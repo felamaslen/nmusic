@@ -1,0 +1,18 @@
+{
+  "name": "nmusic_server",
+  "version": "0.0.1",
+  "description": "Serves requests for nmusic_client",
+  "main": "nmusic_server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/felamaslen/nmusic/"
+  },
+  "author": "Fela Maslen",
+  "license": "GPL-2.0",
+  "dependencies": {
+    "http": "0.0.0"
+  }
+}

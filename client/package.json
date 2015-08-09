@@ -1,0 +1,38 @@
+{
+  "name": "nmusic",
+  "version": "0.0.1",
+  "description": "Node-based music player and organiser",
+  "engines": {
+    "node": "0.12.2"
+  },
+  "scripts": {
+    "start": "gulp --harmony server",
+    "lint": "./node_modules/.bin/eslint ./code/js"
+  },
+  "main": "code/index.js",
+  "dependencies": {
+    "babel-runtime": "^5.8.19",
+    "classnames": "^1.2.0",
+    "immutable": "^3.7.2",
+    "morgan": "^1.6.1",
+    "mysql": "^2.8.0",
+    "react": "^0.13.1",
+    "superagent": "^1.2.0",
+    "superagent-bluebird-promise": "^2.0.2"
+  },
+  "devDependencies": {
+    "babel": "^5.8.19",
+    "babel-eslint": "^4.0.5",
+    "babel-loader": "^5.3.2",
+    "eslint": "^0.24.1",
+    "eslint-plugin-react": "^3.1.0",
+    "express": "^4.13.1",
+    "gulp": "^3.9.0",
+    "gulp-live-server": "0.0.23",
+    "gulp-watch": "^4.3.4",
+    "gulp-webpack": "^1.5.0"
+  },
+  "keywords": [],
+  "author": "Fela Maslen",
+  "license": "GPL-2.0"
+}
