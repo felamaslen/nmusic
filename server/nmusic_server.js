@@ -21,6 +21,15 @@ const schema = new mongoose.Schema(config.MUSIC_SCHEMA);
 const Song = mongoose.model('song', schema);
 
 const getMethods = {
+  'list/albums': (res, params) => {
+    const query = typeof params.artist === 'undefined'
+      ? {} : { artist: unescape(params.artist) };
+
+    Song.find(query).distinct('album', (error, albums) => {
+      res.end(JSON.stringify(albums));
+    });
+  },
+
   'list/artists': res => {
     Song.find().distinct('artist', (error, artists) => {
       res.end(JSON.stringify(artists));
