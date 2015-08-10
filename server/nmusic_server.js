@@ -2,10 +2,18 @@
  * test web server for now (skeleton)
  */
 
-// Lets require/import the HTTP module
+const config = require('./config');
+
 const http = require('http');
 
-const PORT = 3005;
+// connect to database
+const mongoose = require('mongoose');
+mongoose.connect(config.MONGO_URL);
+
+const db = mongoose.connection;
+db.on('error', (e) => {
+  console.error('Connection error:', e);
+});
 
 const getMethods = {
   play: (res, params) => {
@@ -31,6 +39,8 @@ const handleRequest = (req, res) => {
 
   const url = req.url;
 
+  console.log('REQ', url);
+
   // GET parameters (?param1=value1&param2=value2... in URL)
   const parts = url.split('?');
 
@@ -54,7 +64,6 @@ const handleRequest = (req, res) => {
     break;
   case 'GET':
   default:
-    console.log(path, typeof getMethods[path]);
     if (typeof getMethods[path] === 'function') {
       getMethods[path](res, params);
     } else {
@@ -70,6 +79,6 @@ const handleRequest = (req, res) => {
 const server = http.createServer(handleRequest);
 
 // Lets start our server
-server.listen(PORT, () => {
-  console.log('Server listening on: http://localhost:%s', PORT);
+server.listen(config.SERVER_PORT, () => {
+  console.log('Server listening on: http://localhost:%s', config.SERVER_PORT);
 });
