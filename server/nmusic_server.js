@@ -8,6 +8,10 @@ const http = require('http');
 const fs = require('fs');
 const util = require('util');
 
+const secureParam = param => {
+  return decodeURIComponent(param.toString());
+};
+
 // connect to database
 const mongoose = require('mongoose');
 mongoose.connect(config.MONGO_URL);
@@ -21,17 +25,44 @@ const schema = new mongoose.Schema(config.MUSIC_SCHEMA);
 const Song = mongoose.model('song', schema);
 
 const getMethods = {
+  'list/songs': (res, params) => {
+    const query = {};
+
+    if (typeof params.artist !== 'undefined') {
+      query.artist = secureParam(params.artist);
+    }
+    if (typeof params.album !== 'undefined') {
+      query.album = secureParam(params.album);
+    }
+
+    Song.find(query, 'track title artist album genre time year', (error, songs) => {
+      if (error) {
+        throw error;
+      }
+
+      res.end(JSON.stringify(songs));
+    });
+  },
+
   'list/albums': (res, params) => {
     const query = typeof params.artist === 'undefined'
-      ? {} : { artist: decodeURIComponent(params.artist.toString()) };
+      ? {} : { artist: secureParam(params.artist) };
 
     Song.find(query).distinct('album', (error, albums) => {
+      if (error) {
+        throw error;
+      }
+
       res.end(JSON.stringify(albums));
     });
   },
 
   'list/artists': res => {
     Song.find().distinct('artist', (error, artists) => {
+      if (error) {
+        throw error;
+      }
+
       res.end(JSON.stringify(artists));
     });
   },
