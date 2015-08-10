@@ -112,16 +112,7 @@ const schema = {
     filename: String,
   }),
 
-  songs: new mongoose.Schema({
-    filename: String,
-    track: Number,
-    title: String,
-    artist: String,
-    album: String,
-    genre: String,
-    time: Number, // seconds
-    year: Number,
-  }),
+  songs: new mongoose.Schema(config.MUSIC_SCHEMA),
 };
 
 const BadFile = mongoose.model('badfile', schema.badFiles);

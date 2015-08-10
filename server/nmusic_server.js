@@ -5,6 +5,9 @@
 const config = require('./config');
 
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
 
 // connect to database
 const mongoose = require('mongoose');
@@ -15,9 +18,11 @@ db.on('error', (e) => {
   console.error('Connection error:', e);
 });
 
+const schema = new mongoose.Schema(config.MUSIC_SCHEMA);
+const Song = mongoose.model('song', schema);
+
 const getMethods = {
   play: (res, params) => {
-    console.log(res);
     if (typeof params.id === 'undefined') {
       res.statusCode = 500;
       res.end('Error: must supply an ID!');
@@ -25,7 +30,31 @@ const getMethods = {
 
     const id = params.id;
 
-    res.end('Playing file #' + id.toString());
+    // fetch song filename from database
+    Song.findOne({ _id: id }, 'filename', (err, song) => {
+      if (err) {
+        res.statusCode = 404;
+        res.end('File not found');
+      } else {
+        const file = song.filename;
+        try {
+          const stat = fs.statSync(file);
+
+          const extension = file.substring(file.lastIndexOf('.') + 1);
+
+          res.writeHead(200, {
+            'Content-Type': 'audio/' + extension,
+            'Content-Length': stat.size,
+          });
+
+          const readStream = fs.createReadStream(file);
+          util.pump(readStream, res);
+        } catch(err2) {
+          res.statusCode = 500;
+          res.end('Server error (bad database entry)');
+        }
+      }
+    });
   },
 
   'favicon.ico': res => {
