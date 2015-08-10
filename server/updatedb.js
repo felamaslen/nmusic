@@ -9,7 +9,6 @@ const mongoose = require('mongoose');
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
 
-// const id3 = require('id3js');
 const mm = require('musicmetadata');
 const fs = require('fs');
 
@@ -108,6 +107,8 @@ const addDirRecursive = (dir, badFiles) => {
 };
 
 const schema = {
+  counters: new mongoose.Schema({ _id: String, seq: Number }),
+
   badFiles: new mongoose.Schema({
     filename: String,
   }),
@@ -118,6 +119,27 @@ const schema = {
 const BadFile = mongoose.model('badfile', schema.badFiles);
 
 const Song = mongoose.model('song', schema.songs);
+
+// handle counters
+schema.counters.statics.findAndModify = (query, sort, doc, options, callback) => {
+  return this.collection.findAndModify(query, sort, doc, options, callback);
+};
+
+const Counter = mongoose.model('counter', schema.counters);
+
+const getID = (name, callback) => {
+  Counter.findAndModify(
+    { _id: name },
+    [],
+    { $inc: { seq: 1 } },
+    { new: true },
+    (error, counter) => {
+      if (error) { throw error; }
+
+      callback(counter.value.seq);
+    }
+  );
+};
 
 const addMissing = (missingFiles, total, callback) => {
   if (missingFiles.length > 0) {
@@ -137,24 +159,27 @@ const addMissing = (missingFiles, total, callback) => {
       const time = typeof tags.duration !== 'undefined' ? parseFloat(tags.duration, 10) : 0;
       const year = typeof tags.year !== 'undefined' ? parseInt(tags.year, 10) : 0;
 
-      const item = new Song({
-        filename: doc.filename,
-        track: track,
-        title: title,
-        artist: artist,
-        album: album,
-        genre: genre,
-        time: time,
-        year: year,
-      });
+      getID('songsid', id => {
+        const item = new Song({
+          _id: id,
+          filename: doc.filename,
+          track: track,
+          title: title,
+          artist: artist,
+          album: album,
+          genre: genre,
+          time: time,
+          year: year,
+        });
 
-      item.save(err2 => {
-        if (err2) throw err2;
+        item.save(err2 => {
+          if (err2) throw err2;
 
-        const progress = '[' + Math.round((total - missingFiles.length) / total * 100, 2).toString() + '%]';
-        console.log(progress, 'Processed', basename(doc.filename));
+          const progress = '[' + Math.round((total - missingFiles.length) / total * 100, 2).toString() + '%]';
+          console.log(progress, 'Processed', basename(doc.filename));
 
-        addMissing(missingFiles, total, callback);
+          addMissing(missingFiles, total, callback);
+        });
       });
     });
   } else {

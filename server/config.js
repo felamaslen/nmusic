@@ -10,6 +10,7 @@ module.exports = {
   MUSIC_DIR: '/home/fela/music',
   FORMATS: ['mp3', 'flac', 'ogg', 'm4a'],
   MUSIC_SCHEMA: {
+    _id: Number,
     filename: String,
     track: Number,
     title: String,
