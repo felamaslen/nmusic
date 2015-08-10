@@ -21,6 +21,12 @@ const schema = new mongoose.Schema(config.MUSIC_SCHEMA);
 const Song = mongoose.model('song', schema);
 
 const getMethods = {
+  'list/artists': res => {
+    Song.find().distinct('artist', (error, artists) => {
+      res.end(JSON.stringify(artists));
+    });
+  },
+
   play: (res, params) => {
     if (typeof params.id === 'undefined') {
       res.statusCode = 500;
