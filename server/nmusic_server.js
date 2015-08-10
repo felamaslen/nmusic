@@ -12,6 +12,22 @@ const secureParam = param => {
   return decodeURIComponent(param.toString());
 };
 
+const compressSongs = songs => {
+  // use arrays to save bandwidth on keys
+  return JSON.stringify(songs.map(song => {
+    return [
+      song._id,
+      song.track,
+      song.title,
+      song.artist,
+      song.album,
+      song.genre,
+      song.time,
+      song.year,
+    ];
+  }));
+};
+
 // connect to database
 const mongoose = require('mongoose');
 mongoose.connect(config.MONGO_URL);
@@ -25,6 +41,37 @@ const schema = new mongoose.Schema(config.MUSIC_SCHEMA);
 const Song = mongoose.model('song', schema);
 
 const getMethods = {
+  'list/tree': res => {
+    // gets all the songs, but in an artist/album tree
+    Song.find({}, 'track title artist album genre time year', (error, songs) => {
+      if (error) {
+        throw error;
+      }
+
+      const tree = {};
+
+      songs.forEach(song => {
+        if (typeof tree[song.artist] === 'undefined') {
+          tree[song.artist] = {};
+        }
+        if (typeof tree[song.artist][song.album] === 'undefined') {
+          tree[song.artist][song.album] = [];
+        }
+
+        tree[song.artist][song.album].push([
+          song._id,
+          song.track,
+          song.title,
+          song.genre,
+          song.time,
+          song.year,
+        ]);
+      });
+
+      res.end(JSON.stringify(tree));
+    });
+  },
+
   'list/songs': (res, params) => {
     const query = {};
 
@@ -40,7 +87,7 @@ const getMethods = {
         throw error;
       }
 
-      res.end(JSON.stringify(songs));
+      res.end(compressSongs(songs));
     });
   },
 
