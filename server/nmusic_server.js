@@ -222,6 +222,9 @@ const handleRequest = (req, res) => {
   // to the API (e.g. in case you use sessions)
   res.setHeader('Access-Control-Allow-Credentials', true);
 
+  // we're always outputting JSON
+  res.setHeader('Content-Type', 'application/json');
+
   switch (method) {
   case 'POST':
     res.status(500).end('POST not implemented');
