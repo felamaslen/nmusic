@@ -1,0 +1,1 @@
+export const APP_HIDE_SPINNER = 'APP_HIDE_SPINNER';

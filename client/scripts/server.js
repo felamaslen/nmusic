@@ -13,6 +13,7 @@ app.use(logger('dev'));
 app.use(express.static(CORDOVA_WWW_ROOT));
 
 // error handler
+/*
 app.use((err, req, res) => {
   res.status(err.status || 500);
   res.render('error', {
@@ -20,5 +21,6 @@ app.use((err, req, res) => {
     error: err,
   });
 });
+*/
 
 server.listen(process.env.PORT || 3000);

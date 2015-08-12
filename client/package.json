@@ -11,8 +11,11 @@
   },
   "main": "code/index.js",
   "dependencies": {
+    "babel": "^5.8.21",
     "babel-runtime": "^5.8.19",
     "classnames": "^1.2.0",
+    "express": "^4.13.3",
+    "flux": "^2.0.3",
     "immutable": "^3.7.2",
     "morgan": "^1.6.1",
     "mysql": "^2.8.0",
