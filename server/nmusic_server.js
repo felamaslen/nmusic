@@ -41,6 +41,36 @@ const schema = new mongoose.Schema(config.MUSIC_SCHEMA);
 const Song = mongoose.model('song', schema);
 
 const getMethods = {
+  'search/suggestions': (res, params) => {
+    // finds automatic suggestions ("as-you-type") for keyword searching
+
+    if (typeof params.term === 'undefined') {
+      res.statusCode = 400;
+      res.end('Error: must supply a search term!');
+    }
+
+    const term = secureParam(params.term);
+    const regex = new RegExp(term, 'gi');
+
+    Song.find({ title: regex }, 'title artist', { limit: 5 }, (error1, songs) => {
+      const suggestions = {
+        songs: songs.map(song => {
+          return [song._id, song.title, song.artist];
+        }),
+      };
+
+      Song.find({ artist: regex }).distinct('artist', (error2, artists) => {
+        suggestions.artists = artists.slice(0, 5).map(artist => artist);
+
+        Song.find({ album: regex }).distinct('album', (error3, albums) => {
+          suggestions.albums = albums.slice(0, 5).map(album => album);
+
+          res.end(JSON.stringify(suggestions));
+        });
+      });
+    });
+  },
+
   'list/tree': res => {
     // gets all the songs, but in an artist/album tree
     Song.find({}, 'track title artist album genre time year', (error, songs) => {
@@ -116,7 +146,7 @@ const getMethods = {
 
   play: (res, params) => {
     if (typeof params.id === 'undefined') {
-      res.statusCode = 500;
+      res.statusCode = 400;
       res.end('Error: must supply an ID!');
     }
 
