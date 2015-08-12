@@ -2,7 +2,7 @@
  * the main nmusic-app JSX component
  */
 
-import { TEST_CONFIG } from '../config';
+import { } from '../config';
 
 import { Record, fromJS, List } from 'immutable';
 import React, { Component } from 'react';
@@ -12,14 +12,19 @@ import mainReducer from '../reducers/MainReducer.js';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
-// import Component from './Component'
+import LoadingSpinner from './LoadingSpinner';
+import BrowserArtists from './BrowserArtists';
 
 const Reduction = new Record({
   appState: fromJS({
-    loaded: false,
+    loaded: {
+      browserArtists: false,
+    },
     loadedOnLastRender: false,
-    something: TEST_CONFIG,
-    playing: false,
+    browser: {
+      selectedArtist: -1,
+      listArtists: List.of(),
+    },
   }),
   effects: List.of(),
 });
@@ -84,9 +89,17 @@ export default class App extends Component {
 
   render() {
     return (
-      <div className="test">
-        App goes here...
-      </div>
+      <main>
+        <LoadingSpinner dispatcher={this.state.dispatcher}
+          loaded={!this.state.reduction.getIn(['appState', 'loaded']).some(loadedItem => !loadedItem)}
+          loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}/>
+        <section>
+          <BrowserArtists dispatcher={this.state.dispatcher}
+            loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
+            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtist'])}
+            list={this.state.reduction.getIn(['appState', 'browser', 'listArtists'])}/>
+        </section>
+      </main>
     );
   }
 }

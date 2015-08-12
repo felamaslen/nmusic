@@ -1,6 +1,19 @@
-import { Map as map } from 'immutable';
+import {
+  API_LIST_ARTIST,
+  // API_LIST_ALBUMS,
+} from '../config';
 
-import { } from '../constants/Effects';
+import { Map as map } from 'immutable';
+import request from 'superagent-bluebird-promise';
+
+import {
+  gotListArtists,
+} from '../actions/BrowserActions';
+
+import {
+  BROWSER_ARTISTS_API_CALL,
+  // BROWSER_ALBUMS_API_CALL,
+} from '../constants/Effects';
 
 const buildEffectHandler = handlers => {
   return (dispatcher, effect) => {
@@ -11,4 +24,10 @@ const buildEffectHandler = handlers => {
 };
 
 export default buildEffectHandler({
+  [BROWSER_ARTISTS_API_CALL]: (_, dispatcher) => {
+    request.get(API_LIST_ARTIST).then(response => {
+      dispatcher.dispatch(gotListArtists(response.body));
+    });
+  },
+
 });

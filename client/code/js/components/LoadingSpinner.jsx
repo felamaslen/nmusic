@@ -26,7 +26,7 @@ export default class LoadingSpinner extends PureControllerView {
   _hideSpinner() {
     window.setTimeout(() => {
       this.dispatchAction(hideSpinner());
-    }, 250);
+    }, 500);
   }
 }
 

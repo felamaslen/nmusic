@@ -20,6 +20,7 @@
     "morgan": "^1.6.1",
     "mysql": "^2.8.0",
     "react": "^0.13.1",
+    "react-pure-render": "^1.0.2",
     "superagent": "^1.2.0",
     "superagent-bluebird-promise": "^2.0.2"
   },

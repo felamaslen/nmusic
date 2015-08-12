@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+}
+
+#spinnerBG {
+  background: #fff;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10000;
+  transition: opacity .45s;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  background: url(../img/loading.png) 0 0;
+  animation: spinner .8s steps(18, end) infinite;
+  text-indent: -9999px;
+  left: 50%;
+  top: 50%;
+  margin-left: -15px;
+  margin-top: -15px;
+  position: absolute;
+}
+@keyframes spinner {
+  from { background-position: 0 0; }
+  to { background-position: 0 -540px; }
+}
+
