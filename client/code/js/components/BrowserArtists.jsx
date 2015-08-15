@@ -41,12 +41,6 @@ export default class BrowserArtists extends PureControllerView {
       </div>
     );
   }
-
-  _load() {
-    window.setTimeout(() => {
-      this.dispatchAction(loadListArtists());
-    }, 0);
-  }
 }
 
 BrowserArtists.propTypes = {
