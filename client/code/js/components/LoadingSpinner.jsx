@@ -5,28 +5,26 @@ import PureControllerView from './PureControllerView';
 import { hideSpinner } from '../actions/AppActions';
 
 export default class LoadingSpinner extends PureControllerView {
-  render() {
-    const spinnerStyle = {};
-
-    if (this.props.loaded) {
-      if (!this.props.loadedOnLastRender) {
-        spinnerStyle.opacity = 0;
-
+  componentDidUpdate() {
+    if (this.props.loaded && !this.props.loadedOnLastRender) {
+      window.setTimeout(() => {
         this._hideSpinner();
-      }
+      }, 550);
     }
+  }
+
+  render() {
+    const spinnerClass = this.props.loaded ? 'loaded' : 'not-loaded';
 
     return this.props.loadedOnLastRender ? false : (
-      <div id="spinnerBG" style={spinnerStyle}>
+      <div id="spinnerBG" className={spinnerClass}>
         <div className="spinner">Loading...</div>
       </div>
     );
   }
 
   _hideSpinner() {
-    window.setTimeout(() => {
-      this.dispatchAction(hideSpinner());
-    }, 500);
+    this.dispatchAction(hideSpinner());
   }
 }
 
