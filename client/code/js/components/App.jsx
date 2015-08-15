@@ -8,7 +8,9 @@ import { Record, fromJS, List } from 'immutable';
 import React, { Component } from 'react';
 import { Dispatcher } from 'flux';
 
-import mainReducer from '../reducers/MainReducer.js';
+// import reducers
+import mainReducer from '../reducers/MainReducer';
+import browserReducer from '../reducers/BrowserReducer';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
@@ -47,6 +49,7 @@ export default class App extends Component {
 
       // all reducers are being executed here
       reduction = mainReducer(reduction, action);
+      reduction = browserReducer(reduction, action);
 
       // all effect handlers are being handled here
       reduction.get('effects').forEach(apiCallEffectHandler.bind(null, dispatcher));
