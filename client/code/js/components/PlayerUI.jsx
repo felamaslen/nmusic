@@ -36,7 +36,7 @@ export default class PlayerUI extends PureControllerView {
         <info-artist>{this.props.currentTrack.get('artist')}</info-artist>
         <seekbar>
           <current-time>{secondsToTime(this.props.currentTime)}</current-time>
-          <input className="ctrl-seekbar" ref="ctrlSeekbar" type="range"
+          <input id="seekbar" className="ctrl-seekbar" ref="ctrlSeekbar" type="range"
             min="0" max={this.props.currentTrack.get('time')} value={this.props.currentTime}
             onChange={this._seek.bind(this)}
           />
@@ -44,7 +44,6 @@ export default class PlayerUI extends PureControllerView {
         </seekbar>
       </song-info>
     );
-
 
     return (
       <player>
@@ -81,7 +80,7 @@ export default class PlayerUI extends PureControllerView {
   }
 
   _seek(ev) {
-    console.log(ev);
+    console.debug('_seek', ev.target.value, typeof ev.target.value);
     this.dispatchAction(ctrlSeek(ev.target.value));
   }
 }

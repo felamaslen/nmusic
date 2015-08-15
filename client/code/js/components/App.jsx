@@ -36,6 +36,7 @@ const Reduction = new Record({
       paused: true,
       volume: 0.7,
       currentTime: 0,
+      setTime: -1,
     },
     trackList: [],
     browser: {
@@ -118,6 +119,7 @@ export default class App extends Component {
         <PlayerEngine dispatcher={this.state.dispatcher}
           history={this.state.reduction.getIn(['appState', 'player', 'trackHistory'])}
           currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
+          setTime={this.state.reduction.getIn(['appState', 'player', 'setTime'])}
           paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
           volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
         />
@@ -125,8 +127,8 @@ export default class App extends Component {
           <PlayerUI dispatcher={this.state.dispatcher}
             currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
             paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
-            volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
             currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
+            volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
           />
         </section>
         <section id="section-browsers">

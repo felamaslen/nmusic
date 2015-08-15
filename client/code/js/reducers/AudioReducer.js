@@ -1,3 +1,5 @@
+import { secondsToTime } from '../common';
+
 import { } from 'immutable';
 
 import {
@@ -27,8 +29,8 @@ export default buildReducer({
   },
 
   [AUDIO_DURATION_SET]: (reduction, time) => {
-    // console.debug('AUDIO_DURATION_SET', time);
     return reduction
+      .setIn(['appState', 'player', 'currentTrack', 'time'], time)
     ;
   },
 
@@ -45,8 +47,8 @@ export default buildReducer({
   },
 
   [AUDIO_TIME_UPDATED]: (reduction, position) => {
-    // console.debug('AUDIO_TIME_UPDATED', position);
     return reduction
+      .setIn(['appState', 'player', 'currentTime'], position)
     ;
   },
 

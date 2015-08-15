@@ -47,8 +47,10 @@ export default buildReducer({
   },
 
   [PLAYER_POSITION_SEEKED]: (reduction, position) => {
-    console.debug('PLAYER_POSITION_SEEKED', position);
-    return reduction;
+    console.debug('PLAYER_POSITION_SEEKED', parseFloat(position, 10));
+    return reduction
+      .setIn(['appState', 'player', 'setTime'], parseFloat(position, 10))
+    ;
   },
 
 });

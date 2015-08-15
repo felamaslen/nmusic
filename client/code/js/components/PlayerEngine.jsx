@@ -12,6 +12,7 @@ import {
   playQueueItem,
   togglePause,
   ctrlNext,
+  ctrlSeek,
 } from '../actions/PlayerActions';
 
 import {
@@ -53,6 +54,8 @@ export default class PlayerEngine extends PureControllerView {
   }
 
   shouldComponentUpdate(nextProps) {
+    const audioElem = this.refs.audioObject.getDOMNode();
+
     const paused = this.isPaused();
 
     if (paused && !nextProps.paused) {
@@ -63,16 +66,23 @@ export default class PlayerEngine extends PureControllerView {
 
     const volumeChanged = nextProps.volume !== this.props.volume;
     if (volumeChanged) {
-      this.refs.audioObject.getDOMNode().volume = parseFloat(nextProps.volume, 10);
+      audioElem.volume = parseFloat(nextProps.volume, 10);
     }
 
-    const trackDidChange =
+    console.log(nextProps.setTime, typeof nextProps.setTime);
+    if (nextProps.setTime > -1) {
+      audioElem.currentTime = nextProps.setTime;
+      this.dispatchAction(ctrlSeek(-1));
+    }
+
+    const trackChanged =
       (nextProps.currentTrack === null && this.props.currentTrack !== null) ||
       (nextProps.currentTrack !== null && this.props.currentTrack === null) ||
       (nextProps.currentTrack !== null && this.props.currentTrack !== null &&
        nextProps.currentTrack.id !== this.props.currentTrack.id);
 
-    return trackDidChange;
+    // only need to re-render <audio> element if the track (source) changed
+    return trackChanged;
   }
 
   componentDidUpdate() {
@@ -87,7 +97,7 @@ export default class PlayerEngine extends PureControllerView {
     );
 
     return (
-      <audio ref="audioObject" id="playerEngine" autoPlay="false">
+      <audio ref="audioObject" id="playerEngine">
         {source}
       </audio>
     );
@@ -161,6 +171,7 @@ export default class PlayerEngine extends PureControllerView {
 PlayerEngine.propTypes = {
   paused: PropTypes.bool,
   volume: PropTypes.number,
+  setTime: PropTypes.number,
   history: PropTypes.instanceOf(List),
   currentTrack: PropTypes.instanceOf(Map),
 };
