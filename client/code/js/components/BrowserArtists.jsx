@@ -10,11 +10,11 @@ import PureControllerView from './PureControllerView';
 import { loadListArtists } from '../actions/BrowserActions';
 
 export default class BrowserArtists extends PureControllerView {
-  render() {
-    if (!this.props.loaded) {
-      this._load();
-    }
+  componentWillMount() {
+    this.dispatchAction(loadListArtists());
+  }
 
+  render() {
     const numArtists = this.props.list.size;
 
     const _list = this.props.list.unshift(
@@ -23,7 +23,7 @@ export default class BrowserArtists extends PureControllerView {
       ) + ')'
     );
 
-    const categoryList = _list.map((artist, index) => {
+    const artistList = _list.map((artist, index) => {
       const liClass = this.props.selected === index - 1 ? 'selected' : '';
 
       return (
@@ -36,7 +36,7 @@ export default class BrowserArtists extends PureControllerView {
     return (
       <div className={className}>
         <ul>
-          {categoryList}
+          {artistList}
         </ul>
       </div>
     );

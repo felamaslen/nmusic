@@ -1,5 +1,7 @@
+/** App actions */
 export const APP_HIDE_SPINNER = 'APP_HIDE_SPINNER';
 
+/** Browser actions */
 export const BROWSER_FETCH_ARTISTS = 'BROWSER_FETCH_ARTISTS';
 export const BROWSER_FETCH_ALBUMS = 'BROWSER_FETCH_ALBUMS';
 

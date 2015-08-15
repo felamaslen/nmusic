@@ -16,16 +16,19 @@ import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
 import LoadingSpinner from './LoadingSpinner';
 import BrowserArtists from './BrowserArtists';
+import BrowserAlbums from './BrowserAlbums';
 
 const Reduction = new Record({
   appState: fromJS({
     loaded: {
       browserArtists: false,
+      browserAlbums: false,
     },
     loadedOnLastRender: false,
     browser: {
       selectedArtist: -1,
       listArtists: List.of(),
+      listAlbums: List.of(),
     },
   }),
   effects: List.of(),
@@ -95,12 +98,20 @@ export default class App extends Component {
       <main>
         <LoadingSpinner dispatcher={this.state.dispatcher}
           loaded={!this.state.reduction.getIn(['appState', 'loaded']).some(loadedItem => !loadedItem)}
-          loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}/>
+          loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
+        />
         <section>
           <BrowserArtists dispatcher={this.state.dispatcher}
             loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
             selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtist'])}
-            list={this.state.reduction.getIn(['appState', 'browser', 'listArtists'])}/>
+            list={this.state.reduction.getIn(['appState', 'browser', 'listArtists'])}
+          />
+          <BrowserAlbums dispatcher={this.state.dispatcher}
+            loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserAlbums'])}
+            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedAlbum'])}
+            selectedArtist={this.state.reduction.getIn(['appState', 'browser', 'selectedArtist'])}
+            list={this.state.reduction.getIn(['appState', 'browser', 'listAlbums'])}
+          />
         </section>
       </main>
     );

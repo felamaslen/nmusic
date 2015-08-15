@@ -122,7 +122,7 @@ const getMethods = {
   },
 
   'list/albums': (res, params) => {
-    const query = typeof params.artist === 'undefined'
+    const query = typeof params.artist === 'undefined' || !params.artist.length
       ? {} : { artist: secureParam(params.artist) };
 
     Song.find(query).distinct('album', (error, albums) => {
