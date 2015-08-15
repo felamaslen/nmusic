@@ -1,4 +1,4 @@
-import { Map as map, fromJS } from 'immutable';
+import { fromJS } from 'immutable';
 
 import {
   APP_HIDE_SPINNER,
@@ -11,14 +11,7 @@ import {
 } from '../constants/Effects';
 
 import buildMessage from '../MessageBuilder';
-
-const buildReducer = handlers => {
-  return (reduction, action) => {
-    return map(handlers)
-      .filter((handler, actionType) => actionType === action.type)
-      .reduce((partialReduction, handler) => handler(partialReduction, action.payload), reduction);
-  };
-};
+import buildReducer from './BuildReducer';
 
 // This is the place where all magic belongs
 export default buildReducer({
