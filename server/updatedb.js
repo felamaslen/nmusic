@@ -2,6 +2,7 @@
  * 2015, Fela Maslen
  */
 
+const common = require('./common');
 const config = require('./config');
 
 // connect to database
@@ -25,28 +26,12 @@ const execTime = (name, fromStart) => {
   return true;
 };
 
-const formatTime = () => {
-  const date = new Date();
-
-  const yyyy = date.getFullYear().toString();
-  const mm_ = (date.getMonth() + 1).toString(); // getMonth() is zero-based
-  const dd = date.getDate().toString();
-
-  const HH = date.getHours().toString();
-  const MM = date.getMinutes().toString();
-  const SS = date.getSeconds().toString();
-
-  return yyyy + '-' + (mm_[1] ? mm_ : '0' + mm_[0]) + '-'
-    + (dd[1] ? dd : '0' + dd[0]) + ' '
-    + HH + ':' + MM + ':' + SS;
-};
-
 const basename = filename => {
   return filename.substring(filename.lastIndexOf('/') + 1);
 };
 
 const logProcess = (msg) => {
-  console.log('[' + formatTime() + ']', msg);
+  console.log('[' + common.formatTime() + ']', msg);
 };
 
 const getFilenames = item => { return item.filename; };

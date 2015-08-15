@@ -2,6 +2,7 @@
  * test web server for now (skeleton)
  */
 
+const common = require('./common');
 const config = require('./config');
 
 const http = require('http');
@@ -190,7 +191,7 @@ const handleRequest = (req, res) => {
 
   const url = req.url;
 
-  console.log('REQ', url);
+  console.log(common.formatTime(), 'REQ', url);
 
   // GET parameters (?param1=value1&param2=value2... in URL)
   const parts = url.split('?');
