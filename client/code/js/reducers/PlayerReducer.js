@@ -8,15 +8,14 @@ import {
 import buildReducer from './BuildReducer';
 
 export default buildReducer({
-  [PLAYER_TRACK_ADDED]: (reduction, trackId) => {
-    console.debug('PLAYER_TRACK_ADDED', trackId);
+  [PLAYER_TRACK_ADDED]: (reduction, track) => {
     return reduction
       .setIn(
         ['appState', 'player', 'trackHistory'],
         reduction.getIn(['appState', 'player', 'trackHistory'])
-          .push(trackId)
+          .push(track)
       )
-      .setIn(['appState', 'player', 'playingId'], trackId);
+      .setIn(['appState', 'player', 'currentTrack'], track);
   },
 
   [PLAYER_PAUSE_TOGGLED]: (reduction, paused) => {

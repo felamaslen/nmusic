@@ -29,9 +29,10 @@ const Reduction = new Record({
     loadedOnLastRender: false,
     player: {
       trackHistory: [],
-      playingId: null,
+      currentTrack: null,
       paused: true,
     },
+    trackList: [],
     browser: {
       selectedArtist: -1,
       listArtists: List.of(),
@@ -110,7 +111,7 @@ export default class App extends Component {
         />
         <PlayerEngine dispatcher={this.state.dispatcher}
           history={this.state.reduction.getIn(['appState', 'player', 'trackHistory'])}
-          playingId={this.state.reduction.getIn(['appState', 'player', 'playingId'])}
+          currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
           paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
         />
         <section>

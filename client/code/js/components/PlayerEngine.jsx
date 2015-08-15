@@ -2,7 +2,7 @@
 
 import { STREAM_URL } from '../config';
 
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import React, { PropTypes } from 'react';
 
 import PureControllerView from './PureControllerView';
@@ -13,16 +13,9 @@ import {
 } from '../actions/PlayerActions';
 
 export default class PlayerEngine extends PureControllerView {
-  componentDidMount() {
-    window.setTimeout(() => {
-      this._addTrack(3);
-      this._togglePause(false);
-    }, 2000);
-  }
-
   render() {
-    const source = this.props.playingId === null ? false : (
-      <source src={STREAM_URL + this.props.playingId} type="audio/mpeg"/>
+    const source = this.props.currentTrack === null ? false : (
+      <source src={STREAM_URL + this.props.currentTrack.id} type="audio/mpeg"/>
     );
 
     return (
@@ -32,8 +25,8 @@ export default class PlayerEngine extends PureControllerView {
     );
   }
 
-  _addTrack(trackId) {
-    this.dispatchAction(addTrack(trackId));
+  _addTrack(track) {
+    this.dispatchAction(addTrack(track));
   }
 
   _togglePause(paused) {
@@ -49,7 +42,7 @@ export default class PlayerEngine extends PureControllerView {
 
 PlayerEngine.propTypes = {
   paused: PropTypes.bool,
-  playingId: PropTypes.number,
   history: PropTypes.instanceOf(List),
+  currentTrack: PropTypes.instanceOf(Map),
 };
 
