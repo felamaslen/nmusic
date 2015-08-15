@@ -15,44 +15,44 @@ import buildReducer from './BuildReducer';
 
 export default buildReducer({
   [AUDIO_STREAM_CANPLAY]: (reduction, status) => {
-    console.debug('AUDIO_STREAM_CANPLAY', status);
+    // console.debug('AUDIO_STREAM_CANPLAY', status);
     return reduction
     ;
   },
 
   [AUDIO_STREAM_BEGAN]: reduction => {
-    console.debug('AUDIO_STREAM_BEGAN');
+    // console.debug('AUDIO_STREAM_BEGAN');
     return reduction
     ;
   },
 
   [AUDIO_DURATION_SET]: (reduction, time) => {
-    console.debug('AUDIO_DURATION_SET', time);
+    // console.debug('AUDIO_DURATION_SET', time);
     return reduction
     ;
   },
 
   [AUDIO_ERROR_OCCURRED]: reduction => {
-    console.error('An error occurred! Fuuuuuu');
+    // console.error('An error occurred! Fuuuuuu');
     return reduction
     ;
   },
 
   [AUDIO_STREAM_PROGRESSED]: (reduction, buffered) => {
-    console.debug('AUDIO_STREAM_PROGRESSED', buffered);
+    // console.debug('AUDIO_STREAM_PROGRESSED', buffered);
     return reduction
     ;
   },
 
   [AUDIO_TIME_UPDATED]: (reduction, position) => {
-    console.debug('AUDIO_TIME_UPDATED', position);
+    // console.debug('AUDIO_TIME_UPDATED', position);
     return reduction
     ;
   },
 
   [AUDIO_VOLUME_SET]: (reduction, volume) => {
-    console.debug('AUDIO_VOLUME_SET', volume);
     return reduction
+      .setIn(['appState', 'player', 'volume'], parseFloat(volume, 10))
     ;
   },
 

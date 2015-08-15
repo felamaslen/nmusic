@@ -2,6 +2,7 @@ import { fromJS } from 'immutable';
 
 import {
   PLAYER_TRACK_ADDED,
+  PLAYER_TRACK_PLAYED,
   PLAYER_PAUSE_TOGGLED,
   PLAYER_CTRL_PREVIOUS_CLICKED,
   PLAYER_CTRL_NEXT_CLICKED,
@@ -15,10 +16,19 @@ export default buildReducer({
     return reduction
       .setIn(
         ['appState', 'player', 'trackHistory'],
-        reduction.getIn(['appState', 'player', 'trackHistory'])
-          .push(track)
+        reduction.getIn(['appState', 'player', 'trackHistory']).push(fromJS(track))
       )
-      .setIn(['appState', 'player', 'currentTrack'], fromJS(track));
+    ;
+  },
+
+  [PLAYER_TRACK_PLAYED]: (reduction, queueId) => {
+    return reduction
+      .setIn(['appState', 'player', 'paused'], false)
+      .setIn(
+        ['appState', 'player', 'currentTrack'],
+        reduction.getIn(['appState', 'player', 'trackHistory']).get(queueId)
+      )
+    ;
   },
 
   [PLAYER_PAUSE_TOGGLED]: (reduction, paused) => {

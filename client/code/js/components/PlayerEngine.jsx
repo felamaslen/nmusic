@@ -8,7 +8,8 @@ import React, { PropTypes } from 'react';
 import PureControllerView from './PureControllerView';
 
 import {
-  addTrack,
+  addToQueue,
+  playQueueItem,
   togglePause,
   ctrlNext,
 } from '../actions/PlayerActions';
@@ -38,7 +39,7 @@ export default class PlayerEngine extends PureControllerView {
 
     // this is for testing purposes, obviously
     window.setTimeout(() => {
-      this._addTrack({
+      this._addToQueue({
         id: 11,
         artist: 'Agnes Obel',
         album: 'Aventine',
@@ -47,17 +48,36 @@ export default class PlayerEngine extends PureControllerView {
         genre: 'Alternative',
         time: 119,
       });
-      this._play();
+      this._playQueueItem(0);
     }, 1000);
   }
 
-  componentDidUpdate() {
+  shouldComponentUpdate(nextProps) {
     const paused = this.isPaused();
 
-    if (paused && !this.props.paused) {
+    if (paused && !nextProps.paused) {
       this._play();
-    } else if (!paused && this.props.paused) {
+    } else if (!paused && nextProps.paused) {
       this._pause();
+    }
+
+    const volumeChanged = nextProps.volume !== this.props.volume;
+    if (volumeChanged) {
+      this.refs.audioObject.getDOMNode().volume = parseFloat(nextProps.volume, 10);
+    }
+
+    const trackDidChange =
+      (nextProps.currentTrack === null && this.props.currentTrack !== null) ||
+      (nextProps.currentTrack !== null && this.props.currentTrack === null) ||
+      (nextProps.currentTrack !== null && this.props.currentTrack !== null &&
+       nextProps.currentTrack.id !== this.props.currentTrack.id);
+
+    return trackDidChange;
+  }
+
+  componentDidUpdate() {
+    if (!this.props.paused) {
+      this._play();
     }
   }
 
@@ -67,7 +87,7 @@ export default class PlayerEngine extends PureControllerView {
     );
 
     return (
-      <audio ref="audioObject" id="playerEngine">
+      <audio ref="audioObject" id="playerEngine" autoPlay="false">
         {source}
       </audio>
     );
@@ -103,7 +123,7 @@ export default class PlayerEngine extends PureControllerView {
   }
 
   _volumechange(ev) {
-    this.dispatchAction(volumechange(ev.target.volume * 10));
+    this.dispatchAction(volumechange(ev.target.volume));
   }
   /* end HTML5 audio event abstraction */
 
@@ -119,8 +139,12 @@ export default class PlayerEngine extends PureControllerView {
     this.refs.audioObject.getDOMNode().pause();
   }
 
-  _addTrack(track) {
-    this.dispatchAction(addTrack(track));
+  _playQueueItem(queueId) {
+    this.dispatchAction(playQueueItem(queueId));
+  }
+
+  _addToQueue(track) {
+    this.dispatchAction(addToQueue(track));
   }
 
   _togglePause(paused) {
@@ -136,6 +160,7 @@ export default class PlayerEngine extends PureControllerView {
 
 PlayerEngine.propTypes = {
   paused: PropTypes.bool,
+  volume: PropTypes.number,
   history: PropTypes.instanceOf(List),
   currentTrack: PropTypes.instanceOf(Map),
 };

@@ -34,7 +34,7 @@ const Reduction = new Record({
       trackHistory: [],
       currentTrack: null,
       paused: true,
-      volume: 70,
+      volume: 0.7,
       currentTime: 0,
     },
     trackList: [],
@@ -119,6 +119,7 @@ export default class App extends Component {
           history={this.state.reduction.getIn(['appState', 'player', 'trackHistory'])}
           currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
           paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
+          volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
         />
         <section id="section-meta">
           <PlayerUI dispatcher={this.state.dispatcher}

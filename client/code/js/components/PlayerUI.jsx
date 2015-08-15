@@ -14,6 +14,16 @@ import {
   ctrlSeek,
 } from '../actions/PlayerActions';
 
+import {
+//  canplay,
+//  loadstart,
+//  durationchange,
+//  error,
+//  progress,
+//  timeupdate,
+  volumechange,
+} from '../actions/AudioActions';
+
 export default class PlayerUI extends PureControllerView {
   render() {
     const playPauseText = this.props.paused ? 'Play' : 'Pause';
@@ -45,12 +55,17 @@ export default class PlayerUI extends PureControllerView {
             onClick={this._ctrlPlayPause.bind(this)}>{playPauseText}</control>
           <control className="ctrl-next" ref="ctrlNext"
             onClick={this._ctrlNext.bind(this)}>Next</control>
-          <input className="ctrl-volume" ref="ctrlVolume" type="range" min="0" max="100"
-            defaultValue={this.props.volume} onChange={this.ctrlVolume}/>
+          <input className="ctrl-volume" ref="ctrlVolume" type="range"
+            min="0" max="1" step="0.001"
+            value={this.props.volume} onChange={this._ctrlVolume.bind(this)}/>
         </controls>
         {songInfo}
       </player>
     );
+  }
+
+  _ctrlVolume(ev) {
+    this.dispatchAction(volumechange(ev.target.value));
   }
 
   _ctrlPrevious() {
