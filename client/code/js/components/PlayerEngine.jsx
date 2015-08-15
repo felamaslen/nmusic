@@ -13,9 +13,25 @@ import {
 } from '../actions/PlayerActions';
 
 export default class PlayerEngine extends PureControllerView {
+  componentDidMount() {
+    window.setTimeout(() => {
+      this._addTrack({
+        id: 8,
+        track: 3,
+        title: 'Royals',
+        artist: 'Lorde',
+        album: 'Pure Heroine',
+        genre: 'Indie Pop',
+        time: 190.25405,
+        year: 2013,
+      });
+
+      // this._togglePause(false);
+    }, 1500);
+  }
   render() {
     const source = this.props.currentTrack === null ? false : (
-      <source src={STREAM_URL + this.props.currentTrack.id} type="audio/mpeg"/>
+      <source src={STREAM_URL + this.props.currentTrack.get('id')} type="audio/mpeg"/>
     );
 
     return (

@@ -15,8 +15,10 @@ import browserReducer from '../reducers/BrowserReducer';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
+// import components here
 import LoadingSpinner from './LoadingSpinner';
 import PlayerEngine from './PlayerEngine';
+import PlayerUI from './PlayerUI';
 import BrowserArtists from './BrowserArtists';
 import BrowserAlbums from './BrowserAlbums';
 
@@ -31,6 +33,8 @@ const Reduction = new Record({
       trackHistory: [],
       currentTrack: null,
       paused: true,
+      volume: 70,
+      currentTime: 0,
     },
     trackList: [],
     browser: {
@@ -114,7 +118,15 @@ export default class App extends Component {
           currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
           paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
         />
-        <section>
+        <section id="section-meta">
+          <PlayerUI dispatcher={this.state.dispatcher}
+            currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
+            paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
+            volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
+            currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
+          />
+        </section>
+        <section id="section-browsers">
           <BrowserArtists dispatcher={this.state.dispatcher}
             loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
             selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtist'])}
