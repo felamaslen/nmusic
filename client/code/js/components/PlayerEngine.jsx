@@ -37,20 +37,6 @@ export default class PlayerEngine extends PureControllerView {
     audioElement.addEventListener('progress', this._progress.bind(this));
     audioElement.addEventListener('timeupdate', this._timeupdate.bind(this));
     audioElement.addEventListener('volumechange', this._volumechange.bind(this));
-
-    // this is for testing purposes, obviously
-    window.setTimeout(() => {
-      this._addToQueue({
-        id: 11,
-        artist: 'Agnes Obel',
-        album: 'Aventine',
-        title: 'Fivefold',
-        track: 10,
-        genre: 'Alternative',
-        time: 119,
-      });
-      this._playQueueItem(0);
-    }, 1000);
   }
 
   shouldComponentUpdate(nextProps) {

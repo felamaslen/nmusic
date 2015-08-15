@@ -7,7 +7,10 @@ import { List } from 'immutable';
 
 import PureControllerView from './PureControllerView';
 
-import { loadListAlbums } from '../actions/BrowserActions';
+import {
+  loadListAlbums,
+  selectAlbum,
+} from '../actions/BrowserActions';
 
 export default class BrowserAlbums extends PureControllerView {
   componentWillMount() {
@@ -29,7 +32,8 @@ export default class BrowserAlbums extends PureControllerView {
       const liClass = this.props.selected === index - 1 ? 'selected' : '';
 
       return (
-        <li key={index} className={liClass}>{album}</li>
+        <li onClick={this._handleClick.bind(this, index)}
+          key={index} className={liClass}>{album}</li>
       );
     });
 
@@ -42,6 +46,10 @@ export default class BrowserAlbums extends PureControllerView {
         </ul>
       </div>
     );
+  }
+
+  _handleClick(index) {
+    this.dispatchAction(selectAlbum(index - 1));
   }
 }
 

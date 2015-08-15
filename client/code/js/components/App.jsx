@@ -22,12 +22,14 @@ import PlayerEngine from './PlayerEngine';
 import PlayerUI from './PlayerUI';
 import BrowserArtists from './BrowserArtists';
 import BrowserAlbums from './BrowserAlbums';
+import SongList from './SongList';
 
 const Reduction = new Record({
   appState: fromJS({
     loaded: {
       browserArtists: false,
       browserAlbums: false,
+      songList: true,
     },
     loadedOnLastRender: false,
     player: {
@@ -38,9 +40,13 @@ const Reduction = new Record({
       currentTime: 0,
       setTime: -1,
     },
-    trackList: [],
+    songList: {
+      list: [],
+      selectedSong: -1,
+    },
     browser: {
       selectedArtist: -1,
+      selectedAlbum: -1,
       listArtists: List.of(),
       listAlbums: List.of(),
     },
@@ -144,6 +150,11 @@ export default class App extends Component {
             list={this.state.reduction.getIn(['appState', 'browser', 'listAlbums'])}
           />
         </section>
+        <SongList dispatcher={this.state.dispatcher}
+          list={this.state.reduction.getIn(['appState', 'songList', 'list'])}
+          selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSong'])}
+          loaded={this.state.reduction.getIn(['appState', 'loaded', 'songList'])}
+        />
       </main>
     );
   }

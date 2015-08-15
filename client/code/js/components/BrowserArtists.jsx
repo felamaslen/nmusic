@@ -7,7 +7,10 @@ import { List } from 'immutable';
 
 import PureControllerView from './PureControllerView';
 
-import { loadListArtists } from '../actions/BrowserActions';
+import {
+  loadListArtists,
+  selectArtist,
+} from '../actions/BrowserActions';
 
 export default class BrowserArtists extends PureControllerView {
   componentWillMount() {
@@ -27,7 +30,8 @@ export default class BrowserArtists extends PureControllerView {
       const liClass = this.props.selected === index - 1 ? 'selected' : '';
 
       return (
-        <li key={index} className={liClass}>{artist}</li>
+        <li onClick={this._handleClick.bind(this, index)}
+          key={index} className={liClass}>{artist}</li>
       );
     });
 
@@ -40,6 +44,10 @@ export default class BrowserArtists extends PureControllerView {
         </ul>
       </div>
     );
+  }
+
+  _handleClick(index) {
+    this.dispatchAction(selectArtist(index - 1));
   }
 }
 

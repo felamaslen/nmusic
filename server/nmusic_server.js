@@ -7,15 +7,14 @@ const config = require('./config');
 
 const http = require('http');
 const send = require('send');
-const fs = require('fs');
 
 const secureParam = param => {
   return decodeURIComponent(param.toString());
 };
 
-const compressSongs = songs => {
+const compressSongs = (songs, json) => {
   // use arrays to save bandwidth on keys
-  return JSON.stringify(songs.map(song => {
+  const _songs = songs.map(song => {
     return [
       song._id,
       song.track,
@@ -26,7 +25,9 @@ const compressSongs = songs => {
       song.time,
       song.year,
     ];
-  }));
+  });
+
+  return typeof json === 'undefined' || json === true ? JSON.stringify(_songs) : _songs;
 };
 
 // connect to database
@@ -106,20 +107,74 @@ const getMethods = {
   'list/songs': (res, params) => {
     const query = {};
 
-    if (typeof params.artist !== 'undefined') {
+    const fetchBrowser = typeof params.browser !== 'undefined' && params.browser === 'true';
+    const haveArtist = typeof params.artist !== 'undefined' && params.artist.length > 0;
+    const haveAlbum = typeof params.album !== 'undefined' && params.album.length > 0;
+
+    if (haveArtist) {
       query.artist = secureParam(params.artist);
     }
-    if (typeof params.album !== 'undefined') {
+    if (haveAlbum) {
       query.album = secureParam(params.album);
     }
 
-    Song.find(query, 'track title artist album genre time year', (error, songs) => {
-      if (error) {
-        throw error;
-      }
+    const fetchAlbums = fetchBrowser && !haveAlbum; // changing artists, so recalculate albums
+    const allSongs = fetchAlbums && !haveArtist;
 
-      res.end(compressSongs(songs));
-    });
+    if (!config.GET_ALL_SONGS && allSongs) {
+      // if "All Artists, all albums" is selected, don't get any songs
+      // this is to save bandwidth, memory and CPU time
+
+      Song.find().distinct('album', (error, albums) => {
+        if (error) {
+          throw error;
+        }
+
+        res.end(JSON.stringify({
+          songs: [],
+          albums: albums,
+        }));
+      });
+    } else {
+      Song.find(
+        query,
+        'track title artist album genre time year',
+        {
+          sort: {
+            artist: 1,
+            album: 1,
+            track: 1,
+            title: 1,
+          },
+        },
+        (error, songs) => {
+          if (error) {
+            throw error;
+          }
+
+          if (fetchAlbums) {
+            const browserQuery = {};
+
+            if (haveArtist) {
+              browserQuery.artist = query.artist;
+            }
+
+            Song.find(browserQuery).distinct('album', (error2, albums) => {
+              if (error2) {
+                throw error2;
+              }
+
+              res.end(JSON.stringify({
+                songs: compressSongs(songs, false),
+                albums: albums.sort(),
+              }));
+            });
+          } else {
+            res.end(compressSongs(songs));
+          }
+        }
+      );
+    }
   },
 
   'list/albums': (res, params) => {

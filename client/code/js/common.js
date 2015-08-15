@@ -19,3 +19,16 @@ export const secondsToTime = _seconds => {
 
   return dd + hh + mm + ':' + ss;
 };
+
+export const decompressSongs = song => {
+  return {
+    id: song[0],
+    track: song[1],
+    title: song[2],
+    artist: song[3],
+    album: song[4],
+    genre: song[5],
+    time: song[6],
+    year: song[7],
+  };
+};
