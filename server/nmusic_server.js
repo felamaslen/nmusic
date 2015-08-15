@@ -161,21 +161,6 @@ const getMethods = {
       } else {
         const file = song.filename;
         try {
-/*
-          const stat = fs.statSync(file);
-
-          const extension = file.substring(file.lastIndexOf('.') + 1);
-
-          res.writeHead(200, {
-            'Content-Type': 'audio/' + extension,
-            'Content-Length': stat.size,
-            'Accept-Ranges': 'bytes',
-          });
-
-          const readStream = fs.createReadStream(file);
-          readStream.pipe(res);
-*/
-
           const uri = encodeURIComponent(file);
 
           send(req, uri, {root: '/'})
