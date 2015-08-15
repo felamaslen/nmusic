@@ -10,11 +10,13 @@ import { Dispatcher } from 'flux';
 
 // import reducers
 import mainReducer from '../reducers/MainReducer';
+import playerReducer from '../reducers/PlayerReducer';
 import browserReducer from '../reducers/BrowserReducer';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
 import LoadingSpinner from './LoadingSpinner';
+import PlayerEngine from './PlayerEngine';
 import BrowserArtists from './BrowserArtists';
 import BrowserAlbums from './BrowserAlbums';
 
@@ -25,6 +27,11 @@ const Reduction = new Record({
       browserAlbums: false,
     },
     loadedOnLastRender: false,
+    player: {
+      trackHistory: [],
+      playingId: null,
+      paused: true,
+    },
     browser: {
       selectedArtist: -1,
       listArtists: List.of(),
@@ -52,6 +59,7 @@ export default class App extends Component {
 
       // all reducers are being executed here
       reduction = mainReducer(reduction, action);
+      reduction = playerReducer(reduction, action);
       reduction = browserReducer(reduction, action);
 
       // all effect handlers are being handled here
@@ -99,6 +107,11 @@ export default class App extends Component {
         <LoadingSpinner dispatcher={this.state.dispatcher}
           loaded={!this.state.reduction.getIn(['appState', 'loaded']).some(loadedItem => !loadedItem)}
           loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
+        />
+        <PlayerEngine dispatcher={this.state.dispatcher}
+          history={this.state.reduction.getIn(['appState', 'player', 'trackHistory'])}
+          playingId={this.state.reduction.getIn(['appState', 'player', 'playingId'])}
+          paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
         />
         <section>
           <BrowserArtists dispatcher={this.state.dispatcher}

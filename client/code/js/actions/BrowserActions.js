@@ -1,20 +1,20 @@
 import buildMessage from '../MessageBuilder';
 import {
-  BROWSER_FETCH_ARTISTS,
-  BROWSER_GOT_ARTISTS,
+  BROWSER_ARTISTS_REQUESTED,
+  BROWSER_ARTISTS_FETCHED,
 
-  BROWSER_FETCH_ALBUMS,
-  BROWSER_GOT_ALBUMS,
+  BROWSER_ALBUMS_REQUESTED,
+  BROWSER_ALBUMS_FETCHED,
 } from '../constants/Actions';
 
 // this fetches the artists from the server
-export const loadListArtists = () => buildMessage(BROWSER_FETCH_ARTISTS, {});
+export const loadListArtists = () => buildMessage(BROWSER_ARTISTS_REQUESTED, {});
 
 // this happens when the artists have been fetched from the server
-export const gotListArtists = list => buildMessage(BROWSER_GOT_ARTISTS, list);
+export const gotListArtists = list => buildMessage(BROWSER_ARTISTS_FETCHED, list);
 
 // this fetches the artists from the server
-export const loadListAlbums = artistIndex => buildMessage(BROWSER_FETCH_ALBUMS, artistIndex);
+export const loadListAlbums = artistIndex => buildMessage(BROWSER_ALBUMS_REQUESTED, artistIndex);
 
 // this happens when the artists have been fetched from the server
-export const gotListAlbums = list => buildMessage(BROWSER_GOT_ALBUMS, list);
+export const gotListAlbums = list => buildMessage(BROWSER_ALBUMS_FETCHED, list);

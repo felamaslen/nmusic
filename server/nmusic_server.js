@@ -7,7 +7,7 @@ const config = require('./config');
 
 const http = require('http');
 const fs = require('fs');
-const util = require('util');
+// const stream = require('stream');
 
 const secureParam = param => {
   return decodeURIComponent(param.toString());
@@ -171,7 +171,8 @@ const getMethods = {
           });
 
           const readStream = fs.createReadStream(file);
-          util.pump(readStream, res);
+          readStream.pipe(res);
+//          util.pump(readStream, res);
         } catch(err2) {
           res.statusCode = 500;
           res.end('Server error (bad database entry)');

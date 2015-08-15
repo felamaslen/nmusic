@@ -1,11 +1,11 @@
 import { fromJS } from 'immutable';
 
 import {
-  BROWSER_FETCH_ARTISTS,
-  BROWSER_GOT_ARTISTS,
+  BROWSER_ARTISTS_REQUESTED,
+  BROWSER_ARTISTS_FETCHED,
 
-  BROWSER_FETCH_ALBUMS,
-  BROWSER_GOT_ALBUMS,
+  BROWSER_ALBUMS_REQUESTED,
+  BROWSER_ALBUMS_FETCHED,
 } from '../constants/Actions';
 
 import {
@@ -16,9 +16,8 @@ import {
 import buildMessage from '../MessageBuilder';
 import buildReducer from './BuildReducer';
 
-// This is the place where all magic belongs
 export default buildReducer({
-  [BROWSER_FETCH_ARTISTS]: reduction => {
+  [BROWSER_ARTISTS_REQUESTED]: reduction => {
     return reduction
       .set('effects', reduction
         .get('effects')
@@ -26,13 +25,13 @@ export default buildReducer({
       );
   },
 
-  [BROWSER_GOT_ARTISTS]: (reduction, artists) => {
+  [BROWSER_ARTISTS_FETCHED]: (reduction, artists) => {
     return reduction
       .setIn(['appState', 'loaded', 'browserArtists'], true)
       .setIn(['appState', 'browser', 'listArtists'], fromJS(artists));
   },
 
-  [BROWSER_FETCH_ALBUMS]: (reduction, artistIndex) => {
+  [BROWSER_ALBUMS_REQUESTED]: (reduction, artistIndex) => {
     const artist = artistIndex < 0 ? ''
       : reduction.getIn(['appState', 'browser', 'listArtists']).get(artistIndex);
 
@@ -43,7 +42,7 @@ export default buildReducer({
       );
   },
 
-  [BROWSER_GOT_ALBUMS]: (reduction, albums) => {
+  [BROWSER_ALBUMS_FETCHED]: (reduction, albums) => {
     return reduction
       .setIn(['appState', 'loaded', 'browserAlbums'], true)
       .setIn(['appState', 'browser', 'listAlbums'], fromJS(albums));

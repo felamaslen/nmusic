@@ -6,7 +6,6 @@ import {
 
 import buildReducer from './BuildReducer';
 
-// This is the place where all magic belongs
 export default buildReducer({
   [APP_HIDE_SPINNER]: reduction => {
     return reduction
