@@ -11,6 +11,7 @@ import { Dispatcher } from 'flux';
 // import reducers
 import mainReducer from '../reducers/MainReducer';
 import playerReducer from '../reducers/PlayerReducer';
+import audioReducer from '../reducers/AudioReducer';
 import browserReducer from '../reducers/BrowserReducer';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
@@ -65,6 +66,7 @@ export default class App extends Component {
       // all reducers are being executed here
       reduction = mainReducer(reduction, action);
       reduction = playerReducer(reduction, action);
+      reduction = audioReducer(reduction, action);
       reduction = browserReducer(reduction, action);
 
       // all effect handlers are being handled here
