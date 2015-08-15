@@ -80,7 +80,6 @@ export default class PlayerUI extends PureControllerView {
   }
 
   _seek(ev) {
-    console.debug('_seek', ev.target.value, typeof ev.target.value);
     this.dispatchAction(ctrlSeek(ev.target.value));
   }
 }

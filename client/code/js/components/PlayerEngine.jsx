@@ -69,7 +69,6 @@ export default class PlayerEngine extends PureControllerView {
       audioElem.volume = parseFloat(nextProps.volume, 10);
     }
 
-    console.log(nextProps.setTime, typeof nextProps.setTime);
     if (nextProps.setTime > -1) {
       audioElem.currentTime = nextProps.setTime;
       this.dispatchAction(ctrlSeek(-1));

@@ -6,6 +6,7 @@ const common = require('./common');
 const config = require('./config');
 
 const http = require('http');
+const send = require('send');
 const fs = require('fs');
 
 const secureParam = param => {
@@ -144,7 +145,7 @@ const getMethods = {
     });
   },
 
-  play: (res, params) => {
+  play: (res, params, req) => {
     if (typeof params.id === 'undefined') {
       res.statusCode = 400;
       res.end('Error: must supply an ID!');
@@ -160,6 +161,7 @@ const getMethods = {
       } else {
         const file = song.filename;
         try {
+/*
           const stat = fs.statSync(file);
 
           const extension = file.substring(file.lastIndexOf('.') + 1);
@@ -172,6 +174,20 @@ const getMethods = {
 
           const readStream = fs.createReadStream(file);
           readStream.pipe(res);
+*/
+
+          const uri = encodeURIComponent(file);
+
+          send(req, uri, {root: '/'})
+            .on('error', error => {
+              res.statusCode = error.status || 500;
+              res.end(error.message);
+            })
+            .on('directory', () => {
+              res.statusCode = 403;
+              res.end('Forbidden');
+            })
+            .pipe(res);
         } catch(err2) {
           res.statusCode = 500;
           res.end('Server error (bad database entry)');
@@ -233,7 +249,7 @@ const handleRequest = (req, res) => {
   case 'GET':
   default:
     if (typeof getMethods[path] === 'function') {
-      getMethods[path](res, params);
+      getMethods[path](res, params, req);
     } else {
       res.end('Error: undefined method!');
     }
