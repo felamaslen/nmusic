@@ -33,3 +33,8 @@ body {
   to { background-position: 0 -540px; }
 }
 
+/* this is for testing purposes */
+.songlist .selected {
+  background: #09c;
+  color: #fff;
+}

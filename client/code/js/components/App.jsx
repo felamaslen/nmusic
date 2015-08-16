@@ -13,6 +13,7 @@ import mainReducer from '../reducers/MainReducer';
 import playerReducer from '../reducers/PlayerReducer';
 import audioReducer from '../reducers/AudioReducer';
 import browserReducer from '../reducers/BrowserReducer';
+import songListReducer from '../reducers/SongListReducer';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
@@ -42,7 +43,7 @@ const Reduction = new Record({
     },
     songList: {
       list: [],
-      selectedSong: -1,
+      selectedSongs: [],
     },
     browser: {
       selectedArtist: -1,
@@ -75,6 +76,7 @@ export default class App extends Component {
       reduction = playerReducer(reduction, action);
       reduction = audioReducer(reduction, action);
       reduction = browserReducer(reduction, action);
+      reduction = songListReducer(reduction, action);
 
       // all effect handlers are being handled here
       reduction.get('effects').forEach(apiCallEffectHandler.bind(null, dispatcher));
@@ -152,7 +154,7 @@ export default class App extends Component {
         </section>
         <SongList dispatcher={this.state.dispatcher}
           list={this.state.reduction.getIn(['appState', 'songList', 'list'])}
-          selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSong'])}
+          selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSongs'])}
           loaded={this.state.reduction.getIn(['appState', 'loaded', 'songList'])}
         />
       </main>

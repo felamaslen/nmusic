@@ -2,20 +2,24 @@
  * dispays list of songs (e.g. from search results)
  */
 
+import { itemInRanges } from '../common';
+
 import React, { PropTypes } from 'react';
 import { List } from 'immutable';
+
+import { selectSong } from '../actions/SongListActions';
 
 import PureControllerView from './PureControllerView';
 
 export default class BrowserArtists extends PureControllerView {
   render() {
     const songList = this.props.list.map((song, index) => {
-      const selected = index === this.props.selected;
-
-      const liClass = selected ? 'selected' : '';
+      const liClass = itemInRanges(this.props.selected, index) > -1 ? 'selected' : '';
 
       return (
-        <li key={index} className={liClass}>
+        <li key={index} className={liClass}
+          onMouseDown={this._selectSong.bind(this, index)}
+        >
           <song-track>{song.get('track')}</song-track>
           <song-title>{song.get('title')}</song-title>
           <song-time>{song.get('time')}</song-time>
@@ -46,11 +50,19 @@ export default class BrowserArtists extends PureControllerView {
       </section>
     );
   }
+
+  _selectSong(index, ev) {
+    this.dispatchAction(selectSong({
+      ctrl: ev.ctrlKey,
+      shift: ev.shiftKey,
+      index: index,
+    }));
+  }
 }
 
 BrowserArtists.propTypes = {
   loaded: PropTypes.bool,
-  selected: PropTypes.number,
+  selected: PropTypes.instanceOf(List),
   list: PropTypes.instanceOf(List),
 };
 
