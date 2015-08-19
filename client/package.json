@@ -1,42 +1,54 @@
 {
-  "name": "nmusic",
-  "version": "0.0.1",
+  "name": "nMusic",
+  "version": "0.0.1-dev",
   "description": "Node-based music player and organiser",
   "engines": {
     "node": "0.12.2"
   },
   "scripts": {
-    "start": "gulp --harmony server",
+    "postinstall": "./node_modules/.bin/webpack --config=webpack/webpack.staging.config.js",
+    "start": "node code/stageServer.js",
+    "test": "./node_modules/.bin/karma start --single-run",
     "lint": "./node_modules/.bin/eslint ./code/js"
   },
-  "main": "code/index.js",
   "dependencies": {
-    "babel": "^5.8.21",
     "babel-runtime": "^5.8.19",
-    "classnames": "^1.2.0",
-    "express": "^4.13.3",
+    "express": "^4.13.1",
     "flux": "^2.0.3",
     "immutable": "^3.7.2",
     "morgan": "^1.6.1",
-    "mysql": "^2.8.0",
     "react": "^0.13.1",
     "react-pure-render": "^1.0.2",
     "superagent": "^1.2.0",
     "superagent-bluebird-promise": "^2.0.2"
   },
   "devDependencies": {
+    "autoprefixer-loader": "^2.0.0",
     "babel": "^5.8.19",
     "babel-eslint": "^4.0.5",
     "babel-loader": "^5.3.2",
+    "css-loader": "^0.16.0",
     "eslint": "^0.24.1",
     "eslint-plugin-react": "^3.1.0",
-    "express": "^4.13.1",
-    "gulp": "^3.9.0",
-    "gulp-live-server": "0.0.23",
-    "gulp-watch": "^4.3.4",
-    "gulp-webpack": "^1.5.0"
+    "file-loader": "^0.8.4",
+    "fs": "0.0.2",
+    "gulp": "^3.8.11",
+    "karma": "^0.13.9",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-junit-reporter": "^0.3.3",
+    "karma-mocha": "^0.2.0",
+    "karma-nyan-reporter": "^0.2.2",
+    "karma-webpack": "^1.7.0",
+    "mocha": "^2.2.5",
+    "path": "^0.11.14",
+    "should": "^7.0.4",
+    "style-loader": "^0.12.3",
+    "url-loader": "^0.5.6",
+    "webpack-dev-server": "^1.10.1"
   },
-  "keywords": [],
-  "author": "Fela Maslen",
-  "license": "GPL-2.0"
+  "keywords": [
+    "music"
+  ],
+  "author": "Salsita Software",
+  "license": "proprietary"
 }
