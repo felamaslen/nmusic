@@ -8,6 +8,7 @@ import React, { PropTypes } from 'react';
 import { List } from 'immutable';
 
 import { selectSong } from '../actions/SongListActions';
+import { addToQueue } from '../actions/PlayerActions';
 
 import PureControllerView from './PureControllerView';
 
@@ -19,6 +20,7 @@ export default class SongList extends PureControllerView {
       return (
         <li key={index} className={liClass}
           onMouseDown={this._selectSong.bind(this, index)}
+          onDoubleClick={this._addAndPlay.bind(this, index)}
         >
           <song-track>{song.get('track')}</song-track>
           <song-title>{song.get('title')}</song-title>
@@ -51,11 +53,18 @@ export default class SongList extends PureControllerView {
     );
   }
 
+  _addAndPlay(index) {
+    this.dispatchAction(addToQueue({
+      songs: List.of(this.props.list.get(index)),
+      playAfter: true
+    }));
+  }
+
   _selectSong(index, ev) {
     this.dispatchAction(selectSong({
       ctrl: ev.ctrlKey,
       shift: ev.shiftKey,
-      index: index,
+      index: index
     }));
   }
 }

@@ -16,13 +16,13 @@ import {
 } from '../actions/PlayerActions';
 
 import {
-  canplay,
-  loadstart,
-  durationchange,
-  error,
-  progress,
-  timeupdate,
-  volumechange,
+  audioCanPlay,
+  audioLoadStart,
+  audioDurationChange,
+  audioError,
+  audioProgress,
+  audioTimeUpdate,
+  audioVolumeChange,
 } from '../actions/AudioActions';
 
 export default class PlayerEngine extends PureControllerView {
@@ -61,10 +61,10 @@ export default class PlayerEngine extends PureControllerView {
     }
 
     const trackChanged =
-      (nextProps.currentTrack === null && this.props.currentTrack !== null) ||
-      (nextProps.currentTrack !== null && this.props.currentTrack === null) ||
-      (nextProps.currentTrack !== null && this.props.currentTrack !== null &&
-       nextProps.currentTrack.id !== this.props.currentTrack.id);
+      (nextProps.currentSong === null && this.props.currentSong !== null) ||
+      (nextProps.currentSong !== null && this.props.currentSong === null) ||
+      (nextProps.currentSong !== null && this.props.currentSong !== null &&
+       nextProps.currentSong.id !== this.props.currentSong.id);
 
     // only need to re-render <audio> element if the track (source) changed
     return trackChanged;
@@ -77,8 +77,8 @@ export default class PlayerEngine extends PureControllerView {
   }
 
   render() {
-    const source = this.props.currentTrack === null ? false : (
-      <source src={STREAM_URL + this.props.currentTrack.get('id')} type="audio/mpeg"/>
+    const source = this.props.currentSong === null ? false : (
+      <source src={STREAM_URL + this.props.currentSong.get('id')} type="audio/mpeg"/>
     );
 
     return (
@@ -94,31 +94,31 @@ export default class PlayerEngine extends PureControllerView {
   }
 
   _canplay() {
-    this.dispatchAction(canplay(true));
+    this.dispatchAction(audioCanPlay(true));
   }
 
   _loadstart() {
-    this.dispatchAction(loadstart());
+    this.dispatchAction(audioLoadStart());
   }
 
   _durationchange(ev) {
-    this.dispatchAction(durationchange(ev.target.duration));
+    this.dispatchAction(audioDurationChange(ev.target.duration));
   }
 
   _error() {
-    this.dispatchAction(error());
+    this.dispatchAction(audioError());
   }
 
   _progress(ev) {
-    this.dispatchAction(progress(ev.target.buffered));
+    this.dispatchAction(audioProgress(ev.target.buffered));
   }
 
   _timeupdate(ev) {
-    this.dispatchAction(timeupdate(ev.target.currentTime));
+    this.dispatchAction(audioTimeUpdate(ev.target.currentTime));
   }
 
   _volumechange(ev) {
-    this.dispatchAction(volumechange(ev.target.volume));
+    this.dispatchAction(audioVolumeChange(ev.target.volume));
   }
   /* end HTML5 audio event abstraction */
 
@@ -158,6 +158,6 @@ PlayerEngine.propTypes = {
   volume: PropTypes.number,
   setTime: PropTypes.number,
   history: PropTypes.instanceOf(List),
-  currentTrack: PropTypes.instanceOf(Map),
+  currentSong: PropTypes.instanceOf(Map),
 };
 

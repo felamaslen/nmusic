@@ -82,6 +82,11 @@ export default class App extends Component {
   }
 
   render() {
+    const currentSongId = this.state.reduction.getIn(['appState', 'player', 'currentSongId']);
+    const currentSong = currentSongId > -1
+      ? this.state.reduction.getIn(['appState', 'player', 'queue']).get(currentSongId)
+      : null;
+
     return (
       <main>
         <LoadingSpinner dispatcher={this.state.dispatcher}
@@ -89,15 +94,16 @@ export default class App extends Component {
           loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
         />
         <PlayerEngine dispatcher={this.state.dispatcher}
-          history={this.state.reduction.getIn(['appState', 'player', 'trackHistory'])}
-          currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
+          queue={this.state.reduction.getIn(['appState', 'player', 'queue'])}
+          currentSongId={this.state.reduction.getIn(['appState', 'player', 'currentSongId'])}
+          currentSong={currentSong}
           setTime={this.state.reduction.getIn(['appState', 'player', 'setTime'])}
           paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
           volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
         />
         <section id="section-meta">
           <PlayerUI dispatcher={this.state.dispatcher}
-            currentTrack={this.state.reduction.getIn(['appState', 'player', 'currentTrack'])}
+            currentSong={currentSong}
             paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
             currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
             volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}

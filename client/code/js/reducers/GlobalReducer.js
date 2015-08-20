@@ -73,7 +73,7 @@ export default (reduction, action) => {
     return selectAlbum(reduction, action.payload);
 
   // Player actions
-  case 'PLAYER_TRACK_ADDED':
+  case 'PLAYER_TRACKS_ADDED':
     return addToQueue(reduction, action.payload);
   case 'PLAYER_TRACK_PLAYED':
     return playQueueItem(reduction, action.payload);

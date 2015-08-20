@@ -28,19 +28,19 @@ export default class PlayerUI extends PureControllerView {
   render() {
     const playPauseText = this.props.paused ? 'Play' : 'Pause';
 
-    const songInfo = this.props.currentTrack === null ? (
+    const currentSong = this.props.currentSong === null ? (
       <song-info className="no-info"></song-info>
     ) : (
       <song-info>
-        <info-title>{this.props.currentTrack.get('title')}</info-title>
-        <info-artist>{this.props.currentTrack.get('artist')}</info-artist>
+        <info-title>{this.props.currentSong.get('title')}</info-title>
+        <info-artist>{this.props.currentSong.get('artist')}</info-artist>
         <seekbar>
           <current-time>{secondsToTime(this.props.currentTime)}</current-time>
           <input id="seekbar" className="ctrl-seekbar" ref="ctrlSeekbar" type="range"
-            min="0" max={this.props.currentTrack.get('time')} value={this.props.currentTime}
+            min="0" max={this.props.currentSong.get('time')} value={this.props.currentTime}
             onChange={this._seek.bind(this)}
           />
-          <total-time>{secondsToTime(this.props.currentTrack.get('time'))}</total-time>
+          <total-time>{secondsToTime(this.props.currentSong.get('time'))}</total-time>
         </seekbar>
       </song-info>
     );
@@ -58,7 +58,7 @@ export default class PlayerUI extends PureControllerView {
             min="0" max="1" step="0.001"
             value={this.props.volume} onChange={this._ctrlVolume.bind(this)}/>
         </controls>
-        {songInfo}
+        {currentSong}
       </player>
     );
   }
@@ -88,6 +88,6 @@ PlayerUI.propTypes = {
   paused: PropTypes.bool,
   currentTime: PropTypes.number,
   volume: PropTypes.number,
-  currentTrack: PropTypes.instanceOf(Map),
+  currentSong: PropTypes.instanceOf(Map)
 };
 

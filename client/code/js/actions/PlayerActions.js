@@ -1,6 +1,6 @@
 import buildMessage from '../MessageBuilder';
 
-export const addToQueue = track => buildMessage('PLAYER_TRACK_ADDED', track);
+export const addToQueue = options => buildMessage('PLAYER_TRACKS_ADDED', options);
 export const playQueueItem = queueId => buildMessage('PLAYER_TRACK_PLAYED', queueId);
 export const togglePause = paused => buildMessage('PLAYER_PAUSE_TOGGLED', paused);
 

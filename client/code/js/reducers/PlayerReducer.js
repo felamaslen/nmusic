@@ -1,10 +1,23 @@
-import { fromJS } from 'immutable';
+export const addToQueue = (reduction, options) => {
+  const playAfter = typeof options.playAfter !== 'undefined'
+    && options.playAfter;
 
-export const addToQueue = (reduction, track) => {
   return reduction
     .setIn(
-      ['appState', 'player', 'trackHistory'],
-      reduction.getIn(['appState', 'player', 'trackHistory']).push(fromJS(track))
+      ['appState', 'player', 'currentSongId'],
+      playAfter
+        ? reduction.getIn(['appState', 'player', 'queue']).size
+        : reduction.getIn(['appState', 'player', 'currentSongId'])
+    )
+    .setIn(
+      ['appState', 'player', 'queue'],
+      reduction.getIn(['appState', 'player', 'queue']).concat(options.songs)
+    )
+    .setIn(
+      ['appState', 'player', 'paused'],
+      typeof options.playAfter !== 'undefined'
+        ? !playAfter
+        : reduction.getIn(['appState', 'player', 'paused'])
     )
   ;
 };
@@ -13,8 +26,8 @@ export const playQueueItem = (reduction, queueId) => {
   return reduction
     .setIn(['appState', 'player', 'paused'], false)
     .setIn(
-      ['appState', 'player', 'currentTrack'],
-      reduction.getIn(['appState', 'player', 'trackHistory']).get(queueId)
+      ['appState', 'player', 'currentSong'],
+      reduction.getIn(['appState', 'player', 'queue']).get(queueId)
     )
   ;
 };

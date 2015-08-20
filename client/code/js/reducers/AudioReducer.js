@@ -15,7 +15,7 @@ export const audioDurationChange = (reduction, time) => {
   // The metadata has loaded or changed, indicating a change in duration of the media.
   // This is sent, for example, when the media has loaded enough that the duration is known.
   return reduction
-    .setIn(['appState', 'player', 'currentTrack', 'time'], time)
+    .setIn(['appState', 'player', 'currentSong', 'time'], time)
   ;
 };
 
