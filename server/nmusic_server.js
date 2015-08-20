@@ -23,7 +23,7 @@ const compressSongs = (songs, json) => {
       song.album,
       song.genre,
       song.time,
-      song.year,
+      song.year
     ];
   });
 
@@ -58,7 +58,7 @@ const getMethods = {
       const suggestions = {
         songs: songs.map(song => {
           return [song._id, song.title, song.artist];
-        }),
+        })
       };
 
       Song.find({ artist: regex }).distinct('artist', (error2, artists) => {
@@ -96,7 +96,7 @@ const getMethods = {
           song.title,
           song.genre,
           song.time,
-          song.year,
+          song.year
         ]);
       });
 
@@ -132,7 +132,7 @@ const getMethods = {
 
         res.end(JSON.stringify({
           songs: [],
-          albums: albums,
+          albums: albums
         }));
       });
     } else {
@@ -144,8 +144,8 @@ const getMethods = {
             artist: 1,
             album: 1,
             track: 1,
-            title: 1,
-          },
+            title: 1
+          }
         },
         (error, songs) => {
           if (error) {
@@ -166,7 +166,7 @@ const getMethods = {
 
               res.end(JSON.stringify({
                 songs: compressSongs(songs, false),
-                albums: albums.sort(),
+                albums: albums.sort()
               }));
             });
           } else {
@@ -239,7 +239,7 @@ const getMethods = {
   'favicon.ico': res => {
     res.statusCode = 404;
     res.end('Not found');
-  },
+  }
 };
 
 const handleRequest = (req, res) => {

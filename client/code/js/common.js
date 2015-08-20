@@ -20,11 +20,10 @@ export const secondsToTime = _seconds => {
   return dd + hh + mm + ':' + ss;
 };
 
-export const itemInRanges = (ranges, index) => {
-  return ranges.findIndex(range => {
-    return range.first() <= index && range.last() >= index;
-  });
-};
+export const itemInRanges = (ranges, index) =>
+  ranges.findIndex(range =>
+    range.first() <= index && range.last() >= index
+  );
 
 export const decompressSongs = song => {
   return {

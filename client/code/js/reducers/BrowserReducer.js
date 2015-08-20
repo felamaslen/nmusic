@@ -100,6 +100,7 @@ export default buildReducer({
     const _songs = res.songs.map(decompressSongs);
 
     return reduction
+      .setIn(['appState', 'songList', 'selectedKey'], null)
       .setIn(['appState', 'songList', 'list'], fromJS(_songs))
       .setIn(['appState', 'browser', 'selectedAlbum'], -1)
       .setIn(['appState', 'browser', 'listAlbums'], fromJS(res.albums))
@@ -111,6 +112,7 @@ export default buildReducer({
       ? res.songs.map(decompressSongs) : res.map(decompressSongs);
 
     return reduction
+      .setIn(['appState', 'songList', 'selectedKey'], null)
       .setIn(['appState', 'songList', 'list'], fromJS(_songs))
     ;
   },

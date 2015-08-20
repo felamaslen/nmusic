@@ -43,6 +43,7 @@ const Reduction = new Record({
     },
     songList: {
       list: [],
+      clickedLast: null,
       selectedSongs: [],
     },
     browser: {
