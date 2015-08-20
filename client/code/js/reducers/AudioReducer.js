@@ -1,61 +1,47 @@
-import { secondsToTime } from '../common';
-
 import { } from 'immutable';
 
-import {
-  // audio events
-  AUDIO_STREAM_CANPLAY, // canplay
-  AUDIO_STREAM_BEGAN,   // loadstart
-  AUDIO_DURATION_SET,   // durationchange
-  AUDIO_ERROR_OCCURRED, // error
-  AUDIO_STREAM_PROGRESSED, // progress
-  AUDIO_TIME_UPDATED,   // timeupdate
-  AUDIO_VOLUME_SET,     // volumechange
-} from '../constants/Actions';
+export const audioCanPlay = reduction => {
+  // Sent when enough data is available that the media can be played, at least
+  // for a couple of frames.  This corresponds to the HAVE_ENOUGH_DATA readyState.
+  return reduction;
+};
 
-import buildReducer from './BuildReducer';
+export const audioLoadStart = reduction => {
+  // Sent when loading of the media begins.
+  return reduction;
+};
 
-export default buildReducer({
-  [AUDIO_STREAM_CANPLAY]: (reduction, status) => {
-    // console.debug('AUDIO_STREAM_CANPLAY', status);
-    return reduction
-    ;
-  },
+export const audioDurationChange = (reduction, time) => {
+  // The metadata has loaded or changed, indicating a change in duration of the media.
+  // This is sent, for example, when the media has loaded enough that the duration is known.
+  return reduction
+    .setIn(['appState', 'player', 'currentTrack', 'time'], time)
+  ;
+};
 
-  [AUDIO_STREAM_BEGAN]: reduction => {
-    // console.debug('AUDIO_STREAM_BEGAN');
-    return reduction
-    ;
-  },
+export const audioError = reduction => {
+  // Sent when an error occurs. The element's error attribute contains more information.
+  return reduction;
+};
 
-  [AUDIO_DURATION_SET]: (reduction, time) => {
-    return reduction
-      .setIn(['appState', 'player', 'currentTrack', 'time'], time)
-    ;
-  },
+export const audioProgress = reduction => {
+  // Sent periodically to inform interested parties of progress downloading the media.
+  // Information about the current amount of the media that has been downloaded is
+  // available in the media element's buffered attribute.
+  return reduction;
+};
 
-  [AUDIO_ERROR_OCCURRED]: reduction => {
-    // console.error('An error occurred! Fuuuuuu');
-    return reduction
-    ;
-  },
+export const audioTimeUpdate = (reduction, position) => {
+  // The time indicated by the element's currentTime attribute has changed.
+  return reduction
+    .setIn(['appState', 'player', 'currentTime'], position)
+  ;
+};
 
-  [AUDIO_STREAM_PROGRESSED]: (reduction, buffered) => {
-    // console.debug('AUDIO_STREAM_PROGRESSED', buffered);
-    return reduction
-    ;
-  },
-
-  [AUDIO_TIME_UPDATED]: (reduction, position) => {
-    return reduction
-      .setIn(['appState', 'player', 'currentTime'], position)
-    ;
-  },
-
-  [AUDIO_VOLUME_SET]: (reduction, volume) => {
-    return reduction
-      .setIn(['appState', 'player', 'volume'], parseFloat(volume, 10))
-    ;
-  },
-
-});
+export const audioVolumeChange = (reduction, volume) => {
+  // Sent when the audio volume changes (both when the volume is set
+  // and when the muted attribute is changed).
+  return reduction
+    .setIn(['appState', 'player', 'volume'], parseFloat(volume, 10))
+  ;
+};

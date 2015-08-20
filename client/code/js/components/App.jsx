@@ -4,16 +4,12 @@
 
 import { } from '../config';
 
-import { Record, fromJS, List } from 'immutable';
+import { List } from 'immutable';
 import React, { Component } from 'react';
 import { Dispatcher } from 'flux';
 
 // import reducers
-import mainReducer from '../reducers/MainReducer';
-import playerReducer from '../reducers/PlayerReducer';
-import audioReducer from '../reducers/AudioReducer';
-import browserReducer from '../reducers/BrowserReducer';
-import songListReducer from '../reducers/SongListReducer';
+import globalReducer from '../reducers/GlobalReducer';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
@@ -25,36 +21,7 @@ import BrowserArtists from './BrowserArtists';
 import BrowserAlbums from './BrowserAlbums';
 import SongList from './SongList';
 
-const Reduction = new Record({
-  appState: fromJS({
-    loaded: {
-      browserArtists: false,
-      browserAlbums: false,
-      songList: true,
-    },
-    loadedOnLastRender: false,
-    player: {
-      trackHistory: [],
-      currentTrack: null,
-      paused: true,
-      volume: 0.7,
-      currentTime: 0,
-      setTime: -1,
-    },
-    songList: {
-      list: [],
-      clickedLast: null,
-      selectedSongs: [],
-    },
-    browser: {
-      selectedArtist: -1,
-      selectedAlbum: -1,
-      listArtists: List.of(),
-      listAlbums: List.of(),
-    },
-  }),
-  effects: List.of(),
-});
+import Reduction from '../reduction';
 
 export default class App extends Component {
   constructor(props) {
@@ -73,11 +40,7 @@ export default class App extends Component {
       reduction = reduction.set('effects', List.of());
 
       // all reducers are being executed here
-      reduction = mainReducer(reduction, action);
-      reduction = playerReducer(reduction, action);
-      reduction = audioReducer(reduction, action);
-      reduction = browserReducer(reduction, action);
-      reduction = songListReducer(reduction, action);
+      reduction = globalReducer(reduction, action);
 
       // all effect handlers are being handled here
       reduction.get('effects').forEach(apiCallEffectHandler.bind(null, dispatcher));
@@ -94,7 +57,7 @@ export default class App extends Component {
     this.state = {
       dispatcher: dispatcher,
       reduction: new Reduction(),
-      actionLog: List.of(), // This is only for debugging, we can perform replay of actions
+      actionLog: List.of() // This is only for debugging, we can perform replay of actions
     };
 
     // If there is hot-reloading available
@@ -111,7 +74,7 @@ export default class App extends Component {
       // strip down the effects so that we are not replaying them.
       const reduction = this.state
         .actionLog
-        .reduce(mainReducer, new Reduction())
+        .reduce(globalReducer, new Reduction())
         .set('effects', List.of());
 
       this.setState({reduction});

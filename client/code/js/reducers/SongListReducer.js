@@ -2,12 +2,6 @@ import { itemInRanges } from '../common';
 
 import { List } from 'immutable';
 
-import {
-  LIST_SONG_SELECTED,
-} from '../constants/Actions';
-
-import buildReducer from './BuildReducer';
-
 const addRange = (top, end, ranges) => {
   let _ranges;
 
@@ -40,75 +34,73 @@ const addRange = (top, end, ranges) => {
   return _ranges;
 };
 
-export default buildReducer({
-  [LIST_SONG_SELECTED]: (reduction, evt) => {
-    const ranges = reduction.getIn(['appState', 'songList', 'selectedSongs']);
-    const clickedLast = reduction.getIn(['appState', 'songList', 'clickedLast']);
+export const selectSong = (reduction, evt) => {
+  const ranges = reduction.getIn(['appState', 'songList', 'selectedSongs']);
+  const clickedLast = reduction.getIn(['appState', 'songList', 'clickedLast']);
 
-    const clicked = evt.index;
+  const clicked = evt.index;
 
-    let newRanges = ranges;
+  let newRanges = ranges;
 
-    if (clickedLast === null || (!evt.shift && !evt.ctrl)) {
-      // select just the clicked item, deselect all others
-      newRanges = List.of(List.of(clicked, clicked));
-    } else if (evt.shift) {
-      // make sure all between clicked and clickedLast are selected
-      const mainTop = Math.min(clicked, clickedLast);
-      const mainEnd = Math.max(clicked, clickedLast);
+  if (clickedLast === null || (!evt.shift && !evt.ctrl)) {
+    // select just the clicked item, deselect all others
+    newRanges = List.of(List.of(clicked, clicked));
+  } else if (evt.shift) {
+    // make sure all between clicked and clickedLast are selected
+    const mainTop = Math.min(clicked, clickedLast);
+    const mainEnd = Math.max(clicked, clickedLast);
 
-      let subRanges = List.of();
+    let subRanges = List.of();
 
-      let subTop = false;
-      let subEnd = false;
+    let subTop = false;
+    let subEnd = false;
 
-      for (let i = mainTop; i <= mainEnd; i++) {
-        const itemIndex = itemInRanges(ranges, i);
-        if (itemIndex === -1 && subTop === false) {
-          subTop = i;
-        } else if (itemIndex > -1 && subTop !== false) {
-          subEnd = i - 1;
-          subRanges = subRanges.push(List.of(subTop, subEnd));
+    for (let i = mainTop; i <= mainEnd; i++) {
+      const itemIndex = itemInRanges(ranges, i);
+      if (itemIndex === -1 && subTop === false) {
+        subTop = i;
+      } else if (itemIndex > -1 && subTop !== false) {
+        subEnd = i - 1;
+        subRanges = subRanges.push(List.of(subTop, subEnd));
 
-          subTop = false;
-          subEnd = false;
-        }
-      }
-
-      if (subEnd === false && subTop !== false) {
-        subRanges = subRanges.push(List.of(subTop, mainEnd));
-      }
-
-      subRanges.forEach(subRange => {
-        newRanges = addRange(subRange.first(), subRange.last(), newRanges);
-      });
-    } else if (evt.ctrl) {
-      const selectedIndex = itemInRanges(ranges, clicked);
-
-      if (selectedIndex > -1) {
-        // deselect this item
-        const top = ranges.get(selectedIndex).first();
-        const end = ranges.get(selectedIndex).last();
-
-        const args = [selectedIndex, 1];
-
-        if (top < clicked) {
-          args.push(List.of(top, clicked - 1));
-        }
-        if (end > clicked) {
-          args.push(List.of(clicked + 1, end));
-        }
-
-        newRanges = ranges.splice.apply(ranges, args);
-      } else {
-        // select this item
-        newRanges = addRange(clicked, clicked, ranges);
+        subTop = false;
+        subEnd = false;
       }
     }
 
-    return reduction
-      .setIn(['appState', 'songList', 'clickedLast'], clicked)
-      .setIn(['appState', 'songList', 'selectedSongs'], newRanges)
-    ;
+    if (subEnd === false && subTop !== false) {
+      subRanges = subRanges.push(List.of(subTop, mainEnd));
+    }
+
+    subRanges.forEach(subRange => {
+      newRanges = addRange(subRange.first(), subRange.last(), newRanges);
+    });
+  } else if (evt.ctrl) {
+    const selectedIndex = itemInRanges(ranges, clicked);
+
+    if (selectedIndex > -1) {
+      // deselect this item
+      const top = ranges.get(selectedIndex).first();
+      const end = ranges.get(selectedIndex).last();
+
+      const args = [selectedIndex, 1];
+
+      if (top < clicked) {
+        args.push(List.of(top, clicked - 1));
+      }
+      if (end > clicked) {
+        args.push(List.of(clicked + 1, end));
+      }
+
+      newRanges = ranges.splice.apply(ranges, args);
+    } else {
+      // select this item
+      newRanges = addRange(clicked, clicked, ranges);
+    }
   }
-});
+
+  return reduction
+    .setIn(['appState', 'songList', 'clickedLast'], clicked)
+    .setIn(['appState', 'songList', 'selectedSongs'], newRanges)
+  ;
+};
