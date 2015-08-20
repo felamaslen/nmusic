@@ -46,5 +46,5 @@ export default buildEffectHandler({
       '&artist=' + encodeURIComponent(search.artist);
 
     request.get(url).then(response => dispatcher.dispatch(insertAlbumResults(response.body)));
-  },
+  }
 });

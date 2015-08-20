@@ -1,6 +1,6 @@
 import { decompressSongs } from '../common';
 
-import { fromJS } from 'immutable';
+import { List, fromJS } from 'immutable';
 
 import buildMessage from '../MessageBuilder';
 
@@ -76,8 +76,9 @@ export const insertArtistResults = (reduction, res) => {
   const _songs = res.songs.map(decompressSongs);
 
   return reduction
-    .setIn(['appState', 'songList', 'selectedKey'], null)
     .setIn(['appState', 'songList', 'list'], fromJS(_songs))
+    .setIn(['appState', 'songList', 'selectedSongs'], List.of())
+    .setIn(['appState', 'songList', 'clickedLast'], null)
     .setIn(['appState', 'browser', 'selectedAlbum'], -1)
     .setIn(['appState', 'browser', 'listAlbums'], fromJS(res.albums))
   ;
@@ -88,7 +89,8 @@ export const insertAlbumResults = (reduction, res) => {
     ? res.songs.map(decompressSongs) : res.map(decompressSongs);
 
   return reduction
-    .setIn(['appState', 'songList', 'selectedKey'], null)
+    .setIn(['appState', 'songList', 'selectedSongs'], List.of())
+    .setIn(['appState', 'songList', 'clickedLast'], null)
     .setIn(['appState', 'songList', 'list'], fromJS(_songs))
   ;
 };

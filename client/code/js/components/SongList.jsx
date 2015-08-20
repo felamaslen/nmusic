@@ -11,7 +11,7 @@ import { selectSong } from '../actions/SongListActions';
 
 import PureControllerView from './PureControllerView';
 
-export default class BrowserArtists extends PureControllerView {
+export default class SongList extends PureControllerView {
   render() {
     const songList = this.props.list.map((song, index) => {
       const liClass = itemInRanges(this.props.selected, index) > -1 ? 'selected' : '';
@@ -60,9 +60,9 @@ export default class BrowserArtists extends PureControllerView {
   }
 }
 
-BrowserArtists.propTypes = {
+SongList.propTypes = {
   loaded: PropTypes.bool,
   selected: PropTypes.instanceOf(List),
-  list: PropTypes.instanceOf(List),
+  list: PropTypes.instanceOf(List)
 };
 

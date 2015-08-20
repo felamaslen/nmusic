@@ -34,6 +34,6 @@ export const decompressSongs = song => {
     album: song[4],
     genre: song[5],
     time: song[6],
-    year: song[7],
+    year: song[7]
   };
 };
