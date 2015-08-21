@@ -13,6 +13,6 @@ module.exports = {
     return yyyy + '-' + (!!mm_[1] ? mm_ : '0' + mm_[0]) + '-'
       + (!!dd[1] ? dd : '0' + dd[0]) + ' '
       + HH + ':' + MM + ':' + SS;
-  },
+  }
 };
 

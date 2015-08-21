@@ -95,10 +95,10 @@ const schema = {
   counters: new mongoose.Schema({ _id: String, seq: Number }),
 
   badFiles: new mongoose.Schema({
-    filename: String,
+    filename: String
   }),
 
-  songs: new mongoose.Schema(config.MUSIC_SCHEMA),
+  songs: new mongoose.Schema(config.MUSIC_SCHEMA)
 };
 
 const BadFile = mongoose.model('badfile', schema.badFiles);
@@ -154,7 +154,7 @@ const addMissing = (missingFiles, total, callback) => {
           album: album,
           genre: genre,
           time: time,
-          year: year,
+          year: year
         });
 
         item.save(err2 => {
