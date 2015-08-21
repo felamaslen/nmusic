@@ -17,6 +17,7 @@
     "flux": "^2.0.3",
     "immutable": "^3.7.2",
     "morgan": "^1.6.1",
+    "querystring": "^0.2.0",
     "react": "^0.13.1",
     "react-pure-render": "^1.0.2",
     "superagent": "^1.2.0",

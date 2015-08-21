@@ -2,19 +2,19 @@ import {
   API_LIST_ARTISTS,
   API_LIST_ALBUMS,
 
-  API_LIST_ARTIST,
-  API_LIST_ALBUM,
+  API_LIST_SONGS_FROM_BROWSER
 } from '../config';
 
 import { Map as map } from 'immutable';
 import request from 'superagent-bluebird-promise';
+import querystring from 'querystring';
 
 import {
   gotListArtists,
   gotListAlbums,
 
   insertArtistResults,
-  insertAlbumResults,
+  insertAlbumResults
 } from '../actions/BrowserActions';
 
 const buildEffectHandler = handlers => {
@@ -28,23 +28,29 @@ const buildEffectHandler = handlers => {
 export default buildEffectHandler({
   BROWSER_ARTISTS_API_CALL: (_, dispatcher) => {
     request.get(API_LIST_ARTISTS)
-      .then(response => dispatcher.dispatch(gotListArtists(response.body)));
+      .then(response => dispatcher.dispatch(gotListArtists(response)))
+      .catch(() => dispatcher.dispatch(gotListArtists(null)));
   },
 
-  BROWSER_ALBUMS_API_CALL: (artist, dispatcher) => {
-    request.get(API_LIST_ALBUMS + '?artist=' + encodeURIComponent(artist))
-      .then(response => dispatcher.dispatch(gotListAlbums(response.body)));
+  BROWSER_ALBUMS_API_CALL: (query, dispatcher) => {
+    request.get(API_LIST_ALBUMS + querystring.stringify(query))
+      .then(response => dispatcher.dispatch(gotListAlbums(response)))
+      .catch(() => dispatcher.dispatch(gotListAlbums(null)));
   },
 
-  LIST_ARTIST_API_CALL: (artist, dispatcher) => {
-    request.get(API_LIST_ARTIST + encodeURIComponent(artist))
-      .then(response => dispatcher.dispatch(insertArtistResults(response.body)));
+  LIST_ARTIST_API_CALL: (query, dispatcher) => {
+    request.get(API_LIST_SONGS_FROM_BROWSER + querystring.stringify(query))
+      .then(
+        response => dispatcher.dispatch(insertArtistResults(response)),
+        () => dispatcher.dispatch(insertArtistResults(null))
+      );
   },
 
-  LIST_ALBUM_API_CALL: (search, dispatcher) => {
-    const url = API_LIST_ALBUM + encodeURIComponent(search.album) +
-      '&artist=' + encodeURIComponent(search.artist);
-
-    request.get(url).then(response => dispatcher.dispatch(insertAlbumResults(response.body)));
+  LIST_ALBUM_API_CALL: (query, dispatcher) => {
+    request.get(API_LIST_SONGS_FROM_BROWSER + querystring.stringify(query))
+      .then(
+        response => dispatcher.dispatch(insertAlbumResults(response)),
+        () => dispatcher.dispatch(insertAlbumResults(null))
+      );
   }
 });

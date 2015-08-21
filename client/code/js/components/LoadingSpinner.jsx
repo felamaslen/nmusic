@@ -30,6 +30,6 @@ export default class LoadingSpinner extends PureControllerView {
 
 LoadingSpinner.propTypes = {
   loaded: PropTypes.bool,
-  loadedOnLastRender: PropTypes.bool,
+  loadedOnLastRender: PropTypes.bool
 };
 

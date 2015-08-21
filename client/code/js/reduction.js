@@ -3,6 +3,7 @@ import { Record, fromJS, List } from 'immutable';
 export default new Record({
   appState: fromJS({
     loaded: {
+      firstList: false,
       browserArtists: false,
       browserAlbums: false,
       songList: true

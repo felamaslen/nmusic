@@ -57,6 +57,6 @@ BrowserAlbums.propTypes = {
   loaded: PropTypes.bool,
   selected: PropTypes.number,
   selectedArtist: PropTypes.number,
-  list: PropTypes.instanceOf(List),
+  list: PropTypes.instanceOf(List)
 };
 

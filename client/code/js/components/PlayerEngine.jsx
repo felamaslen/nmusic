@@ -158,6 +158,6 @@ PlayerEngine.propTypes = {
   volume: PropTypes.number,
   setTime: PropTypes.number,
   history: PropTypes.instanceOf(List),
-  currentSong: PropTypes.instanceOf(Map),
+  currentSong: PropTypes.instanceOf(Map)
 };
 

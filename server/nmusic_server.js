@@ -105,21 +105,12 @@ const getMethods = {
   },
 
   'list/songs': (res, params) => {
-    const query = {};
+    // gets a song list and reloads the albums browser if necessary
 
-    const fetchBrowser = typeof params.browser !== 'undefined' && params.browser === 'true';
-    const haveArtist = typeof params.artist !== 'undefined' && params.artist.length > 0;
-    const haveAlbum = typeof params.album !== 'undefined' && params.album.length > 0;
+    const haveArtist = params.artist && params.artist.length > 0;
+    const haveAlbum = params.album && params.album.length > 0;
 
-    if (haveArtist) {
-      query.artist = secureParam(params.artist);
-    }
-    if (haveAlbum) {
-      query.album = secureParam(params.album);
-    }
-
-    const fetchAlbums = fetchBrowser && !haveAlbum; // changing artists, so recalculate albums
-    const allSongs = fetchAlbums && !haveArtist;
+    const allSongs = !haveArtist && !haveAlbum;
 
     if (!config.GET_ALL_SONGS && allSongs) {
       // if "All Artists, all albums" is selected, don't get any songs
@@ -136,6 +127,23 @@ const getMethods = {
         }));
       });
     } else {
+      const artists = haveArtist ? secureParam(params.artist).split(',') : [];
+      const albums = haveAlbum ? secureParam(params.album).split(',') : [];
+
+      const query = haveArtist || haveAlbum ? { $and: [] } : {};
+
+      if (haveArtist) {
+        query.$and.push({ $or: artists.map(artist => {
+          return { artist: artist };
+        }) });
+      }
+
+      if (haveAlbum) {
+        query.$and.push({ $or: albums.map(album => {
+          return { album: album };
+        }) });
+      }
+
       Song.find(
         query,
         'track title artist album genre time year',
@@ -152,21 +160,23 @@ const getMethods = {
             throw error;
           }
 
-          if (fetchAlbums) {
-            const browserQuery = {};
+          if (!haveAlbum) {
+            // if an album wasn't supplied, we want to fetch a new album list
+            // because it may have updated
+            const browserQuery = haveArtist
+            ? { $or: artists.map(artist => {
+              return { artist: artist };
+            }) }
+            : {};
 
-            if (haveArtist) {
-              browserQuery.artist = query.artist;
-            }
-
-            Song.find(browserQuery).distinct('album', (error2, albums) => {
+            Song.find(browserQuery).distinct('album', (error2, browserAlbums) => {
               if (error2) {
                 throw error2;
               }
 
               res.end(JSON.stringify({
                 songs: compressSongs(songs, false),
-                albums: albums.sort()
+                albums: browserAlbums.sort()
               }));
             });
           } else {
