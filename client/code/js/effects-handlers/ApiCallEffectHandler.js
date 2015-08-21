@@ -1,7 +1,5 @@
 import {
   API_LIST_ARTISTS,
-  API_LIST_ALBUMS,
-
   API_LIST_SONGS_FROM_BROWSER
 } from '../config';
 
@@ -11,8 +9,6 @@ import querystring from 'querystring';
 
 import {
   gotListArtists,
-  gotListAlbums,
-
   insertBrowserResults
 } from '../actions/BrowserActions';
 
@@ -29,12 +25,6 @@ export default buildEffectHandler({
     request.get(API_LIST_ARTISTS)
       .then(response => dispatcher.dispatch(gotListArtists(response)))
       .catch(() => dispatcher.dispatch(gotListArtists(null)));
-  },
-
-  BROWSER_ALBUMS_API_CALL: (query, dispatcher) => {
-    request.get(API_LIST_ALBUMS + querystring.stringify(query))
-      .then(response => dispatcher.dispatch(gotListAlbums(response)))
-      .catch(() => dispatcher.dispatch(gotListAlbums(null)));
   },
 
   LIST_BROWSER_API_CALL: (query, dispatcher) => {

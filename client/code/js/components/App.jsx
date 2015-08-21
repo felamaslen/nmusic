@@ -112,13 +112,13 @@ export default class App extends Component {
         <section id="section-browsers">
           <BrowserArtists dispatcher={this.state.dispatcher}
             loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
-            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtist'])}
+            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtists'])}
             list={this.state.reduction.getIn(['appState', 'browser', 'listArtists'])}
           />
           <BrowserAlbums dispatcher={this.state.dispatcher}
             loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserAlbums'])}
-            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedAlbum'])}
-            selectedArtist={this.state.reduction.getIn(['appState', 'browser', 'selectedArtist'])}
+            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedAlbums'])}
+            selectedArtists={this.state.reduction.getIn(['appState', 'browser', 'selectedArtists'])}
             list={this.state.reduction.getIn(['appState', 'browser', 'listAlbums'])}
           />
         </section>

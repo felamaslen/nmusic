@@ -15,8 +15,6 @@ import {
 import {
   loadListArtists,
   gotListArtists,
-  loadListAlbums,
-  gotListAlbums,
   selectArtist,
   selectAlbum,
   insertBrowserResults
@@ -62,10 +60,6 @@ export default (reduction, action) => {
     return loadListArtists(reduction);
   case 'BROWSER_ARTISTS_FETCHED':
     return gotListArtists(reduction, action.payload);
-  case 'BROWSER_ALBUMS_REQUESTED':
-    return loadListAlbums(reduction, action.payload);
-  case 'BROWSER_ALBUMS_FETCHED':
-    return gotListAlbums(reduction, action.payload);
   case 'BROWSER_ARTIST_SELECTED':
     return selectArtist(reduction, action.payload);
   case 'BROWSER_ALBUM_SELECTED':

@@ -3,10 +3,8 @@ import { Record, fromJS, List } from 'immutable';
 export default new Record({
   appState: fromJS({
     loaded: {
-      firstList: false,
       browserArtists: false,
-      browserAlbums: false,
-      songList: true
+      songList: false
     },
     loadedOnLastRender: false,
     player: {
@@ -24,8 +22,8 @@ export default new Record({
       selectedSongs: []
     },
     browser: {
-      selectedArtist: -1,
-      selectedAlbum: -1,
+      selectedArtists: [-1],
+      selectedAlbums: [-1],
       listArtists: List.of(),
       listAlbums: List.of()
     }

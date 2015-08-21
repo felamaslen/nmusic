@@ -15,7 +15,7 @@ import {
 export default class BrowserArtists extends PureControllerView {
   componentWillMount() {
     this.dispatchAction(loadListArtists());
-    this.dispatchAction(selectArtist(-1));
+    this.dispatchAction(selectArtist(List.of(-1)));
   }
 
   render() {
@@ -28,7 +28,8 @@ export default class BrowserArtists extends PureControllerView {
     );
 
     const artistList = _list.map((artist, index) => {
-      const liClass = this.props.selected === index - 1 ? 'selected' : '';
+      const liClass = this.props.selected.indexOf(index - 1) > -1
+        ? 'selected' : '';
 
       return (
         <li onClick={this._handleClick.bind(this, index)}
@@ -48,13 +49,13 @@ export default class BrowserArtists extends PureControllerView {
   }
 
   _handleClick(index) {
-    this.dispatchAction(selectArtist(index - 1));
+    this.dispatchAction(selectArtist(List.of(index - 1)));
   }
 }
 
 BrowserArtists.propTypes = {
   loaded: PropTypes.bool,
-  selected: PropTypes.number,
+  selected: PropTypes.instanceOf(List),
   list: PropTypes.instanceOf(List)
 };
 

@@ -8,17 +8,10 @@ import { List } from 'immutable';
 import PureControllerView from './PureControllerView';
 
 import {
-  loadListAlbums,
   selectAlbum,
 } from '../actions/BrowserActions';
 
 export default class BrowserAlbums extends PureControllerView {
-  componentWillMount() {
-    if (!this.props.loaded) {
-      this.dispatchAction(loadListAlbums(this.props.selectedArtist));
-    }
-  }
-
   render() {
     const numAlbums = this.props.list.size;
 
@@ -29,7 +22,8 @@ export default class BrowserAlbums extends PureControllerView {
     );
 
     const albumList = _list.map((album, index) => {
-      const liClass = this.props.selected === index - 1 ? 'selected' : '';
+      const liClass = this.props.selected.indexOf(index - 1) > -1
+        ? 'selected' : '';
 
       return (
         <li onClick={this._handleClick.bind(this, index)}
@@ -49,14 +43,14 @@ export default class BrowserAlbums extends PureControllerView {
   }
 
   _handleClick(index) {
-    this.dispatchAction(selectAlbum(index - 1));
+    this.dispatchAction(selectAlbum(List.of(index - 1)));
   }
 }
 
 BrowserAlbums.propTypes = {
   loaded: PropTypes.bool,
-  selected: PropTypes.number,
-  selectedArtist: PropTypes.number,
+  selected: PropTypes.instanceOf(List),
+  selectedArtists: PropTypes.instanceOf(List),
   list: PropTypes.instanceOf(List)
 };
 

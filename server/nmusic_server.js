@@ -5,6 +5,7 @@
 const common = require('./common');
 const config = require('./config');
 
+const Immutable = require('immutable');
 const http = require('http');
 const send = require('send');
 
@@ -106,6 +107,7 @@ const getMethods = {
 
   'list/songs': (res, params) => {
     // gets a song list and reloads the albums browser if necessary
+    const artistChanged = params.artistChanged && params.artistChanged === 'true';
 
     const haveArtist = params.artist && params.artist.length > 0;
     const haveAlbum = params.album && params.album.length > 0;
@@ -123,14 +125,15 @@ const getMethods = {
 
         res.end(JSON.stringify({
           songs: [],
-          albums: albums
+          albums: albums,
+          selectedAlbums: [-1]
         }));
       });
     } else {
       const artists = haveArtist ? secureParam(params.artist).split(',') : [];
       const albums = haveAlbum ? secureParam(params.album).split(',') : [];
 
-      const query = haveArtist || haveAlbum ? { $and: [] } : {};
+      const query = haveArtist || (haveAlbum && !artistChanged) ? { $and: [] } : {};
 
       if (haveArtist) {
         query.$and.push({ $or: artists.map(artist => {
@@ -138,7 +141,7 @@ const getMethods = {
         }) });
       }
 
-      if (haveAlbum) {
+      if (haveAlbum && !artistChanged) {
         query.$and.push({ $or: albums.map(album => {
           return { album: album };
         }) });
@@ -160,7 +163,7 @@ const getMethods = {
             throw error;
           }
 
-          if (!haveAlbum) {
+          if (artistChanged) {
             // if an album wasn't supplied, we want to fetch a new album list
             // because it may have updated
             const browserQuery = haveArtist
@@ -174,10 +177,22 @@ const getMethods = {
                 throw error2;
               }
 
+              const sortedAlbums = browserAlbums.sort();
+
+              const selectedAlbums = [];
+
+              const albumsList = Immutable.fromJS(albums);
+
+              Immutable.fromJS(sortedAlbums).forEach((album, key) => {
+                if (albumsList.indexOf(album) > -1) {
+                  selectedAlbums = selectedAlbums.push(key);
+                }
+              });
+
               res.end(JSON.stringify({
                 songs: compressSongs(songs, false),
-                albums: browserAlbums.sort(),
-                selectedAlbum: -1
+                albums: browserAlbums,
+                selectedAlbums: selectedAlbums.length ? selectedAlbums : [-1]
               }));
             });
           } else {
@@ -189,8 +204,13 @@ const getMethods = {
   },
 
   'list/albums': (res, params) => {
-    const query = typeof params.artist === 'undefined' || !params.artist.length
-      ? {} : { artist: secureParam(params.artist) };
+    const haveArtist = params.artist && params.artist.length > 0;
+
+    const artists = haveArtist ? secureParam(params.artist).split(',') : [];
+
+    const query = haveArtist ? { $or: artists.map(artist => {
+      return { artist: artist };
+    }) } : {};
 
     Song.find(query).distinct('album', (error, albums) => {
       if (error) {

@@ -5,7 +5,6 @@
 const API = 'http://localhost:3005';
 
 export const API_LIST_ARTISTS = API + '/list/artists?';
-export const API_LIST_ALBUMS = API + '/list/albums?';
 
 export const API_LIST_SONGS_FROM_BROWSER = API + '/list/songs?';
 
