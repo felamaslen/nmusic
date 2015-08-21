@@ -176,7 +176,8 @@ const getMethods = {
 
               res.end(JSON.stringify({
                 songs: compressSongs(songs, false),
-                albums: browserAlbums.sort()
+                albums: browserAlbums.sort(),
+                selectedAlbum: -1
               }));
             });
           } else {

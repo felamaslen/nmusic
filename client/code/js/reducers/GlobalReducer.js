@@ -19,8 +19,7 @@ import {
   gotListAlbums,
   selectArtist,
   selectAlbum,
-  insertArtistResults,
-  insertAlbumResults
+  insertBrowserResults
 } from './BrowserReducer';
 
 import {
@@ -87,10 +86,8 @@ export default (reduction, action) => {
     return ctrlNext(reduction, action.payload);
 
   // SongList actions
-  case 'LIST_ARTIST_SELECTED':
-    return insertArtistResults(reduction, action.payload);
-  case 'LIST_ALBUM_SELECTED':
-    return insertAlbumResults(reduction, action.payload);
+  case 'LIST_REQUESTED_FROM_BROWSER':
+    return insertBrowserResults(reduction, action.payload);
   case 'LIST_SONG_SELECTED':
     return selectSong(reduction, action.payload);
 

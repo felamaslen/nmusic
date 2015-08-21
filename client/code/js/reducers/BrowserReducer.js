@@ -48,7 +48,7 @@ export const selectArtist = (reduction, index) => {
     .set('effects', reduction
       .get('effects')
       .push(buildMessage(
-        'LIST_ARTIST_API_CALL',
+        'LIST_BROWSER_API_CALL',
         { artist: artist }
       ))
     )
@@ -69,7 +69,7 @@ export const selectAlbum = (reduction, index) => {
     .set('effects', reduction
       .get('effects')
       .push(buildMessage(
-        'LIST_ALBUM_API_CALL',
+        'LIST_BROWSER_API_CALL',
         {
           artist: artist,
           album: album
@@ -79,7 +79,7 @@ export const selectAlbum = (reduction, index) => {
   ;
 };
 
-export const insertArtistResults = (reduction, response) => {
+export const insertBrowserResults = (reduction, response) => {
   const error = typeof response.body !== 'object';
 
   const songs = error
@@ -88,31 +88,21 @@ export const insertArtistResults = (reduction, response) => {
     ? response.body.songs.map(decompressSongs)
     : response.body.map(decompressSongs)
   );
-  const albums = error ? List.of() : fromJS(response.body.albums);
+
+  const albums = error || !response.body.albums
+    ? reduction.getIn(['appState', 'browser', 'listAlbums'])
+    : fromJS(response.body.albums);
+
+  const selectedAlbum = error || typeof response.body.selectedAlbum === 'undefined'
+    ? reduction.getIn(['appState', 'browser', 'selectedAlbum'])
+    : response.body.selectedAlbum;
 
   return reduction
     .setIn(['appState', 'loaded', 'firstList'], true)
     .setIn(['appState', 'songList', 'list'], songs)
     .setIn(['appState', 'songList', 'selectedSongs'], List.of())
     .setIn(['appState', 'songList', 'clickedLast'], null)
-    .setIn(['appState', 'browser', 'selectedAlbum'], -1)
+    .setIn(['appState', 'browser', 'selectedAlbum'], selectedAlbum)
     .setIn(['appState', 'browser', 'listAlbums'], albums)
-  ;
-};
-
-export const insertAlbumResults = (reduction, response) => {
-  const error = typeof response.body !== 'object';
-
-  const songs = error
-  ? List.of()
-  : fromJS(typeof response.body.songs === 'object'
-    ? response.body.songs.map(decompressSongs)
-    : response.body.map(decompressSongs)
-  );
-
-  return reduction
-    .setIn(['appState', 'songList', 'selectedSongs'], List.of())
-    .setIn(['appState', 'songList', 'clickedLast'], null)
-    .setIn(['appState', 'songList', 'list'], songs)
   ;
 };

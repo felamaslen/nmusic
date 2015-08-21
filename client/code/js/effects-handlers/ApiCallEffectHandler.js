@@ -13,8 +13,7 @@ import {
   gotListArtists,
   gotListAlbums,
 
-  insertArtistResults,
-  insertAlbumResults
+  insertBrowserResults
 } from '../actions/BrowserActions';
 
 const buildEffectHandler = handlers => {
@@ -38,19 +37,11 @@ export default buildEffectHandler({
       .catch(() => dispatcher.dispatch(gotListAlbums(null)));
   },
 
-  LIST_ARTIST_API_CALL: (query, dispatcher) => {
+  LIST_BROWSER_API_CALL: (query, dispatcher) => {
     request.get(API_LIST_SONGS_FROM_BROWSER + querystring.stringify(query))
       .then(
-        response => dispatcher.dispatch(insertArtistResults(response)),
-        () => dispatcher.dispatch(insertArtistResults(null))
-      );
-  },
-
-  LIST_ALBUM_API_CALL: (query, dispatcher) => {
-    request.get(API_LIST_SONGS_FROM_BROWSER + querystring.stringify(query))
-      .then(
-        response => dispatcher.dispatch(insertAlbumResults(response)),
-        () => dispatcher.dispatch(insertAlbumResults(null))
+        response => dispatcher.dispatch(insertBrowserResults(response)),
+        () => dispatcher.dispatch(insertBrowserResults(null))
       );
   }
 });

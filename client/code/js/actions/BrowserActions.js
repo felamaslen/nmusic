@@ -17,5 +17,4 @@ export const selectArtist = index => buildMessage('BROWSER_ARTIST_SELECTED', ind
 export const selectAlbum = index => buildMessage('BROWSER_ALBUM_SELECTED', index);
 
 // executed after the API request for artist/album selection
-export const insertArtistResults = response => buildMessage('LIST_ARTIST_SELECTED', response);
-export const insertAlbumResults = response => buildMessage('LIST_ALBUM_SELECTED', response);
+export const insertBrowserResults = response => buildMessage('LIST_REQUESTED_FROM_BROWSER', response);
