@@ -203,24 +203,6 @@ const getMethods = {
     }
   },
 
-  'list/albums': (res, params) => {
-    const haveArtist = params.artist && params.artist.length > 0;
-
-    const artists = haveArtist ? secureParam(params.artist).split(',') : [];
-
-    const query = haveArtist ? { $or: artists.map(artist => {
-      return { artist: artist };
-    }) } : {};
-
-    Song.find(query).distinct('album', (error, albums) => {
-      if (error) {
-        throw error;
-      }
-
-      res.end(JSON.stringify(albums));
-    });
-  },
-
   'list/artists': res => {
     Song.find().distinct('artist', (error, artists) => {
       if (error) {
