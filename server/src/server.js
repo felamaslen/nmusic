@@ -32,10 +32,9 @@ db.model = {
 const app = express();
 
 const apiRouter = router();
-const authRouter = router();
 
 // use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // use morgan to log requests to the console
@@ -53,9 +52,7 @@ app.all('/*', (req, res, next) => {
 
 // Authentication
 import auth from './auth';
-auth(authRouter, db.model);
-
-app.use('/auth', authRouter);
+auth(app, db.model, [apiRouter]);
 
 // require the API
 import api from './api';
