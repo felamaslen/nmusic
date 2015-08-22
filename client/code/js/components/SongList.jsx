@@ -6,6 +6,7 @@ import { itemInRanges } from '../common';
 
 import React, { PropTypes } from 'react';
 import { List } from 'immutable';
+import classNames from 'classnames';
 
 import { selectSong } from '../actions/SongListActions';
 import { addToQueue } from '../actions/PlayerActions';
@@ -15,7 +16,10 @@ import PureControllerView from './PureControllerView';
 export default class SongList extends PureControllerView {
   render() {
     const songList = this.props.list.map((song, index) => {
-      const liClass = itemInRanges(this.props.selected, index) > -1 ? 'selected' : '';
+      const liClass = classNames({
+        selected: itemInRanges(this.props.selected, index) > -1,
+        playing: song.get('id') === this.props.currentId
+      });
 
       return (
         <li key={index} className={liClass}
@@ -71,6 +75,7 @@ export default class SongList extends PureControllerView {
 
 SongList.propTypes = {
   loaded: PropTypes.bool,
+  currentId: PropTypes.number,
   selected: PropTypes.instanceOf(List),
   list: PropTypes.instanceOf(List)
 };

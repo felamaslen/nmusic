@@ -87,6 +87,8 @@ export default class App extends Component {
       ? this.state.reduction.getIn(['appState', 'player', 'queue']).get(currentSongId)
       : null;
 
+    const currentSongDBId = currentSong === null ? -1 : currentSong.get('id');
+
     return (
       <main>
         <LoadingSpinner dispatcher={this.state.dispatcher}
@@ -123,6 +125,7 @@ export default class App extends Component {
           />
         </section>
         <SongList dispatcher={this.state.dispatcher}
+          currentId={currentSongDBId}
           list={this.state.reduction.getIn(['appState', 'songList', 'list'])}
           selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSongs'])}
           loaded={this.state.reduction.getIn(['appState', 'loaded', 'songList'])}

@@ -47,3 +47,8 @@ body {
   background: #09c;
   color: #fff;
 }
+.songlist .playing {
+  background: #f80;
+  color: #000;
+  font-weight: bold;
+}
