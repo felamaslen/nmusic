@@ -28,6 +28,7 @@ export default class PlayerEngine extends PureControllerView {
     const audioElement = this.refs.audioObject.getDOMNode();
 
     // <audio> event listeners
+    audioElement.addEventListener('ended', this._ended.bind(this));
     audioElement.addEventListener('canplay', this._canplay.bind(this));
     audioElement.addEventListener('loadstart', this._loadstart.bind(this));
     audioElement.addEventListener('durationchange', this._durationchange.bind(this));

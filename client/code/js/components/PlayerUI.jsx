@@ -21,7 +21,7 @@ import {
 //  error,
 //  progress,
 //  timeupdate,
-  volumechange,
+  audioVolumeChange,
 } from '../actions/AudioActions';
 
 export default class PlayerUI extends PureControllerView {
@@ -64,7 +64,7 @@ export default class PlayerUI extends PureControllerView {
   }
 
   _ctrlVolume(ev) {
-    this.dispatchAction(volumechange(ev.target.value));
+    this.dispatchAction(audioVolumeChange(ev.target.value));
   }
 
   _ctrlPrevious() {
