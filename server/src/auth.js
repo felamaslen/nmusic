@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { SUPERSECRET } from './config';
+import { AUTH_SECRET } from './config';
 
 export default (app, db, authRoutes) => {
   // route to authenticate a user
@@ -22,7 +22,7 @@ export default (app, db, authRoutes) => {
 
           if (bCryptRes === true) {
             // Logged in
-            const token = jwt.sign(user, SUPERSECRET, {
+            const token = jwt.sign(user, AUTH_SECRET, {
               expiresInMinutes: 60 * 24
             });
 
@@ -57,7 +57,7 @@ export default (app, db, authRoutes) => {
       let returnValue;
 
       if (token) {
-        jwt.verify(token, SUPERSECRET, (error, decoded) => {
+        jwt.verify(token, AUTH_SECRET, (error, decoded) => {
           if (error) {
             res.statusCode = 403;
 

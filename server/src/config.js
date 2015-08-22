@@ -16,4 +16,4 @@ export const MUSIC_SCHEMA = {
   time: Number,
   year: Number
 };
-export const SUPERSECRET = 'I don\'t eat cheese';
+export const AUTH_SECRET = 'I don\'t eat cheese';
