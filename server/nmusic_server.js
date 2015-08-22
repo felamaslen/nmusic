@@ -52,7 +52,7 @@ const getMethods = {
       res.end('Error: must supply a search term!');
     }
 
-    const term = secureParam(params.term);
+    const term = secureParam(params.term.toString());
     const regex = new RegExp(term, 'gi');
 
     Song.find({ title: regex }, 'title artist', { limit: 5 }, (error1, songs) => {
@@ -130,8 +130,8 @@ const getMethods = {
         }));
       });
     } else {
-      const artists = haveArtist ? secureParam(params.artist).split(',') : [];
-      const albums = haveAlbum ? secureParam(params.album).split(',') : [];
+      const artists = haveArtist ? secureParam(params.artist).split(',').map(secureParam) : [];
+      const albums = haveAlbum ? secureParam(params.album).split(',').map(secureParam) : [];
 
       const query = haveArtist || (haveAlbum && !artistChanged) ? { $and: [] } : {};
 
