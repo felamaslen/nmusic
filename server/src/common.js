@@ -18,21 +18,17 @@ export const formatTime = () => {
 
 export const secureParam = param => decodeURIComponent(param.toString());
 
-export const compressSongs = (songs, json) => {
+export const compressSongs = songs => {
   // use arrays to save bandwidth on keys
-  const _songs = songs.map(song => {
-    return [
-      song._id,
-      song.track,
-      song.title,
-      song.artist,
-      song.album,
-      song.genre,
-      song.time,
-      song.year
-    ];
-  });
-
-  return typeof json === 'undefined' || json === true ? JSON.stringify(_songs) : _songs;
+  return songs.map(song => [
+    song._id,
+    song.track,
+    song.title,
+    song.artist,
+    song.album,
+    song.genre,
+    song.time,
+    song.year
+  ]);
 };
 

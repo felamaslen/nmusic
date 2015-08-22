@@ -5,7 +5,6 @@ import {
 
 import { Map as map } from 'immutable';
 import request from 'superagent-bluebird-promise';
-import querystring from 'querystring';
 
 import {
   gotListArtists,
@@ -28,7 +27,23 @@ export default buildEffectHandler({
   },
 
   LIST_BROWSER_API_CALL: (query, dispatcher) => {
-    request.get(API_LIST_SONGS_FROM_BROWSER + querystring.stringify(query))
+    const array = [];
+    if (!!query.artists) {
+      array.push('artists');
+      array.push(query.artists);
+    } else {
+      array.push('albums');
+    }
+
+    if (!!query.albums) {
+      array.push(query.albums);
+    }
+
+    const queryString = encodeURI(array.map(item => encodeURIComponent(item))
+      .reduce((r, s) => r + '/' + s)
+    ) + (!!query.artistChanged ? '?artistChanged=true' : '');
+
+    request.get(API_LIST_SONGS_FROM_BROWSER + queryString)
       .then(
         response => dispatcher.dispatch(insertBrowserResults(response)),
         () => dispatcher.dispatch(insertBrowserResults(null))

@@ -58,7 +58,7 @@ export const selectArtist = (reduction, evt) => {
     effects = effects.push(buildMessage(
       'LIST_BROWSER_API_CALL',
       {
-        artist: artists.map(encodeURIComponent).join(','),
+        artists: artists.map(encodeURIComponent).join(','),
         artistChanged: 'true'
       })
     );
@@ -115,8 +115,8 @@ export const selectAlbum = (reduction, evt) => {
     effects = effects.push(buildMessage(
       'LIST_BROWSER_API_CALL',
       {
-        artist: currentArtists.map(encodeURIComponent).join(','),
-        album: albums.map(encodeURIComponent).join(',')
+        artists: currentArtists.map(encodeURIComponent).join(','),
+        albums: albums.map(encodeURIComponent).join(',')
       })
     );
   } else {

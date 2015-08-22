@@ -10,8 +10,7 @@ import {
 } from '../common';
 
 export default (app, db) => {
-  // for getting songs filtered by artist or album (or both/neither)
-  app.get('/list/songs/:artists?/:albums?', (req, res) => {
+  const listSongsFromBrowser = (req, res) => {
     // gets a song list and reloads the albums browser if necessary
     const artistChanged = typeof req.query.artistChanged &&
       req.query.artistChanged === 'true';
@@ -99,19 +98,23 @@ export default (app, db) => {
                 }
               });
 
-              res.end(JSON.stringify({
-                songs: compressSongs(songs, false),
+              res.json({
+                songs: compressSongs(songs),
                 albums: browserAlbums,
                 selectedAlbums: selectedAlbums.length ? selectedAlbums : [-1]
-              }));
+              });
             });
           } else {
-            res.end(compressSongs(songs));
+            res.json(compressSongs(songs));
           }
         }
       );
     }
-  });
+  };
+
+  // for getting songs filtered by artist or album (or both/neither)
+  app.get('/list/songs/albums/:albums?', listSongsFromBrowser);
+  app.get('/list/songs/artists/:artists?/:albums?', listSongsFromBrowser);
 
   // for the artists browser on first load
   app.get('/list/artists', (req, res) => {
