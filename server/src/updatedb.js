@@ -2,16 +2,22 @@
  * 2015, Fela Maslen
  */
 
-const common = require('./common');
-const config = require('./config');
+import { formatTime } from './common';
+import {
+  FORMATS,
+  MONGO_URL,
+  MUSIC_SCHEMA,
+  MUSIC_DIR
+} from './config';
+
+import mm from 'musicmetadata';
+import fs from 'fs';
 
 // connect to database
-const mongoose = require('mongoose');
+import mongoose, { Schema } from 'mongoose';
+
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
-
-const mm = require('musicmetadata');
-const fs = require('fs');
 
 const startTime = new Date().getTime();
 const execTimes = [];
@@ -31,13 +37,13 @@ const basename = filename => {
 };
 
 const logProcess = (msg) => {
-  console.log('[' + common.formatTime() + ']', msg);
+  console.log('[' + formatTime() + ']', msg);
 };
 
 const getFilenames = item => { return item.filename; };
 
 const inArray = (needle, haystack) => {
-  for (key in haystack) {
+  for (const key in haystack) {
     if (haystack[key] === needle) {
       return true;
     }
@@ -46,7 +52,7 @@ const inArray = (needle, haystack) => {
 };
 
 const inArraySubkey = (needle, haystack, subkey) => {
-  for (key in haystack) {
+  for (const key in haystack) {
     if (haystack[key][subkey] === needle) {
       return true;
     }
@@ -81,7 +87,7 @@ const addDirRecursive = (dir, badFiles) => {
       } else {
         const extension = path.substring(path.lastIndexOf('.') + 1);
 
-        if (inArray(extension, config.FORMATS)) {
+        if (inArray(extension, FORMATS)) {
           files.push({ filename: path });
         }
       }
@@ -92,13 +98,13 @@ const addDirRecursive = (dir, badFiles) => {
 };
 
 const schema = {
-  counters: new mongoose.Schema({ _id: String, seq: Number }),
+  counters: new Schema({ _id: String, seq: Number }),
 
-  badFiles: new mongoose.Schema({
+  badFiles: new Schema({
     filename: String
   }),
 
-  songs: new mongoose.Schema(config.MUSIC_SCHEMA)
+  songs: new Schema(MUSIC_SCHEMA)
 };
 
 const BadFile = mongoose.model('badfile', schema.badFiles);
@@ -106,14 +112,15 @@ const BadFile = mongoose.model('badfile', schema.badFiles);
 const Song = mongoose.model('song', schema.songs);
 
 // handle counters
-schema.counters.statics.findAndModify = (query, sort, doc, options, callback) => {
-  return this.collection.findAndModify(query, sort, doc, options, callback);
+const findAndModify = (scope, query, sort, doc, options, callback) => {
+  scope.collection.findAndModify(query, sort, doc, options, callback);
 };
 
 const Counter = mongoose.model('counter', schema.counters);
 
 const getID = (name, callback) => {
-  Counter.findAndModify(
+  findAndModify(
+    Counter,
     { _id: name },
     [],
     { $inc: { seq: 1 } },
@@ -203,8 +210,8 @@ const _onDBOpen = () => {
     const _badFiles = badFiles.map(getFilenames);
 
     // find all files in the filesystem
-    logProcess('Recursing through ' + config.MUSIC_DIR + '...');
-    const files = addDirRecursive(config.MUSIC_DIR, _badFiles);
+    logProcess('Recursing through ' + MUSIC_DIR + '...');
+    const files = addDirRecursive(MUSIC_DIR, _badFiles);
     execTime('Scan music directory (' + files.length + ' files)');
 
     // find all entries in the DB
@@ -251,5 +258,5 @@ logProcess('Starting updatedb process...');
 
 db.once('open', _onDBOpen);
 
-mongoose.connect(config.MONGO_URL);
+mongoose.connect(MONGO_URL);
 
