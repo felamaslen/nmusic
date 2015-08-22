@@ -9,7 +9,8 @@ export default new Record({
     loadedOnLastRender: false,
     player: {
       queue: [],
-      currentSongId: -1,
+      queueId: -1,
+      currentSong: null,
       buffered: null,
       paused: true,
       volume: 0.7,

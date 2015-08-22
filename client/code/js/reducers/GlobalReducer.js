@@ -23,6 +23,7 @@ import {
 import {
   addToQueue,
   playQueueItem,
+  playListItem,
   togglePause,
   ctrlPrevious,
   ctrlNext,
@@ -45,7 +46,7 @@ export default (reduction, action) => {
   case 'AUDIO_STREAM_BEGAN':
     return audioLoadStart(reduction);
   case 'AUDIO_DURATION_SET':
-    return audioDurationChange(reduction);
+    return audioDurationChange(reduction, action.payload);
   case 'AUDIO_ERROR_OCCURRED':
     return audioError(reduction);
   case 'AUDIO_STREAM_PROGRESSED':
@@ -66,10 +67,12 @@ export default (reduction, action) => {
     return selectAlbum(reduction, action.payload);
 
   // Player actions
-  case 'PLAYER_TRACKS_ADDED':
+  case 'PLAYER_SONGS_ADDED':
     return addToQueue(reduction, action.payload);
-  case 'PLAYER_TRACK_PLAYED':
+  case 'PLAYER_QUEUEITEM_PLAYED':
     return playQueueItem(reduction, action.payload);
+  case 'PLAYER_SONG_PLAYED':
+    return playListItem(reduction, action.payload);
   case 'PLAYER_PAUSE_TOGGLED':
     return togglePause(reduction, action.payload);
   case 'PLAYER_POSITION_SEEKED':

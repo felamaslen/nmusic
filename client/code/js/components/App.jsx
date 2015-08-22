@@ -82,12 +82,9 @@ export default class App extends Component {
   }
 
   render() {
-    const currentSongId = this.state.reduction.getIn(['appState', 'player', 'currentSongId']);
-    const currentSong = currentSongId > -1
-      ? this.state.reduction.getIn(['appState', 'player', 'queue']).get(currentSongId)
-      : null;
+    const currentSong = this.state.reduction.getIn(['appState', 'player', 'currentSong']);
 
-    const currentSongDBId = currentSong === null ? -1 : currentSong.get('id');
+    const currentSongId = currentSong === null ? -1 : currentSong.get('id');
 
     return (
       <main>
@@ -96,8 +93,6 @@ export default class App extends Component {
           loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
         />
         <PlayerEngine dispatcher={this.state.dispatcher}
-          queue={this.state.reduction.getIn(['appState', 'player', 'queue'])}
-          currentSongId={this.state.reduction.getIn(['appState', 'player', 'currentSongId'])}
           currentSong={currentSong}
           setTime={this.state.reduction.getIn(['appState', 'player', 'setTime'])}
           paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
@@ -125,7 +120,7 @@ export default class App extends Component {
           />
         </section>
         <SongList dispatcher={this.state.dispatcher}
-          currentId={currentSongDBId}
+          currentSongId={currentSongId}
           list={this.state.reduction.getIn(['appState', 'songList', 'list'])}
           selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSongs'])}
           loaded={this.state.reduction.getIn(['appState', 'loaded', 'songList'])}

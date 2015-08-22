@@ -2,14 +2,12 @@
 
 import { STREAM_URL } from '../config';
 
-import { List, Map } from 'immutable';
+import { Map } from 'immutable';
 import React, { PropTypes } from 'react';
 
 import PureControllerView from './PureControllerView';
 
 import {
-  addToQueue,
-  playQueueItem,
   togglePause,
   ctrlNext,
   ctrlSeek,
@@ -136,16 +134,8 @@ export default class PlayerEngine extends PureControllerView {
     this.refs.audioObject.getDOMNode().pause();
   }
 
-  _playQueueItem(queueId) {
-    this.dispatchAction(playQueueItem(queueId));
-  }
-
-  _addToQueue(track) {
-    this.dispatchAction(addToQueue(track));
-  }
-
   _togglePause(paused) {
-    if (this.props.currentSongId > -1) {
+    if (!!this.props.currentSong) {
       this.dispatchAction(togglePause(paused));
 
       if (paused) {
@@ -161,8 +151,6 @@ PlayerEngine.propTypes = {
   paused: PropTypes.bool,
   volume: PropTypes.number,
   setTime: PropTypes.number,
-  currentSongId: PropTypes.number,
-  queue: PropTypes.instanceOf(List),
   currentSong: PropTypes.instanceOf(Map)
 };
 

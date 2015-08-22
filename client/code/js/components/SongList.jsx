@@ -2,14 +2,14 @@
  * dispays list of songs (e.g. from search results)
  */
 
-import { itemInRanges } from '../common';
+import { itemInRanges, secondsToTime } from '../common';
 
 import React, { PropTypes } from 'react';
 import { List } from 'immutable';
 import classNames from 'classnames';
 
 import { selectSong } from '../actions/SongListActions';
-import { addToQueue } from '../actions/PlayerActions';
+import { playListItem } from '../actions/PlayerActions';
 
 import PureControllerView from './PureControllerView';
 
@@ -18,17 +18,17 @@ export default class SongList extends PureControllerView {
     const songList = this.props.list.map((song, index) => {
       const liClass = classNames({
         selected: itemInRanges(this.props.selected, index) > -1,
-        playing: song.get('id') === this.props.currentId
+        playing: song.get('id') === this.props.currentSongId
       });
 
       return (
         <li key={index} className={liClass}
           onMouseDown={this._selectSong.bind(this, index)}
-          onDoubleClick={this._addAndPlay.bind(this, index)}
+          onDoubleClick={this._playListItem.bind(this, index)}
         >
           <song-track>{song.get('track')}</song-track>
           <song-title>{song.get('title')}</song-title>
-          <song-time>{song.get('time')}</song-time>
+          <song-time>{secondsToTime(song.get('time'))}</song-time>
           <song-artist>{song.get('artist')}</song-artist>
           <song-album>{song.get('album')}</song-album>
           <song-year>{song.get('year')}</song-year>
@@ -57,11 +57,8 @@ export default class SongList extends PureControllerView {
     );
   }
 
-  _addAndPlay(index) {
-    this.dispatchAction(addToQueue({
-      songs: List.of(this.props.list.get(index)),
-      playAfter: true
-    }));
+  _playListItem(index) {
+    this.dispatchAction(playListItem(this.props.list.get(index)));
   }
 
   _selectSong(index, ev) {
@@ -75,7 +72,7 @@ export default class SongList extends PureControllerView {
 
 SongList.propTypes = {
   loaded: PropTypes.bool,
-  currentId: PropTypes.number,
+  currentSongId: PropTypes.number,
   selected: PropTypes.instanceOf(List),
   list: PropTypes.instanceOf(List)
 };
