@@ -1,3 +1,5 @@
+import { fromJS } from 'immutable';
+
 import {
   GET_ALL_SONGS
 } from '../config';
@@ -9,10 +11,10 @@ import {
 
 export default (app, db) => {
   // for getting songs filtered by artist or album (or both/neither)
-  app.get('/list/songs/:artists?/:albums?/:artistChanged?', (req, res) => {
+  app.get('/list/songs/:artists?/:albums?', (req, res) => {
     // gets a song list and reloads the albums browser if necessary
-    const artistChanged = typeof req.params.artistChanged &&
-      req.params.artistChanged === 'true';
+    const artistChanged = typeof req.query.artistChanged &&
+      req.query.artistChanged === 'true';
 
     const haveArtists = req.params.artists && req.params.artists.length > 0;
     const haveAlbums = req.params.albums && req.params.albums.length > 0;
@@ -89,9 +91,9 @@ export default (app, db) => {
 
               let selectedAlbums = [];
 
-              const albumsList = Immutable.fromJS(albums);
+              const albumsList = fromJS(albums);
 
-              Immutable.fromJS(sortedAlbums).forEach((album, key) => {
+              fromJS(sortedAlbums).forEach((album, key) => {
                 if (albumsList.indexOf(album) > -1) {
                   selectedAlbums = selectedAlbums.push(key);
                 }
