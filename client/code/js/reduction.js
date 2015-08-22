@@ -7,6 +7,7 @@ export default new Record({
       songList: false
     },
     loadedOnLastRender: false,
+    warnBeforeNavigation: false,
     player: {
       queue: [],
       queueId: -1,

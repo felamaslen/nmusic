@@ -2,6 +2,26 @@
 
 import { List } from 'immutable';
 
+import { NAVIGATION_WARNING_MESSAGE } from './config';
+
+export const _warnBeforeNavigation = warn => {
+  if (warn) {
+    window.onbeforeunload = _ev => {
+      const ev = !_ev ? window.event : _ev;
+
+      if (!!ev) {
+        ev.returnValue = NAVIGATION_WARNING_MESSAGE;
+      }
+
+      return NAVIGATION_WARNING_MESSAGE;
+    };
+  } else {
+    window.onbeforeunload = null;
+  }
+
+  return true;
+};
+
 export const secondsToTime = _seconds => {
   const days = Math.floor(_seconds / 86400);
   const hours = Math.floor((_seconds % 86400) / 3600);

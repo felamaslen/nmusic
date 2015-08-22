@@ -1,10 +1,18 @@
 import { PREVIOUS_SONG_DELAY } from '../config';
 
+import { _warnBeforeNavigation } from '../common';
+
 export const addToQueue = (reduction, options) => {
   const playAfter = !!options.playAfter;
 
   const queue = reduction.getIn(['appState', 'player', 'queue']);
   const queueId = reduction.getIn(['appState', 'player', 'queueId']);
+
+  const paused = typeof options.playAfter !== 'undefined'
+    ? !playAfter
+    : reduction.getIn(['appState', 'player', 'paused']);
+
+  _warnBeforeNavigation(!paused);
 
   return reduction
     .setIn(['appState', 'player', 'queue'], queue.concat(options.songs))
@@ -13,16 +21,17 @@ export const addToQueue = (reduction, options) => {
       ? options.songs.first()
       : reduction.getIn(['appState', 'player', 'currentSong'])
     )
-    .setIn(['appState', 'player', 'paused'], typeof options.playAfter !== 'undefined'
-      ? !playAfter
-      : reduction.getIn(['appState', 'player', 'paused'])
-    )
+    .setIn(['appState', 'player', 'paused'], paused)
+    .setIn(['appState', 'warnBeforeNavigation'], !paused)
   ;
 };
 
 export const playQueueItem = (reduction, queueId) => {
+  _warnBeforeNavigation(true);
+
   return reduction
     .setIn(['appState', 'player', 'paused'], false)
+    .setIn(['appState', 'warnBeforeNavigation'], true)
     .setIn(
       ['appState', 'player', 'currentSong'],
       reduction.getIn(['appState', 'player', 'queue']).get(queueId)
@@ -31,10 +40,13 @@ export const playQueueItem = (reduction, queueId) => {
 };
 
 export const playListItem = (reduction, song) => {
+  _warnBeforeNavigation(true);
+
   return reduction
     .setIn(['appState', 'player', 'currentSong'], song)
     .setIn(['appState', 'player', 'queueId'], -1)
     .setIn(['appState', 'player', 'paused'], false)
+    .setIn(['appState', 'warnBeforeNavigation'], true)
   ;
 };
 
@@ -42,8 +54,12 @@ export const togglePause = (reduction, paused) => {
   const _paused = reduction.getIn(['appState', 'player', 'currentSong']) !== null
     ? paused : reduction.getIn(['appState', 'player', 'paused']);
 
+  _warnBeforeNavigation(!_paused);
+
   return reduction
-    .setIn(['appState', 'player', 'paused'], _paused);
+    .setIn(['appState', 'player', 'paused'], _paused)
+    .setIn(['appState', 'warnBeforeNavigation'], !_paused)
+  ;
 };
 
 export const ctrlPrevious = reduction => {
