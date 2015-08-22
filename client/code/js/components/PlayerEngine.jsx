@@ -64,13 +64,15 @@ export default class PlayerEngine extends PureControllerView {
       (nextProps.currentSong === null && this.props.currentSong !== null) ||
       (nextProps.currentSong !== null && this.props.currentSong === null) ||
       (nextProps.currentSong !== null && this.props.currentSong !== null &&
-       nextProps.currentSong.id !== this.props.currentSong.id);
+       nextProps.currentSong.get('id') !== this.props.currentSong.get('id'));
 
     // only need to re-render <audio> element if the track (source) changed
     return trackChanged;
   }
 
   componentDidUpdate() {
+    this.refs.audioObject.getDOMNode().load();
+
     if (!this.props.paused) {
       this._play();
     }
@@ -78,7 +80,7 @@ export default class PlayerEngine extends PureControllerView {
 
   render() {
     const source = this.props.currentSong === null ? false : (
-      <source src={STREAM_URL + this.props.currentSong.get('id')} type="audio/mpeg"/>
+      <source ref="source1" src={STREAM_URL + this.props.currentSong.get('id')} type="audio/mpeg"/>
     );
 
     return (
@@ -143,12 +145,14 @@ export default class PlayerEngine extends PureControllerView {
   }
 
   _togglePause(paused) {
-    this.dispatchAction(togglePause(paused));
+    if (this.props.currentSongId > -1) {
+      this.dispatchAction(togglePause(paused));
 
-    if (paused) {
-      this._play();
-    } else {
-      this._pause();
+      if (paused) {
+        this._play();
+      } else {
+        this._pause();
+      }
     }
   }
 }
@@ -157,7 +161,8 @@ PlayerEngine.propTypes = {
   paused: PropTypes.bool,
   volume: PropTypes.number,
   setTime: PropTypes.number,
-  history: PropTypes.instanceOf(List),
+  currentSongId: PropTypes.number,
+  queue: PropTypes.instanceOf(List),
   currentSong: PropTypes.instanceOf(Map)
 };
 

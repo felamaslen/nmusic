@@ -1,6 +1,5 @@
 export const addToQueue = (reduction, options) => {
-  const playAfter = typeof options.playAfter !== 'undefined'
-    && options.playAfter;
+  const playAfter = !!options.playAfter;
 
   return reduction
     .setIn(
@@ -33,8 +32,11 @@ export const playQueueItem = (reduction, queueId) => {
 };
 
 export const togglePause = (reduction, paused) => {
+  const _paused = reduction.getIn(['appState', 'player', 'currentSongId']) > -1
+    ? paused : reduction.getIn(['appState', 'player', 'paused']);
+
   return reduction
-    .setIn(['appState', 'player', 'paused'], paused);
+    .setIn(['appState', 'player', 'paused'], _paused);
 };
 
 export const ctrlPrevious = reduction => {
