@@ -34,7 +34,7 @@ body {
 }
 
 /* this is for testing purposes */
-.songlist {
+.songlist, .browser {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;

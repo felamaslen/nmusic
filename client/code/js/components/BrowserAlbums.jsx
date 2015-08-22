@@ -2,8 +2,11 @@
  * browser which lists albums
  */
 
+import { itemInRanges } from '../common';
+
 import React, { PropTypes } from 'react';
 import { List } from 'immutable';
+import classNames from 'classnames';
 
 import PureControllerView from './PureControllerView';
 
@@ -22,16 +25,20 @@ export default class BrowserAlbums extends PureControllerView {
     );
 
     const albumList = _list.map((album, index) => {
-      const liClass = this.props.selected.indexOf(index - 1) > -1
-        ? 'selected' : '';
+      const liClass = classNames({
+        selected: itemInRanges(this.props.selected, index - 1) > -1
+      });
 
       return (
-        <li onClick={this._handleClick.bind(this, index)}
+        <li onMouseDown={this._selectAlbum.bind(this, index)}
           key={index} className={liClass}>{album}</li>
       );
     });
 
-    const className = 'browser albums-browser';
+    const className = classNames({
+      browser: true,
+      'albums-browser': true
+    });
 
     return (
       <div className={className}>
@@ -42,8 +49,12 @@ export default class BrowserAlbums extends PureControllerView {
     );
   }
 
-  _handleClick(index) {
-    this.dispatchAction(selectAlbum(List.of(index - 1)));
+  _selectAlbum(index, ev) {
+    this.dispatchAction(selectAlbum({
+      ctrl: ev.ctrlKey,
+      shift: ev.shiftKey,
+      index: index - 1
+    }));
   }
 }
 

@@ -2,8 +2,11 @@
  * browser which lists artists
  */
 
+import { itemInRanges } from '../common';
+
 import React, { PropTypes } from 'react';
 import { List } from 'immutable';
+import classNames from 'classnames';
 
 import PureControllerView from './PureControllerView';
 
@@ -15,7 +18,7 @@ import {
 export default class BrowserArtists extends PureControllerView {
   componentWillMount() {
     this.dispatchAction(loadListArtists());
-    this.dispatchAction(selectArtist(List.of(-1)));
+    this.dispatchAction(selectArtist({ index: -1 }));
   }
 
   render() {
@@ -28,16 +31,19 @@ export default class BrowserArtists extends PureControllerView {
     );
 
     const artistList = _list.map((artist, index) => {
-      const liClass = this.props.selected.indexOf(index - 1) > -1
+      const liClass = itemInRanges(this.props.selected, index - 1) > -1
         ? 'selected' : '';
 
       return (
-        <li onClick={this._handleClick.bind(this, index)}
+        <li onMouseDown={this._selectArtist.bind(this, index)}
           key={index} className={liClass}>{artist}</li>
       );
     });
 
-    const className = 'browser artists-browser';
+    const className = classNames({
+      browser: true,
+      'artists-browser': true
+    });
 
     return (
       <div className={className}>
@@ -48,8 +54,12 @@ export default class BrowserArtists extends PureControllerView {
     );
   }
 
-  _handleClick(index) {
-    this.dispatchAction(selectArtist(List.of(index - 1)));
+  _selectArtist(index, ev) {
+    this.dispatchAction(selectArtist({
+      ctrl: ev.ctrlKey,
+      shift: ev.shiftKey,
+      index: index - 1
+    }));
   }
 }
 

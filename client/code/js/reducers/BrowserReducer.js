@@ -1,4 +1,9 @@
-import { decompressSongs } from '../common';
+import {
+  decompressSongs,
+  getRangesAfterClick,
+  itemInRanges,
+  createRanges
+} from '../common';
 
 import { List, fromJS } from 'immutable';
 
@@ -20,66 +25,108 @@ export const gotListArtists = (reduction, response) => {
     .setIn(['appState', 'browser', 'listArtists'], error ? List.of() : fromJS(response.body));
 };
 
-export const selectArtist = (reduction, indexes) => {
-  const artists = indexes.indexOf(-1) > -1
-    ? List.of() : reduction.getIn(['appState', 'browser', 'listArtists']).filter(
-      (artist, index) => indexes.indexOf(index) > -1
-    );
-
+export const selectArtist = (reduction, evt) => {
   const oldSelectedArtists = reduction.getIn(['appState', 'browser', 'selectedArtists']);
 
-  const selectionChanged = !reduction.getIn(['appState', 'loaded', 'songList']) ||
-    indexes.some(index => oldSelectedArtists.indexOf(index) < 0) ||
-    oldSelectedArtists.some(index => indexes.indexOf(index) < 0);
+  let effects = reduction.get('effects');
 
-  const selectedAlbums = reduction.getIn(['appState', 'browser', 'selectedAlbums']);
-  const currentAlbums = selectionChanged
-    ? reduction.getIn(
-        ['appState', 'browser', 'listAlbums']
-      ).filter((album, index) => selectedAlbums.indexOf(index) > -1)
-    : null;
+  let newRanges;
+  let newSelectedAlbums;
 
-  const effects = selectionChanged
-    ? reduction.get('effects').push(buildMessage(
+  const selectionChanged = !evt.ctrl || !evt.shift
+    || itemInRanges(oldSelectedArtists, evt.index) === -1;
+
+  if (selectionChanged) {
+    let artists;
+    if (evt.index < 0) {
+      artists = List.of();
+      newRanges = List.of(List.of(-1, -1));
+    } else {
+      newRanges = getRangesAfterClick(
+        reduction.getIn(['appState', 'browser', 'selectedArtists']),
+        evt.shift,
+        evt.ctrl,
+        reduction.getIn(['appState', 'browser', 'artistClickedLast']),
+        evt.index
+      ).filter(range => range.first() > -1);
+
+      artists = reduction.getIn(['appState', 'browser', 'listArtists']).filter(
+        (artist, index) => itemInRanges(newRanges, index) > -1
+      );
+    }
+
+    effects = effects.push(buildMessage(
       'LIST_BROWSER_API_CALL',
       {
-        artist: artists.join(','),
-        album: currentAlbums.join(','),
+        artist: artists.map(encodeURIComponent).join(','),
         artistChanged: 'true'
-      }))
-    : reduction.get('effects');
+      })
+    );
+
+    newSelectedAlbums = List.of(List.of(-1, -1));
+  } else {
+    newRanges = oldSelectedArtists;
+
+    newSelectedAlbums = reduction.getIn(['appState', 'browser', 'selectedAlbums']);
+  }
 
   return reduction
-    .setIn(['appState', 'browser', 'selectedArtists'], indexes)
+    .setIn(['appState', 'browser', 'artistClickedLast'], evt.index)
+    .setIn(['appState', 'browser', 'selectedArtists'], newRanges)
+    .setIn(['appState', 'browser', 'selectedAlbums'], newSelectedAlbums)
     .set('effects', effects)
   ;
 };
 
-export const selectAlbum = (reduction, indexes) => {
-  const artistIndexes = reduction.getIn(['appState', 'browser', 'selectedArtists']);
+export const selectAlbum = (reduction, evt) => {
+  const oldSelectedAlbums = reduction.getIn(['appState', 'browser', 'selectedAlbums']);
 
-  const artists = artistIndexes.indexOf(-1) > -1
-    ? List.of() : reduction.getIn(['appState', 'browser', 'listArtists']).filter(
-      (artist, index) => artistIndexes.indexOf(index) > -1
+  let effects = reduction.get('effects');
+
+  let newRanges;
+
+  const selectionChanged = !evt.ctrl || !evt.shift
+    || itemInRanges(oldSelectedAlbums, evt.index) === -1;
+
+  if (selectionChanged) {
+    newRanges = evt.index < 0
+    ? List.of(List.of(-1, -1))
+    : getRangesAfterClick(
+        reduction.getIn(['appState', 'browser', 'selectedAlbums']),
+        evt.shift,
+        evt.ctrl,
+        reduction.getIn(['appState', 'browser', 'albumClickedLast']),
+        evt.index
+      ).filter(range => range.first() > -1);
+
+    const listAlbums = reduction.getIn(['appState', 'browser', 'listAlbums']);
+    const albums = listAlbums.filter((album, index) =>
+      itemInRanges(newRanges, index) > -1
     );
 
-  const albums = indexes.indexOf(-1) > -1
-    ? List.of() : reduction.getIn(['appState', 'browser', 'listAlbums']).filter(
-      (album, index) => indexes.indexOf(index) > -1
+    const selectedArtists = reduction.getIn(['appState', 'browser', 'selectedArtists']);
+
+    const currentArtists = itemInRanges(selectedArtists, -1) > -1
+      ? List.of()
+      : reduction.getIn(
+        ['appState', 'browser', 'listArtists']
+      ).filter((album, index) => itemInRanges(selectedArtists, index) > -1);
+
+    effects = effects.push(buildMessage(
+      'LIST_BROWSER_API_CALL',
+      {
+        artist: currentArtists.map(encodeURIComponent).join(','),
+        album: albums.map(encodeURIComponent).join(',')
+      })
     );
+  } else {
+    newRanges = oldSelectedAlbums;
+  }
 
   return reduction
-    .setIn(['appState', 'browser', 'selectedAlbums'], indexes)
-    .set('effects', reduction
-      .get('effects')
-      .push(buildMessage(
-        'LIST_BROWSER_API_CALL',
-        {
-          artist: artists.join(','),
-          album: albums.join(',')
-        }
-      ))
-    )
+    .setIn(['appState', 'browser', 'albumClickedLast'], evt.index)
+    .setIn(['appState', 'browser', 'selectedAlbums'], newRanges)
+    .set('effects', effects)
   ;
 };
 
@@ -99,7 +146,7 @@ export const insertBrowserResults = (reduction, response) => {
 
   const selectedAlbums = error || typeof response.body.selectedAlbums === 'undefined'
     ? reduction.getIn(['appState', 'browser', 'selectedAlbums'])
-    : fromJS(response.body.selectedAlbums);
+    : createRanges(fromJS(response.body.selectedAlbums));
 
   return reduction
     .setIn(['appState', 'loaded', 'songList'], true)

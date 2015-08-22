@@ -22,8 +22,10 @@ export default new Record({
       selectedSongs: []
     },
     browser: {
-      selectedArtists: [-1],
-      selectedAlbums: [-1],
+      selectedArtists: [],
+      selectedAlbums: [],
+      artistClickedLast: null,
+      albumClickedLast: null,
       listArtists: List.of(),
       listAlbums: List.of()
     }
