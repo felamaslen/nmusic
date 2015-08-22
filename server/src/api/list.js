@@ -123,7 +123,7 @@ export default (app, db) => {
         throw error;
       }
 
-      res.json(artists);
+      res.json(artists.sort());
     });
   });
 
