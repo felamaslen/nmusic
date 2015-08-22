@@ -7,7 +7,7 @@ import {
 import express, { Router as router } from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 // connect to database
 mongoose.connect(MONGO_URL);
@@ -21,12 +21,18 @@ db.connection.on('error', (error) => {
 });
 
 db.model = {
-  Song: mongoose.model('song', new mongoose.Schema(MUSIC_SCHEMA))
+  Song: mongoose.model('song', new Schema(MUSIC_SCHEMA)),
+  User: mongoose.model('user', new Schema({
+    username: String,
+    password: String,
+    admin: Boolean
+  }))
 };
 
 const app = express();
 
 const apiRouter = router();
+const authRouter = router();
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -44,6 +50,12 @@ app.all('/*', (req, res, next) => {
 
   return next();
 });
+
+// Authentication
+import auth from './auth';
+auth(authRouter, db.model);
+
+app.use('/auth', authRouter);
 
 // require the API
 import api from './api';
