@@ -14,6 +14,7 @@ import globalReducer from '../reducers/GlobalReducer';
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
 // import components here
+import LoginForm from './LoginForm';
 import LoadingSpinner from './LoadingSpinner';
 import PlayerEngine from './PlayerEngine';
 import PlayerUI from './PlayerUI';
@@ -82,12 +83,15 @@ export default class App extends Component {
   }
 
   render() {
-    const currentSong = this.state.reduction.getIn(['appState', 'player', 'currentSong']);
+    let main;
 
+    const authenticated = !this.state.reduction.getIn(['appState', 'auth', 'status']);
+
+    const currentSong = this.state.reduction.getIn(['appState', 'player', 'currentSong']);
     const currentSongId = currentSong === null ? -1 : currentSong.get('id');
 
-    return (
-      <main>
+    const userArea = authenticated ? (
+      <section id="userAreaOuter">
         <LoadingSpinner dispatcher={this.state.dispatcher}
           loaded={!this.state.reduction.getIn(['appState', 'loaded']).some(loadedItem => !loadedItem)}
           loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
@@ -97,6 +101,7 @@ export default class App extends Component {
           setTime={this.state.reduction.getIn(['appState', 'player', 'setTime'])}
           paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
           volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
+          token={this.state.reduction.getIn(['appState', 'auth', 'token'])}
         />
         <section id="section-meta">
           <PlayerUI dispatcher={this.state.dispatcher}
@@ -125,6 +130,15 @@ export default class App extends Component {
           selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSongs'])}
           loaded={this.state.reduction.getIn(['appState', 'loaded', 'songList'])}
         />
+      </section>
+    ) : false;
+
+    return (
+      <main>
+        <LoginForm dispatcher={this.state.dispatcher}
+          status={this.state.reduction.getIn(['appState', 'auth', 'status'])}
+        />
+        {userArea}
       </main>
     );
   }

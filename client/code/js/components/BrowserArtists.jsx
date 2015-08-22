@@ -17,8 +17,8 @@ import {
 
 export default class BrowserArtists extends PureControllerView {
   componentWillMount() {
-    this.dispatchAction(loadListArtists());
-    this.dispatchAction(selectArtist({ index: -1 }));
+    this.dispatchNext(loadListArtists());
+    this.dispatchNext(selectArtist({ index: -1 }));
   }
 
   render() {

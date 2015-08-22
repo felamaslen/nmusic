@@ -1,4 +1,9 @@
 import {
+  attemptLogin,
+  authGotResponse
+} from './LoginReducer';
+
+import {
   hideSpinner
 } from './AppReducer';
 
@@ -36,6 +41,12 @@ import {
 
 export default (reduction, action) => {
   switch (action.type) {
+  // Authentication actions
+  case 'AUTH_LOGIN_ATTEMPTED':
+    return attemptLogin(reduction, action.payload);
+  case 'AUTH_LOGIN_GOT_RESPONSE':
+    return authGotResponse(reduction, action.payload);
+
   // App actions
   case 'APP_SPINNER_HIDDEN':
     return hideSpinner(reduction);

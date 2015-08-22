@@ -13,16 +13,19 @@ export const loadListArtists = reduction => {
   return reduction
     .set('effects', reduction
       .get('effects')
-      .push(buildMessage('BROWSER_ARTISTS_API_CALL', {}))
+      .push(buildMessage(
+        'BROWSER_ARTISTS_API_CALL',
+        reduction.getIn(['appState', 'auth', 'token'])
+      ))
     );
 };
 
 export const gotListArtists = (reduction, response) => {
-  const error = !response || typeof response.body !== 'object';
+  const error = !response || typeof response.data !== 'object';
 
   return reduction
     .setIn(['appState', 'loaded', 'browserArtists'], true)
-    .setIn(['appState', 'browser', 'listArtists'], error ? List.of() : fromJS(response.body));
+    .setIn(['appState', 'browser', 'listArtists'], error ? List.of() : fromJS(response.data));
 };
 
 export const selectArtist = (reduction, evt) => {
@@ -58,6 +61,7 @@ export const selectArtist = (reduction, evt) => {
     effects = effects.push(buildMessage(
       'LIST_BROWSER_API_CALL',
       {
+        token: reduction.getIn(['appState', 'auth', 'token']),
         artists: artists.map(encodeURIComponent).join(','),
         artistChanged: 'true'
       })
@@ -115,6 +119,7 @@ export const selectAlbum = (reduction, evt) => {
     effects = effects.push(buildMessage(
       'LIST_BROWSER_API_CALL',
       {
+        token: reduction.getIn(['appState', 'auth', 'token']),
         artists: currentArtists.map(encodeURIComponent).join(','),
         albums: albums.map(encodeURIComponent).join(',')
       })
@@ -131,22 +136,22 @@ export const selectAlbum = (reduction, evt) => {
 };
 
 export const insertBrowserResults = (reduction, response) => {
-  const error = !response || typeof response.body !== 'object';
+  const error = !response || typeof response.data !== 'object';
 
   const songs = error
   ? List.of()
-  : fromJS(typeof response.body.songs === 'object'
-    ? response.body.songs.map(decompressSongs)
-    : response.body.map(decompressSongs)
+  : fromJS(typeof response.data.songs === 'object'
+    ? response.data.songs.map(decompressSongs)
+    : response.data.map(decompressSongs)
   );
 
-  const albums = error || !response.body.albums
+  const albums = error || !response.data.albums
     ? reduction.getIn(['appState', 'browser', 'listAlbums'])
-    : fromJS(response.body.albums);
+    : fromJS(response.data.albums);
 
-  const selectedAlbums = error || typeof response.body.selectedAlbums === 'undefined'
+  const selectedAlbums = error || typeof response.data.selectedAlbums === 'undefined'
     ? reduction.getIn(['appState', 'browser', 'selectedAlbums'])
-    : createRanges(fromJS(response.body.selectedAlbums));
+    : createRanges(fromJS(response.data.selectedAlbums));
 
   return reduction
     .setIn(['appState', 'loaded', 'songList'], true)

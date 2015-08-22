@@ -1,10 +1,16 @@
 import {
+  AUTH_AUTHENTICATE,
+
   API_LIST_ARTISTS,
   API_LIST_SONGS_FROM_BROWSER
 } from '../config';
 
 import { Map as map } from 'immutable';
-import request from 'superagent-bluebird-promise';
+import axios from 'axios';
+
+import {
+  authGotResponse
+} from '../actions/LoginActions';
 
 import {
   gotListArtists,
@@ -20,33 +26,51 @@ const buildEffectHandler = handlers => {
 };
 
 export default buildEffectHandler({
-  BROWSER_ARTISTS_API_CALL: (_, dispatcher) => {
-    request.get(API_LIST_ARTISTS)
-      .then(response => dispatcher.dispatch(gotListArtists(response)))
-      .catch(() => dispatcher.dispatch(gotListArtists(null)));
+  AUTHENTICATE_API_CALL: (details, dispatcher) => {
+    axios.post(AUTH_AUTHENTICATE, {
+      username: details.username,
+      password: details.password
+    }, {
+      headers: {
+        Accept: 'application/json'
+      }
+    }).then(
+      response => dispatcher.dispatch(authGotResponse(response))
+    ).catch(
+      error => console.error('Error getting auth information', error)
+    );
+  },
+
+  BROWSER_ARTISTS_API_CALL: (token, dispatcher) => {
+    axios.get(API_LIST_ARTISTS + '?token=' + token).then(
+      response => dispatcher.dispatch(gotListArtists(response))
+    ).catch(
+      () => dispatcher.dispatch(gotListArtists(null))
+    );
   },
 
   LIST_BROWSER_API_CALL: (query, dispatcher) => {
-    const array = [];
+    const params = [];
     if (!!query.artists) {
-      array.push('artists');
-      array.push(query.artists);
+      params.push('artists');
+      params.push(query.artists);
     } else {
-      array.push('albums');
+      params.push('albums');
     }
 
     if (!!query.albums) {
-      array.push(query.albums);
+      params.push(query.albums);
     }
 
-    const queryString = encodeURI(array.map(item => encodeURIComponent(item))
+    const queryString = encodeURI(params.map(item => encodeURIComponent(item))
       .reduce((r, s) => r + '/' + s)
     ) + (!!query.artistChanged ? '?artistChanged=true' : '');
 
-    request.get(API_LIST_SONGS_FROM_BROWSER + queryString)
-      .then(
-        response => dispatcher.dispatch(insertBrowserResults(response)),
-        () => dispatcher.dispatch(insertBrowserResults(null))
-      );
+    axios.get(API_LIST_SONGS_FROM_BROWSER + queryString + '&token=' + query.token)
+    .then(
+      response => dispatcher.dispatch(insertBrowserResults(response))
+    ).catch(
+      () => dispatcher.dispatch(insertBrowserResults(null))
+    );
   }
 });

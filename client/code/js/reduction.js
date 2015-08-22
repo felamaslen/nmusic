@@ -2,6 +2,11 @@ import { Record, fromJS, List } from 'immutable';
 
 export default new Record({
   appState: fromJS({
+    auth: {
+      status: 2,  // 0: logged in, 1: bad login, 2: waiting for user, 3: loading, 4: server error
+      username: null,
+      token: ''
+    },
     loaded: {
       browserArtists: false,
       songList: false

@@ -12,4 +12,8 @@ export default class PureControllerView extends React.Component {
     this.props.dispatcher.dispatch(action);
   }
 
+  dispatchNext(action) {
+    window.setTimeout(() => this.props.dispatcher.dispatch(action), 0);
+  }
+
 }
