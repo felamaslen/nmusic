@@ -26,6 +26,20 @@ const buildEffectHandler = handlers => {
 };
 
 export default buildEffectHandler({
+  AUTHTEST_API_CALL: (token, dispatcher) => {
+    axios.get(AUTH_TEST, {
+      headers: { 'X-requested-with': token }
+//      params: { token: token }
+    }).then(
+      response => dispatcher.dispatch(authGotResponse({
+        response: response,
+        fromPersistentLogin: true
+      }))
+    ).catch(
+      error => console.error('Error getting auth test information', error)
+    );
+  },
+
   AUTHENTICATE_API_CALL: (details, dispatcher) => {
     axios.post(AUTH_AUTHENTICATE, {
       username: details.username,
@@ -42,7 +56,9 @@ export default buildEffectHandler({
   },
 
   BROWSER_ARTISTS_API_CALL: (token, dispatcher) => {
-    axios.get(API_LIST_ARTISTS + '?token=' + token).then(
+    axios.get(API_LIST_ARTISTS, {
+      headers: { 'x-access-token': token }
+    }).then(
       response => dispatcher.dispatch(gotListArtists(response))
     ).catch(
       () => dispatcher.dispatch(gotListArtists(null))
@@ -64,10 +80,12 @@ export default buildEffectHandler({
 
     const queryString = encodeURI(params.map(item => encodeURIComponent(item))
       .reduce((r, s) => r + '/' + s)
-    ) + (!!query.artistChanged ? '?artistChanged=true' : '');
+    );
 
-    axios.get(API_LIST_SONGS_FROM_BROWSER + queryString + '&token=' + query.token)
-    .then(
+    axios.get(API_LIST_SONGS_FROM_BROWSER + queryString, {
+      params: { artistChanged: !!query.artistChanged ? 'true' : 'false' },
+      headers: { 'x-access-token': query.token }
+    }).then(
       response => dispatcher.dispatch(insertBrowserResults(response))
     ).catch(
       () => dispatcher.dispatch(insertBrowserResults(null))
