@@ -54,15 +54,19 @@ export default class PlayerUI extends PureControllerView {
     return (
       <audio-player id="player" className={playerClass}>
         <section className="controls">
-          <button className="ctrl ctrl-previous" ref="ctrlPrevious"
-            onClick={this._ctrlPrevious.bind(this)}>Previous</button>
-          <button className="ctrl ctrl-playpause" ref="ctrlPlayPause"
-            onClick={this._ctrlPlayPause.bind(this)}>{playPauseText}</button>
-          <button className="ctrl ctrl-next" ref="ctrlNext"
-            onClick={this._ctrlNext.bind(this)}>Next</button>
-          <input className="ctrl-volume" ref="ctrlVolume" type="range"
-            min="0" max="1" step="0.001"
-            value={this.props.volume} onChange={this._ctrlVolume.bind(this)}/>
+          <div className="controls-player-btns">
+            <button className="ctrl ctrl-previous" ref="ctrlPrevious"
+              onClick={this._ctrlPrevious.bind(this)}>Previous</button>
+            <button className="ctrl ctrl-playpause" ref="ctrlPlayPause"
+              onClick={this._ctrlPlayPause.bind(this)}>{playPauseText}</button>
+            <button className="ctrl ctrl-next" ref="ctrlNext"
+              onClick={this._ctrlNext.bind(this)}>Next</button>
+          </div>
+          <div className="controls-volume">
+            <input className="ctrl-volume" ref="ctrlVolume" type="range"
+              min="0" max="1" step="0.001"
+              value={this.props.volume} onChange={this._ctrlVolume.bind(this)}/>
+          </div>
         </section>
         {currentSong}
       </audio-player>
