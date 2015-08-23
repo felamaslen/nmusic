@@ -1,4 +1,4 @@
-// common functions
+// common server functions
 
 export const formatTime = () => {
   const date = new Date();

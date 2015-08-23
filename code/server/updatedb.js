@@ -247,7 +247,8 @@ const _onDBOpen = () => {
             console.log(time[1][0], time[1][1]);
           });
 
-          process.exit();
+          console.log('Successfully updated the music database.');
+          mongoose.disconnect();
         });
       });
     });

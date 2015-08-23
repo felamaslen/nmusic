@@ -1,6 +1,2 @@
 node_modules/
 npm-debug.log
-client/code/html/app.js
-
-# ignore babel-transpiled files
-server/bin/

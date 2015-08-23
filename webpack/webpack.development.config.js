@@ -1,18 +1,19 @@
-var path = require('path');
-var webpack = require('webpack');
-var moduleConfig = require('./module.config.js');
+const path = require('path');
+const webpack = require('webpack');
+const moduleConfig = require('./module.config.js');
+// const serverConfig = require('../code/server/config.js');
 
 module.exports = {
   debug: true,
   devtool: 'source-map',
   entry: [
-    'webpack-dev-server/client?http://localhost:3000',
+    `webpack-dev-server/client?http://localhost:8081`,
     'webpack/hot/only-dev-server',
     './code/js/index.jsx'
   ],
   output: {
-    path: path.join(__dirname, './code/html'),
-    filename: 'app.js'
+    path: path.join(__dirname, 'dist'),
+    filename: 'App.wpbundle.js'
   },
   resolve: {
     extensions: ['', '.jsx', '.js']

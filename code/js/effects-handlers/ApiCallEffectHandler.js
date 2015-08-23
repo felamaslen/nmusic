@@ -29,8 +29,7 @@ const buildEffectHandler = handlers => {
 export default buildEffectHandler({
   AUTHTEST_API_CALL: (token, dispatcher) => {
     axios.get(AUTH_TEST, {
-      headers: { 'X-requested-with': token }
-//      params: { token: token }
+      headers: { 'x-access-token': token }
     }).then(
       response => dispatcher.dispatch(authGotResponse({
         response: response,

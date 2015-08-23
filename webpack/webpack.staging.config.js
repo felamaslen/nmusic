@@ -1,6 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
-var moduleConfig = require('./module.config.js');
+const path = require('path');
+const webpack = require('webpack');
+const moduleConfig = require('./module.config.js');
 
 module.exports = {
   entry: [
@@ -11,7 +11,7 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, '../code/html'),
-    filename: 'app.js'
+    filename: 'App.wpbundle.js'
   },
   module: moduleConfig,
   resolve: {
