@@ -37,7 +37,12 @@ export default class SongList extends PureControllerView {
       );
     });
 
-    const songListClass = 'songlist ' + (this.props.loaded ? 'loaded' : 'loading');
+    const songListClass = classNames({
+      songlist: true,
+      loaded: this.props.loaded,
+      loading: !this.props.loaded,
+      noselect: true
+    });
 
     return (
       <section id="section-songlist">

@@ -42,7 +42,8 @@ export default class BrowserArtists extends PureControllerView {
 
     const className = classNames({
       browser: true,
-      'artists-browser': true
+      'artists-browser': true,
+      noselect: true
     });
 
     return (

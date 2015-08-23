@@ -1,4 +1,5 @@
 import {
+  setPersistentToken,
   attemptLogin,
   authGotResponse
 } from './LoginReducer';
@@ -42,6 +43,8 @@ import {
 export default (reduction, action) => {
   switch (action.type) {
   // Authentication actions
+  case 'AUTH_TOKEN_SET':
+    return setPersistentToken(reduction, action.payload);
   case 'AUTH_LOGIN_ATTEMPTED':
     return attemptLogin(reduction, action.payload);
   case 'AUTH_LOGIN_GOT_RESPONSE':

@@ -1,34 +1,15 @@
 import {
-  MONGO_URL,
-  SERVER_PORT,
-  MUSIC_SCHEMA
+  SERVER_PORT
 } from './config';
 
 import express, { Router as router } from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import mongoose, { Schema } from 'mongoose';
 
-// connect to database
-mongoose.connect(MONGO_URL);
+// Connect to database
+import db from './db';
 
-const db = {};
-
-db.connection = mongoose.connection;
-
-db.connection.on('error', (error) => {
-  console.error('Database connection error:', error);
-});
-
-db.model = {
-  Song: mongoose.model('song', new Schema(MUSIC_SCHEMA)),
-  User: mongoose.model('user', new Schema({
-    username: String,
-    password: String,
-    admin: Boolean
-  }))
-};
-
+// Initiate new Express server instance
 const app = express();
 
 const apiRouter = router();
@@ -43,7 +24,7 @@ app.use(morgan('dev'));
 // default headers
 app.all('/*', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,x-access-token,content-type');
@@ -66,6 +47,6 @@ app.get('/', (req, res) => {
   res.send('Hello! Go to /api');
 });
 
-// Lets start our server
+// Start the Express server
 app.listen(SERVER_PORT);
 console.log('Server listening on: http://localhost:%s', SERVER_PORT);

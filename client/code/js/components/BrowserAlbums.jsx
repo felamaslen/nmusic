@@ -37,7 +37,8 @@ export default class BrowserAlbums extends PureControllerView {
 
     const className = classNames({
       browser: true,
-      'albums-browser': true
+      'albums-browser': true,
+      noselect: true
     });
 
     return (

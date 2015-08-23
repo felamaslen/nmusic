@@ -1,4 +1,5 @@
 import {
+  AUTH_TEST,
   AUTH_AUTHENTICATE,
 
   API_LIST_ARTISTS,
@@ -49,7 +50,11 @@ export default buildEffectHandler({
         Accept: 'application/json'
       }
     }).then(
-      response => dispatcher.dispatch(authGotResponse(response))
+      response => dispatcher.dispatch(authGotResponse({
+        response: response,
+        fromPersistentLogin: false,
+        rememberme: details.rememberme
+      }))
     ).catch(
       error => console.error('Error getting auth information', error)
     );
