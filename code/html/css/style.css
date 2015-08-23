@@ -216,6 +216,26 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   border-radius: 8px;
   margin-left: -8px;
 }
+.volume-indicator {
+  background-image: url(../img/sprite.png);
+  position: absolute;
+  top: 13px;
+  left: 101px;
+  width: 22px;
+  height: 24px;
+}
+.volume-indicator.mute {
+  background-position: -132px -62px;
+}
+.volume-indicator.low {
+  background-position: -155px -62px;
+}
+.volume-indicator.med {
+  background-position: -178px -62px;
+}
+.volume-indicator.high {
+  background-position: -201px -62px;
+}
 
 /* song info */
 .song-info {

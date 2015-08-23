@@ -71,6 +71,9 @@ export default class PlayerUI extends PureControllerView {
       paused: this.props.paused
     });
 
+    const volumeLow = 0.4;
+    const volumeHigh = 0.9;
+
     return (
       <div id="player" className={playerClass}>
         <section className="controls noselect">
@@ -91,6 +94,13 @@ export default class PlayerUI extends PureControllerView {
                 eventHandlers={this.props.eventHandlers}
                 colors={volumeControlColors}
               />
+              <div className={classNames({
+                'volume-indicator': true,
+                mute: !this.props.volume,
+                low: this.props.volume < volumeLow && this.props.volume > 0,
+                med: this.props.volume < volumeHigh && this.props.volume >= volumeLow,
+                high: this.props.volume >= volumeHigh
+              })}/>
             </div>
           </div>
         </section>
