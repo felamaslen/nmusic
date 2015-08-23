@@ -14,3 +14,4 @@ Node-based music player and organiser, written using React.
 ### Usage
 * Start: `npm start`
 * Scan your music directory: `npm run updatedb`
+* The default username and password are **user** and **password** respectively
