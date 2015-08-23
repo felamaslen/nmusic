@@ -110,7 +110,6 @@ export default class App extends Component {
             currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
             volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
             volumeSliderClicked={this.state.reduction.getIn(['appState', 'player', 'volumeSliderClicked'])}
-            mousePosition={this.state.reduction.getIn(['appState', 'mousePosition'])}
             eventHandlers={List.of(
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_volume']),
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_volume'])

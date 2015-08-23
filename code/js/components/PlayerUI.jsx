@@ -88,7 +88,6 @@ export default class PlayerUI extends PureControllerView {
                 clicked={this.props.volumeSliderClicked}
                 changedAction={audioVolumeChange}
                 clickedAction={volumeClicked}
-                mousePosition={this.props.mousePosition}
                 eventHandlers={this.props.eventHandlers}
                 colors={volumeControlColors}
               />
@@ -121,7 +120,6 @@ PlayerUI.propTypes = {
   volumeSliderClicked: PropTypes.number,
   currentTime: PropTypes.number,
   volume: PropTypes.number,
-  mousePosition: PropTypes.instanceOf(List),
   eventHandlers: PropTypes.instanceOf(List),
   currentSong: PropTypes.instanceOf(Map),
   dispatcher: PropTypes.instanceOf(Dispatcher)
