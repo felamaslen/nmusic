@@ -7,7 +7,7 @@ module.exports = {
   debug: true,
   devtool: 'source-map',
   entry: [
-    `webpack-dev-server/client?http://localhost:8081`,
+    'webpack-dev-server/client?http://localhost:8081',
     'webpack/hot/only-dev-server',
     './code/js/index.jsx'
   ],

@@ -1,7 +1,7 @@
 // Connect to the Mongo database
 import {
   MONGO_URL,
-  MUSIC_SCHEMA
+  DB_SCHEMA
 } from './config';
 
 import mongoose, { Schema } from 'mongoose';
@@ -17,12 +17,8 @@ db.connection.on('error', (error) => {
 });
 
 db.model = {
-  Song: mongoose.model('song', new Schema(MUSIC_SCHEMA)),
-  User: mongoose.model('user', new Schema({
-    username: String,
-    password: String,
-    admin: Boolean
-  }))
+  Song: mongoose.model('song', new Schema(DB_SCHEMA.songs)),
+  User: mongoose.model('user', new Schema(DB_SCHEMA.users))
 };
 
 export default db;

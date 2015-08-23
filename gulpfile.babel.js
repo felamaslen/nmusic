@@ -1,15 +1,14 @@
 import WebpackDevServer from 'webpack-dev-server';
 import gulp from 'gulp';
 import webpack from 'webpack';
-import express, { Router as router } from 'express';
+import express from 'express';
 import proxy from 'proxy-middleware';
 import url from 'url';
 
 import config from './webpack/webpack.development.config.js';
 
-import backend from './code/server/server.js';
-
 import { SERVER_PORT } from './code/server/config.js';
+import backend from './code/server/server.js';
 
 gulp.task('dev', () => {
   const app = express();
@@ -31,4 +30,3 @@ gulp.task('dev', () => {
 });
 
 gulp.task('default', ['dev'], () => {});
-
