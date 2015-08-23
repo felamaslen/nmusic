@@ -9,6 +9,8 @@ import config from './webpack/webpack.development.config.js';
 
 import backend from './code/server/server.js';
 
+import { SERVER_PORT } from './code/server/config.js';
+
 gulp.task('dev', () => {
   const app = express();
 
@@ -25,7 +27,7 @@ gulp.task('dev', () => {
   });
 
   frontend.listen(8081, 'localhost', () => {});
-  app.listen(8080);
+  app.listen(SERVER_PORT);
 });
 
 gulp.task('default', ['dev'], () => {});
