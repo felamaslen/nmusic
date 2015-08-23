@@ -2,11 +2,16 @@
 
 import { secondsToTime } from '../common';
 
-import { Map } from 'immutable';
+import { List, Map } from 'immutable';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { Dispatcher } from 'flux';
 
 import PureControllerView from './PureControllerView';
+
+import {
+  volumeClicked
+} from '../actions/PlayerActions';
 
 import {
   ctrlPrevious,
@@ -24,6 +29,15 @@ import {
 //  timeupdate,
   audioVolumeChange,
 } from '../actions/AudioActions';
+
+import CustomSlider from './CustomSlider';
+
+const volumeControlColors = volume =>
+  List.of(
+    16 / 9 * Math.pow(volume - 0.25, 2),
+    Math.pow(Math.E, -2.5 * Math.pow(volume, 2)),
+    volume * Math.sin(3 * volume)
+  );
 
 export default class PlayerUI extends PureControllerView {
   render() {
@@ -58,8 +72,8 @@ export default class PlayerUI extends PureControllerView {
     });
 
     return (
-      <audio-player id="player" className={playerClass}>
-        <section className="controls">
+      <div id="player" className={playerClass}>
+        <section className="controls noselect">
           <button className="ctrl ctrl-previous" ref="ctrlPrevious"
             onClick={this._ctrlPrevious.bind(this)}>Previous</button>
           <button className="ctrl ctrl-playpause" ref="ctrlPlayPause"
@@ -67,34 +81,36 @@ export default class PlayerUI extends PureControllerView {
           <button className="ctrl ctrl-next" ref="ctrlNext"
             onClick={this._ctrlNext.bind(this)}>Next</button>
           <div className="controls-volume">
-            <input className="ctrl-volume" ref="ctrlVolume" type="range"
-              min="0" max="1" step="0.001"
-              value={this.props.volume} onChange={this._ctrlVolume.bind(this)}/>
+            <div className="ctrl-volume">
+              <CustomSlider dispatcher={this.props.dispatcher}
+                name="volume"
+                min={0} max={1} value={this.props.volume}
+                clicked={this.props.volumeSliderClicked}
+                changedAction={audioVolumeChange}
+                clickedAction={volumeClicked}
+                mousePosition={this.props.mousePosition}
+                eventHandlers={this.props.eventHandlers}
+                colors={volumeControlColors}
+              />
+            </div>
           </div>
         </section>
         <section className={songInfoClass}>
           {currentSongInfo}
         </section>
-      </audio-player>
+      </div>
     );
-  }
-
-  _ctrlVolume(ev) {
-    this.dispatchAction(audioVolumeChange(ev.target.value));
   }
 
   _ctrlPrevious() {
     this.dispatchAction(ctrlPrevious());
   }
-
   _ctrlNext() {
     this.dispatchAction(ctrlNext());
   }
-
   _ctrlPlayPause() {
     this.dispatchAction(togglePause(!this.props.paused));
   }
-
   _seek(ev) {
     this.dispatchAction(ctrlSeek(ev.target.value));
   }
@@ -102,8 +118,12 @@ export default class PlayerUI extends PureControllerView {
 
 PlayerUI.propTypes = {
   paused: PropTypes.bool,
+  volumeSliderClicked: PropTypes.number,
   currentTime: PropTypes.number,
   volume: PropTypes.number,
-  currentSong: PropTypes.instanceOf(Map)
+  mousePosition: PropTypes.instanceOf(List),
+  eventHandlers: PropTypes.instanceOf(List),
+  currentSong: PropTypes.instanceOf(Map),
+  dispatcher: PropTypes.instanceOf(Dispatcher)
 };
 

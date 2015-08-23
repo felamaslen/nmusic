@@ -5,7 +5,8 @@ import {
 } from './LoginReducer';
 
 import {
-  hideSpinner
+  hideSpinner,
+  storeEventHandler
 } from './AppReducer';
 
 import {
@@ -33,7 +34,8 @@ import {
   togglePause,
   ctrlPrevious,
   ctrlNext,
-  ctrlSeek
+  ctrlSeek,
+  volumeClicked
 } from './PlayerReducer';
 
 import {
@@ -53,6 +55,9 @@ export default (reduction, action) => {
   // App actions
   case 'APP_SPINNER_HIDDEN':
     return hideSpinner(reduction);
+  case 'APP_EVENT_HANDLER_STORED':
+    // store all bound events which might need to be de-bound in the appState
+    return storeEventHandler(reduction, action.payload);
 
   // Audio actions
   case 'AUDIO_STREAM_CANPLAY':
@@ -95,6 +100,8 @@ export default (reduction, action) => {
     return ctrlPrevious(reduction, action.payload);
   case 'PLAYER_CTRL_NEXT_CLICKED':
     return ctrlNext(reduction, action.payload);
+  case 'PLAYER_CTRL_VOLUME_CLICKED':
+    return volumeClicked(reduction, action.payload);
 
   // SongList actions
   case 'LIST_REQUESTED_FROM_BROWSER':

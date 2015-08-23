@@ -103,12 +103,18 @@ export default class App extends Component {
           volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
           token={this.state.reduction.getIn(['appState', 'auth', 'token'])}
         />
-        <section id="section-meta">
+        <section id="section-meta" className="noselect">
           <PlayerUI dispatcher={this.state.dispatcher}
             currentSong={currentSong}
             paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
             currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
             volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
+            volumeSliderClicked={this.state.reduction.getIn(['appState', 'player', 'volumeSliderClicked'])}
+            mousePosition={this.state.reduction.getIn(['appState', 'mousePosition'])}
+            eventHandlers={List.of(
+              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_volume']),
+              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_volume'])
+            )}
           />
         </section>
         <section id="section-browsers">
