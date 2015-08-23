@@ -42,15 +42,12 @@ export default class PlayerUI extends PureControllerView {
     const seekbarColors = () =>
       List.of(0.3, 0.3, 0.3);
 
-    const currentSongInfo = this.props.currentSong === null ? (
-      <div className="songinfo-inside">
-      </div>
-    ) : (
-      <div className="songinfo-inside">
-        <info-title>{this.props.currentSong.get('title')}</info-title>
-        <info-artist>{this.props.currentSong.get('artist')}</info-artist>
+    const currentSongInfo = this.props.currentSong ? (
+      <div>
+        <span className="info-title">{this.props.currentSong.get('title')}</span>
+        <span className="info-artist">{this.props.currentSong.get('artist')}</span>
         <div className="seekbar">
-          <current-time>{secondsToTime(this.props.currentTime)}</current-time>
+          <div className="current-time">{secondsToTime(this.props.currentTime)}</div>
           <CustomSlider dispatcher={this.props.dispatcher}
             name="seekbar"
             min={0} max={this.props.currentSong.get('time')}
@@ -61,10 +58,10 @@ export default class PlayerUI extends PureControllerView {
             colors={seekbarColors}
             drag={false}
           />
-          <total-time>{secondsToTime(this.props.currentSong.get('time'))}</total-time>
+          <div className="total-time">{secondsToTime(this.props.currentSong.get('time'))}</div>
         </div>
       </div>
-    );
+    ) : false;
 
     const songInfoClass = classNames({
       'no-info': this.props.currentSong === null,
@@ -109,7 +106,10 @@ export default class PlayerUI extends PureControllerView {
           </div>
         </section>
         <section className={songInfoClass}>
-          {currentSongInfo}
+          <div className="songinfo-inside">
+            <div className="glow"></div>
+            {currentSongInfo}
+          </div>
         </section>
       </div>
     );

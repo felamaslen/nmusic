@@ -52,7 +52,6 @@ export default class CustomSlider extends PureControllerView {
         )
       );
    
-      console.debug('new value', newValue);
       this.dispatchAction(this.props.changedAction(newValue));
     });
   }
