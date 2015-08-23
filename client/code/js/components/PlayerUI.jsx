@@ -4,6 +4,7 @@ import { secondsToTime } from '../common';
 
 import { Map } from 'immutable';
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import PureControllerView from './PureControllerView';
 
@@ -45,21 +46,26 @@ export default class PlayerUI extends PureControllerView {
       </song-info>
     );
 
+    const playerClass = classNames({
+      player: true,
+      paused: this.props.paused
+    });
+
     return (
-      <player>
-        <controls>
-          <control className="ctrl-previous" ref="ctrlPrevious"
-            onClick={this._ctrlPrevious.bind(this)}>Previous</control>
-          <control className="ctrl-next" ref="ctrlPlayPause"
-            onClick={this._ctrlPlayPause.bind(this)}>{playPauseText}</control>
-          <control className="ctrl-next" ref="ctrlNext"
-            onClick={this._ctrlNext.bind(this)}>Next</control>
+      <audio-player id="player" className={playerClass}>
+        <section className="controls">
+          <button className="ctrl ctrl-previous" ref="ctrlPrevious"
+            onClick={this._ctrlPrevious.bind(this)}>Previous</button>
+          <button className="ctrl ctrl-playpause" ref="ctrlPlayPause"
+            onClick={this._ctrlPlayPause.bind(this)}>{playPauseText}</button>
+          <button className="ctrl ctrl-next" ref="ctrlNext"
+            onClick={this._ctrlNext.bind(this)}>Next</button>
           <input className="ctrl-volume" ref="ctrlVolume" type="range"
             min="0" max="1" step="0.001"
             value={this.props.volume} onChange={this._ctrlVolume.bind(this)}/>
-        </controls>
+        </section>
         {currentSong}
-      </player>
+      </audio-player>
     );
   }
 

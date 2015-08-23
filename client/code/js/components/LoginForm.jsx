@@ -44,16 +44,19 @@ export default class LoginForm extends PureControllerView {
     return this.props.status ? (
       <section id="loginArea">
         {statusBlock}
-        <input className="input-username" ref="username" placeholder="Username"/>
-        <input className="input-password" ref="password" placeholder="Password" type="password"/>
-        <button className="button-login" onClick={this._attemptLogin.bind(this)}>
-          Login
-        </button>
+        <form onSubmit={this._attemptLogin.bind(this)}>
+          <input className="input-username" ref="username" placeholder="Username"/>
+          <input className="input-password" ref="password" placeholder="Password" type="password"/>
+          <input className="button-login" type="submit" value="Login"/>
+        </form>
       </section>
     ) : false;
   }
 
-  _attemptLogin() {
+  _attemptLogin(ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+
     this.dispatchAction(attemptLogin({
       username: this.refs.username.getDOMNode().value,
       password: this.refs.password.getDOMNode().value

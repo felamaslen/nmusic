@@ -7,6 +7,7 @@ import {
 
 import { Map as map } from 'immutable';
 import axios from 'axios';
+import querystring from 'querystring';
 
 import {
   authGotResponse
@@ -64,9 +65,12 @@ export default buildEffectHandler({
 
     const queryString = encodeURI(params.map(item => encodeURIComponent(item))
       .reduce((r, s) => r + '/' + s)
-    ) + (!!query.artistChanged ? '?artistChanged=true' : '');
+    ) + '?' + querystring.stringify({
+      artistChanged: !!query.artistChanged ? 'true' : 'false',
+      token: query.token
+    });
 
-    axios.get(API_LIST_SONGS_FROM_BROWSER + queryString + '&token=' + query.token)
+    axios.get(API_LIST_SONGS_FROM_BROWSER + queryString)
     .then(
       response => dispatcher.dispatch(insertBrowserResults(response))
     ).catch(
