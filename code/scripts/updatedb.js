@@ -2,18 +2,17 @@
  * 2015, Fela Maslen
  */
 
-import { formatTime } from './common';
+import { formatTime } from '../server/common';
 import {
   FORMATS,
   MONGO_URL,
-  MUSIC_SCHEMA,
+  DB_SCHEMA,
   MUSIC_DIR
-} from './config';
+} from '../server/config';
 
 import mm from 'musicmetadata';
 import fs from 'fs';
 
-// connect to database
 import mongoose, { Schema } from 'mongoose';
 
 const db = mongoose.connection;
@@ -39,8 +38,6 @@ const basename = filename => {
 const logProcess = (msg) => {
   console.log('[' + formatTime() + ']', msg);
 };
-
-const getFilenames = item => { return item.filename; };
 
 const inArray = (needle, haystack) => {
   for (const key in haystack) {
@@ -71,25 +68,23 @@ const arrayDiffSubkey = (array1, array2, subkey) => {
   return diff;
 };
 
-const addDirRecursive = (dir, badFiles) => {
+const addDirRecursive = dir => {
   const _files = fs.readdirSync(dir);
   const files = [];
 
   _files.forEach(file => {
     const path = dir + '/' + file;
 
-    if (!inArray(path, badFiles)) {
-      if (fs.lstatSync(path).isDirectory()) {
-        const files_ = addDirRecursive(path, badFiles);
-        files_.forEach(obj => {
-          files.push(obj);
-        });
-      } else {
-        const extension = path.substring(path.lastIndexOf('.') + 1);
+    if (fs.lstatSync(path).isDirectory()) {
+      const files_ = addDirRecursive(path);
+      files_.forEach(obj => {
+        files.push(obj);
+      });
+    } else {
+      const extension = path.substring(path.lastIndexOf('.') + 1);
 
-        if (inArray(extension, FORMATS)) {
-          files.push({ filename: path });
-        }
+      if (inArray(extension, FORMATS)) {
+        files.push({ filename: path });
       }
     }
   });
@@ -97,26 +92,14 @@ const addDirRecursive = (dir, badFiles) => {
   return files;
 };
 
-const schema = {
-  counters: new Schema({ _id: String, seq: Number }),
-
-  badFiles: new Schema({
-    filename: String
-  }),
-
-  songs: new Schema(MUSIC_SCHEMA)
-};
-
-const BadFile = mongoose.model('badfile', schema.badFiles);
-
-const Song = mongoose.model('song', schema.songs);
+const Song = mongoose.model('song', new Schema(DB_SCHEMA.songs));
 
 // handle counters
 const findAndModify = (scope, query, sort, doc, options, callback) => {
   scope.collection.findAndModify(query, sort, doc, options, callback);
 };
 
-const Counter = mongoose.model('counter', schema.counters);
+const Counter = mongoose.model('counter', new Schema(DB_SCHEMA.counters));
 
 const getID = (name, callback) => {
   findAndModify(
@@ -200,56 +183,46 @@ const removeExtraneous = (extraneous, callback) => {
 };
 
 const _onDBOpen = () => {
-  logProcess('Finding bad files...');
-  BadFile.find({}, (err1, badFiles) => {
-    if (err1) {
-      throw err1;
+  // find all files in the filesystem
+  logProcess('Recursing through ' + MUSIC_DIR + '...');
+  const files = addDirRecursive(MUSIC_DIR);
+  execTime('Scan music directory (' + files.length + ' files)');
+
+  // find all entries in the DB
+  logProcess('Looking through database...');
+  Song.find({}, { filename: true }, (err2, dbFiles) => {
+    if (err2) {
+      throw err2;
     }
-    execTime('Fetch bad files cache');
+    execTime('Fetch all songs from DB (' + dbFiles.length + ' items)');
 
-    const _badFiles = badFiles.map(getFilenames);
+    // things in the filesystem not in DB
+    logProcess('Calculating missing files...');
+    const missingFiles = arrayDiffSubkey(files, dbFiles, 'filename');
+    execTime('Find missing files (' + missingFiles.length + ' items)');
 
-    // find all files in the filesystem
-    logProcess('Recursing through ' + MUSIC_DIR + '...');
-    const files = addDirRecursive(MUSIC_DIR, _badFiles);
-    execTime('Scan music directory (' + files.length + ' files)');
+    // things in DB which no longer exist in filesystem
+    logProcess('Calculating extraneous db entries...');
+    const extraneous = arrayDiffSubkey(dbFiles, files, 'filename');
+    execTime('Find extraneous db entries (' + extraneous.length + ' items)');
 
-    // find all entries in the DB
-    logProcess('Looking through database...');
-    Song.find({}, { filename: true }, (err2, dbFiles) => {
-      if (err2) {
-        throw err2;
-      }
-      execTime('Fetch all songs from DB (' + dbFiles.length + ' items)');
+    logProcess('Removing extraneous db entries...');
+    removeExtraneous(extraneous, () => {
+      execTime('Remove extraneous db entries');
 
-      // things in the filesystem not in DB
-      logProcess('Calculating missing files...');
-      const missingFiles = arrayDiffSubkey(files, dbFiles, 'filename');
-      execTime('Find missing files (' + missingFiles.length + ' items)');
+      logProcess('Processing missing files...');
+      addMissing(missingFiles, missingFiles.length, () => {
+        execTime('Process missing files');
 
-      // things in DB which no longer exist in filesystem
-      logProcess('Calculating extraneous db entries...');
-      const extraneous = arrayDiffSubkey(dbFiles, files, 'filename');
-      execTime('Find extraneous db entries (' + extraneous.length + ' items)');
-
-      logProcess('Removing extraneous db entries...');
-      removeExtraneous(extraneous, () => {
-        execTime('Remove extraneous db entries');
-
-        logProcess('Processing missing files...');
-        addMissing(missingFiles, missingFiles.length, () => {
-          execTime('Process missing files');
-
-          // show execution times for each process, at the end of the script
-          execTime('Total', true);
-          console.log('Exec times:');
-          execTimes.forEach(time => {
-            console.log(time[1][0], time[1][1]);
-          });
-
-          console.log('Successfully updated the music database.');
-          mongoose.disconnect();
+        // show execution times for each process, at the end of the script
+        execTime('Total', true);
+        console.log('Exec times:');
+        execTimes.forEach(time => {
+          console.log(time[1][0], time[1][1]);
         });
+
+        console.log('Successfully updated the music database.');
+        mongoose.disconnect();
       });
     });
   });

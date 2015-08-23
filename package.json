@@ -18,7 +18,8 @@
     "postinstall": "./node_modules/.bin/webpack --config=webpack/webpack.staging.config.js",
     "test": "./node_modules/.bin/karma start --single-run",
     "lint": "./node_modules/.bin/eslint ./code/js ./code/server",
-    "updatedb": "./node_modules/.bin/babel-node ./code/server/updatedb.js"
+    "dropdb": "./node_modules/.bin/babel-node ./code/scripts/dropdb.js",
+    "updatedb": "./node_modules/.bin/babel-node ./code/scripts/updatedb.js"
   },
   "dependencies": {
     "axios": "^0.5.4",
