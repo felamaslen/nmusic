@@ -1,5 +1,5 @@
 import {
-  SERVER_PORT,
+  SERVER_PORT
 } from './config';
 
 import express, { Router as router } from 'express';

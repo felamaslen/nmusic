@@ -1,4 +1,5 @@
 import {
+  AUTH_TEST,
   AUTH_AUTHENTICATE,
 
   API_LIST_ARTISTS,
@@ -27,6 +28,19 @@ const buildEffectHandler = handlers => {
 };
 
 export default buildEffectHandler({
+  AUTHTEST_API_CALL: (token, dispatcher) => {
+    axios.get(AUTH_TEST + '?' + querystring.stringify({
+      token: token
+    })).then(
+      response => dispatcher.dispatch(authGotResponse({
+        response: response,
+        fromPersistentLogin: true
+      }))
+    ).catch(
+      error => console.error('Error getting auth test information', error)
+    );
+  },
+
   AUTHENTICATE_API_CALL: (details, dispatcher) => {
     axios.post(AUTH_AUTHENTICATE, {
       username: details.username,
@@ -36,14 +50,20 @@ export default buildEffectHandler({
         Accept: 'application/json'
       }
     }).then(
-      response => dispatcher.dispatch(authGotResponse(response))
+      response => dispatcher.dispatch(authGotResponse({
+        response: response,
+        fromPersistentLogin: false,
+        rememberme: details.rememberme
+      }))
     ).catch(
       error => console.error('Error getting auth information', error)
     );
   },
 
   BROWSER_ARTISTS_API_CALL: (token, dispatcher) => {
-    axios.get(API_LIST_ARTISTS + '?token=' + token).then(
+    axios.get(API_LIST_ARTISTS + '?' + querystring.stringify({
+      token: token
+    })).then(
       response => dispatcher.dispatch(gotListArtists(response))
     ).catch(
       () => dispatcher.dispatch(gotListArtists(null))

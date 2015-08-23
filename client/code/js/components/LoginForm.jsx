@@ -2,17 +2,28 @@
 
 import { } from 'immutable';
 import React, { PropTypes } from 'react';
+import Cookies from 'js-cookie';
 
 import PureControllerView from './PureControllerView';
 
 import {
-  attemptLogin
+  attemptLogin,
+  setPersistentToken
 } from '../actions/LoginActions';
 
 export default class LoginForm extends PureControllerView {
+  componentWillMount() {
+    // persistent login
+    const tokenCookie = Cookies.get('token');
+    if (!!tokenCookie) {
+      this.dispatchAction(setPersistentToken(tokenCookie));
+    }
+  }
+
   render() {
     let statusMessage;
     let statusType;
+    let renderForm = true;
 
     switch (this.props.status) {
     case 0:
@@ -31,6 +42,11 @@ export default class LoginForm extends PureControllerView {
       statusMessage = 'Loading...';
       statusType = 'loading';
       break;
+    case 3.1:
+      statusMessage = 'Authenticating using stored session...';
+      statusType = 'loading-fromstored';
+      renderForm = false;
+      break;
     case 4:
     default:
       statusMessage = 'Unknown error';
@@ -41,14 +57,19 @@ export default class LoginForm extends PureControllerView {
       <span className={statusType}>{statusMessage}</span>
     );
 
+    const form = renderForm ? (
+      <form onSubmit={this._attemptLogin.bind(this)}>
+        <input className="input-username" ref="username" placeholder="Username"/>
+        <input className="input-password" ref="password" placeholder="Password" type="password"/>
+        <input className="button-login" type="submit" value="Login"/>
+        <input className="rememberme" ref="rememberme" type="checkbox"/>Remember me
+      </form>
+    ) : false;
+
     return this.props.status ? (
       <section id="loginArea">
         {statusBlock}
-        <form onSubmit={this._attemptLogin.bind(this)}>
-          <input className="input-username" ref="username" placeholder="Username"/>
-          <input className="input-password" ref="password" placeholder="Password" type="password"/>
-          <input className="button-login" type="submit" value="Login"/>
-        </form>
+        {form}
       </section>
     ) : false;
   }
@@ -59,7 +80,8 @@ export default class LoginForm extends PureControllerView {
 
     this.dispatchAction(attemptLogin({
       username: this.refs.username.getDOMNode().value,
-      password: this.refs.password.getDOMNode().value
+      password: this.refs.password.getDOMNode().value,
+      rememberme: this.refs.rememberme.getDOMNode().checked
     }));
   }
 }
