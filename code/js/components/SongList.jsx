@@ -2,7 +2,11 @@
  * dispays list of songs (e.g. from search results)
  */
 
-import { itemInRanges, secondsToTime } from '../common';
+import {
+  itemInRanges,
+  secondsToTime,
+  trackFormat
+} from '../common';
 
 import React, { PropTypes } from 'react';
 import { List } from 'immutable';
@@ -26,7 +30,7 @@ export default class SongList extends PureControllerView {
           onMouseDown={this._selectSong.bind(this, index)}
           onDoubleClick={this._playListItem.bind(this, index)}
         >
-          <song-track>{song.get('track')}</song-track>
+          <song-track>{trackFormat(song.get('track'))}</song-track>
           <song-title>{song.get('title')}</song-title>
           <song-time>{secondsToTime(song.get('time'))}</song-time>
           <song-artist>{song.get('artist')}</song-artist>

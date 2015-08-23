@@ -22,6 +22,8 @@ export const _warnBeforeNavigation = warn => {
   return true;
 };
 
+export const trackFormat = track => track < 10 ? '0' + track.toString() : track.toString();
+
 export const secondsToTime = _seconds => {
   const days = Math.floor(_seconds / 86400);
   const hours = Math.floor((_seconds % 86400) / 3600);
