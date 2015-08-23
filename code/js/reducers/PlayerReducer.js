@@ -2,9 +2,6 @@ import { PREVIOUS_SONG_DELAY } from '../config';
 
 import { _warnBeforeNavigation } from '../common';
 
-export const volumeClicked = (reduction, clickPosition) =>
-  reduction.setIn(['appState', 'player', 'volumeSliderClicked'], clickPosition);
-
 export const addToQueue = (reduction, options) => {
   const playAfter = !!options.playAfter;
 

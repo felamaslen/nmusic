@@ -243,7 +243,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   margin: 0 auto;
   padding: 3px 0 4px 0;
 }
-.song-info .inside {
+.songinfo-inside {
   position: relative;
   width: 100%;
   height: 57px;
@@ -251,6 +251,42 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   border-radius: 5px;
   box-shadow: inset 0 0 14px rgba(100,100,100,.5),inset 0 2px 3px 1px rgba(30,30,30,.4),0 1px 1px #eee;
 }
+/* seek bar */
+.seekbar .slider {
+  width: 84px;
+  height: 10px;
+  background-image: linear-gradient(135deg,rgba(255,255,255,.2) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.2) 75%,transparent 75%,transparent);
+  background-color: #afafaf;
+  background-size: 10px 10px;
+  position: absolute;
+  left: 5px;
+  top: 19px;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 1px #333;
+}
+.seekbar .slider .inside {
+  position: relative;
+  width: 50%;
+  height: 10px;
+  left: 0;
+  border-radius: 5px;
+  background-size: 10px 10px;
+}
+.seekbar .slider-ctrl {
+  width: 16px;
+  height: 16px;
+  top: -3px;
+  left: 100%;
+  position: absolute;
+  z-index: 50;
+  background: #ccc;
+  background: -webkit-radial-gradient(50% 0,8% 50%,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 100%),-webkit-radial-gradient(50% 100%,12% 50%,rgba(255,255,255,.6) 0,rgba(255,255,255,0) 100%),-webkit-radial-gradient(0% 50%,50% 7%,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 100%),-webkit-radial-gradient(100% 50%,50% 5%,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 100%),-webkit-repeating-radial-gradient(50% 50%,100% 100%,rgba(255,255,255,0) 0,rgba(0,0,0,0) 3%,rgba(0,0,0,.1) 3.5%),-webkit-repeating-radial-gradient(50% 50%,100% 100%,rgba(255,255,255,0) 0,rgba(255,255,255,0) 6%,rgba(255,255,255,.1) 7.5%),-webkit-repeating-radial-gradient(50% 50%,100% 100%,rgba(255,255,255,0) 0,rgba(255,255,255,0) 1.2%,rgba(255,255,255,.2) 2.2%),-webkit-radial-gradient(50% 50%,200% 50%,rgba(230,230,230,1) 5%,rgba(217,217,217,1) 30%,rgba(153,153,153,1) 100%);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.7),inset 0 0 1px 0 #eee,0 0 1px #666;
+  border-radius: 8px;
+  margin-left: -8px;
+}
+
 
 /** Song list */
 .songlist, .browser {

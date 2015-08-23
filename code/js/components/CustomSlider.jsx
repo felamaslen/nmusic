@@ -3,7 +3,10 @@
 import { List } from 'immutable';
 import React, { PropTypes } from 'react';
 
-import { storeEventHandler } from '../actions/AppActions';
+import {
+  storeEventHandler,
+  customSliderClicked
+} from '../actions/AppActions';
 
 import PureControllerView from './PureControllerView';
 
@@ -11,23 +14,46 @@ const getOffset = element => element.getBoundingClientRect();
 
 export default class CustomSlider extends PureControllerView {
   componentWillMount() {
-    this.dispatchNext(storeEventHandler({
-      name: 'CustomSliderMouseup_' + this.props.name,
-      func: this._mouseup.bind(this)
-    }));
-    
-    this.dispatchNext(storeEventHandler({
-      name: 'CustomSliderMousemove_' + this.props.name,
-      func: this._mousemove.bind(this)
-    }));
+    if (this.props.drag) {
+      this.dispatchNext(storeEventHandler({
+        name: 'CustomSliderMouseup_' + this.props.name,
+        func: this._mouseup.bind(this)
+      }));
+      
+      this.dispatchNext(storeEventHandler({
+        name: 'CustomSliderMousemove_' + this.props.name,
+        func: this._mousemove.bind(this)
+      }));
+    }
   }
 
   componentDidMount() {
     this.refs.btn.getDOMNode().addEventListener('mousedown', ev => {
       ev.stopPropagation();
-      const offset = getOffset(this.refs.btn.getDOMNode()).left;
+      if (this.props.drag) {
+        const offset = getOffset(this.refs.btn.getDOMNode()).left;
 
-      this.dispatchAction(this.props.clickedAction(ev.clientX - offset));
+        this.dispatchAction(customSliderClicked({
+          name: this.props.name,
+          clickPosition: ev.clientX - offset
+        }));
+      }
+    });
+
+    const sliderMeasure = this._sliderMeasure();
+
+    this.refs.slider.getDOMNode().addEventListener('mousedown', ev => {
+      const position = ev.clientX - sliderMeasure.left;
+
+      const newValue = Math.min(
+        this.props.max, Math.max(
+          this.props.min,
+          this.props.min + (this.props.max - this.props.min) * position / sliderMeasure.width
+        )
+      );
+   
+      console.debug('new value', newValue);
+      this.dispatchAction(this.props.changedAction(newValue));
     });
   }
 
@@ -67,27 +93,36 @@ export default class CustomSlider extends PureControllerView {
     );
   }
 
-  _mousemove(ev) {
+  _sliderMeasure() {
     const slider = this.refs.slider.getDOMNode();
 
     // work out the offset of the control element
     const bounds = getOffset(slider);
-    const sliderOffset = bounds.left;
-    const sliderWidth = bounds.width;
 
-    const position = ev.clientX - sliderOffset - this.props.clicked + 8;
+    return { left: bounds.left, width: bounds.width };
+  }
 
-    const newValue = Math.min(1, Math.max(0, position / sliderWidth));
+  _mousemove(ev) {
+    const sliderMeasure = this._sliderMeasure();
+    const position = ev.clientX - sliderMeasure.left - this.props.clicked + 8;
+
+    const newValue = Math.min(this.props.max, Math.max(
+      this.props.min, position / sliderMeasure.width)
+    );
 
     this.dispatchAction(this.props.changedAction(newValue));
   }
 
   _mouseup() {
-    this.dispatchAction(this.props.clickedAction(-1));
+    this.dispatchAction(customSliderClicked({
+      name: this.props.name,
+      clickPosition: -1
+    }));
   }
 }
 
 CustomSlider.propTypes = {
+  drag: PropTypes.bool,
   clicked: PropTypes.number,
   min: PropTypes.number,
   max: PropTypes.number,
@@ -98,3 +133,8 @@ CustomSlider.propTypes = {
   clickedAction: PropTypes.func,
   eventHandlers: PropTypes.instanceOf(List)
 };
+
+CustomSlider.defaultProps = {
+  drag: true
+};
+

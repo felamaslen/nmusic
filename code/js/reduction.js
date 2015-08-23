@@ -14,6 +14,10 @@ export default new Record({
     loadedOnLastRender: false,
     warnBeforeNavigation: false,
     eventHandlers: {},
+    customSlider: {
+      volumeClicked: -1,
+      seekbarClicked: -1
+    },
     player: {
       queue: [],
       queueId: -1,
@@ -22,8 +26,7 @@ export default new Record({
       paused: true,
       volume: 0.7,
       currentTime: 0,
-      setTime: -1,
-      volumeSliderClicked: -1 // when clicked, this becomes the position of the click
+      setTime: -1
     },
     songList: {
       list: [],

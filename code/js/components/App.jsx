@@ -109,10 +109,15 @@ export default class App extends Component {
             paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
             currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
             volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
-            volumeSliderClicked={this.state.reduction.getIn(['appState', 'player', 'volumeSliderClicked'])}
-            eventHandlers={List.of(
+            volumeClicked={this.state.reduction.getIn(['appState', 'customSlider', 'volumeClicked'])}
+            seekbarClicked={this.state.reduction.getIn(['appState', 'customSlider', 'seekbarClicked'])}
+            volumeControlEvents={List.of(
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_volume']),
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_volume'])
+            )}
+            seekbarEvents={List.of(
+              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_seekbar']),
+              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_seekbar'])
             )}
           />
         </section>

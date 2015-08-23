@@ -56,7 +56,7 @@ export default class PlayerEngine extends PureControllerView {
 
     if (nextProps.setTime > -1) {
       audioElem.currentTime = nextProps.setTime;
-      this.dispatchAction(ctrlSeek(-1));
+      this.dispatchNext(ctrlSeek(-1));
     }
 
     const trackChanged =

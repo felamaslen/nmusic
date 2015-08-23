@@ -10,10 +10,6 @@ import { Dispatcher } from 'flux';
 import PureControllerView from './PureControllerView';
 
 import {
-  volumeClicked
-} from '../actions/PlayerActions';
-
-import {
   ctrlPrevious,
   ctrlNext,
   togglePause,
@@ -43,21 +39,30 @@ export default class PlayerUI extends PureControllerView {
   render() {
     const playPauseText = this.props.paused ? 'Play' : 'Pause';
 
+    const seekbarColors = () =>
+      List.of(0.3, 0.3, 0.3);
+
     const currentSongInfo = this.props.currentSong === null ? (
-      <div className="inside">
+      <div className="songinfo-inside">
       </div>
     ) : (
-      <div className="inside">
+      <div className="songinfo-inside">
         <info-title>{this.props.currentSong.get('title')}</info-title>
         <info-artist>{this.props.currentSong.get('artist')}</info-artist>
-        <seekbar>
+        <div className="seekbar">
           <current-time>{secondsToTime(this.props.currentTime)}</current-time>
-          <input id="seekbar" className="ctrl-seekbar" ref="ctrlSeekbar" type="range"
-            min="0" max={this.props.currentSong.get('time')} value={this.props.currentTime}
-            onChange={this._seek.bind(this)}
+          <CustomSlider dispatcher={this.props.dispatcher}
+            name="seekbar"
+            min={0} max={this.props.currentSong.get('time')}
+            value={this.props.currentTime}
+            clicked={this.props.seekbarClicked}
+            changedAction={ctrlSeek}
+            eventHandlers={this.props.seekbarEvents}
+            colors={seekbarColors}
+            drag={false}
           />
           <total-time>{secondsToTime(this.props.currentSong.get('time'))}</total-time>
-        </seekbar>
+        </div>
       </div>
     );
 
@@ -88,10 +93,9 @@ export default class PlayerUI extends PureControllerView {
               <CustomSlider dispatcher={this.props.dispatcher}
                 name="volume"
                 min={0} max={1} value={this.props.volume}
-                clicked={this.props.volumeSliderClicked}
+                clicked={this.props.volumeClicked}
                 changedAction={audioVolumeChange}
-                clickedAction={volumeClicked}
-                eventHandlers={this.props.eventHandlers}
+                eventHandlers={this.props.volumeControlEvents}
                 colors={volumeControlColors}
               />
               <div className={classNames({
@@ -120,17 +124,16 @@ export default class PlayerUI extends PureControllerView {
   _ctrlPlayPause() {
     this.dispatchAction(togglePause(!this.props.paused));
   }
-  _seek(ev) {
-    this.dispatchAction(ctrlSeek(ev.target.value));
-  }
 }
 
 PlayerUI.propTypes = {
   paused: PropTypes.bool,
-  volumeSliderClicked: PropTypes.number,
+  volumeClicked: PropTypes.number,
+  seekbarClicked: PropTypes.number,
   currentTime: PropTypes.number,
   volume: PropTypes.number,
-  eventHandlers: PropTypes.instanceOf(List),
+  seekbarEvents: PropTypes.instanceOf(List),
+  volumeControlEvents: PropTypes.instanceOf(List),
   currentSong: PropTypes.instanceOf(Map),
   dispatcher: PropTypes.instanceOf(Dispatcher)
 };
