@@ -29,10 +29,11 @@ export default class PlayerUI extends PureControllerView {
   render() {
     const playPauseText = this.props.paused ? 'Play' : 'Pause';
 
-    const currentSong = this.props.currentSong === null ? (
-      <song-info className="no-info"></song-info>
+    const currentSongInfo = this.props.currentSong === null ? (
+      <div className="inside">
+      </div>
     ) : (
-      <song-info>
+      <div className="inside">
         <info-title>{this.props.currentSong.get('title')}</info-title>
         <info-artist>{this.props.currentSong.get('artist')}</info-artist>
         <seekbar>
@@ -43,8 +44,13 @@ export default class PlayerUI extends PureControllerView {
           />
           <total-time>{secondsToTime(this.props.currentSong.get('time'))}</total-time>
         </seekbar>
-      </song-info>
+      </div>
     );
+
+    const songInfoClass = classNames({
+      'no-info': this.props.currentSong === null,
+      'song-info': true
+    });
 
     const playerClass = classNames({
       player: true,
@@ -54,21 +60,21 @@ export default class PlayerUI extends PureControllerView {
     return (
       <audio-player id="player" className={playerClass}>
         <section className="controls">
-          <div className="controls-player-btns">
-            <button className="ctrl ctrl-previous" ref="ctrlPrevious"
-              onClick={this._ctrlPrevious.bind(this)}>Previous</button>
-            <button className="ctrl ctrl-playpause" ref="ctrlPlayPause"
-              onClick={this._ctrlPlayPause.bind(this)}>{playPauseText}</button>
-            <button className="ctrl ctrl-next" ref="ctrlNext"
-              onClick={this._ctrlNext.bind(this)}>Next</button>
-          </div>
+          <button className="ctrl ctrl-previous" ref="ctrlPrevious"
+            onClick={this._ctrlPrevious.bind(this)}>Previous</button>
+          <button className="ctrl ctrl-playpause" ref="ctrlPlayPause"
+            onClick={this._ctrlPlayPause.bind(this)}>{playPauseText}</button>
+          <button className="ctrl ctrl-next" ref="ctrlNext"
+            onClick={this._ctrlNext.bind(this)}>Next</button>
           <div className="controls-volume">
             <input className="ctrl-volume" ref="ctrlVolume" type="range"
               min="0" max="1" step="0.001"
               value={this.props.volume} onChange={this._ctrlVolume.bind(this)}/>
           </div>
         </section>
-        {currentSong}
+        <section className={songInfoClass}>
+          {currentSongInfo}
+        </section>
       </audio-player>
     );
   }
