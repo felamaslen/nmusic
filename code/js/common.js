@@ -4,10 +4,11 @@ import { List } from 'immutable';
 
 import {
   NAVIGATION_WARNING_MESSAGE,
-  DOCUMENT_TITLE
+  DOCUMENT_TITLE,
+  TIME_DISPLAY_NOTIFICATIONS
 } from './config';
 
-export const getDocumentTitle = (song, paused) => {
+export const getDocumentTitle = (canNotify, song, paused) => {
   const haveTitle = !!song && !!song.get('title');
   const haveArtist = haveTitle && !!song.get('artist');
 
@@ -25,7 +26,26 @@ export const getDocumentTitle = (song, paused) => {
     newTitle += ' - ';
   }
 
-  return newTitle + DOCUMENT_TITLE;
+  newTitle = newTitle + DOCUMENT_TITLE;
+
+  if (canNotify) {
+    const artistText = haveArtist ? ' - ' + song.get('artist') : '';
+
+    const title = 'nmusic' + (haveTitle ? ': ' + song.get('title') + artistText : '');
+
+    const body = paused ? 'Paused' : 'Playing';
+
+    const icon = 'img/app.png';
+
+    const notification = new Notification(title, {
+      body: body,
+      icon: icon
+    });
+
+    window.setTimeout(() => notification.close(), 1000 * TIME_DISPLAY_NOTIFICATIONS);
+  }
+
+  return newTitle;
 };
 
 export const _warnBeforeNavigation = warn => {

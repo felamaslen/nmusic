@@ -93,7 +93,7 @@ export default class PlayerEngine extends PureControllerView {
 
   /* these correspond to HTML5 audio events */
   _ended() {
-    this.dispatchAction(ctrlNext());
+    this.dispatchAction(ctrlNext(false));
   }
 
   _canplay() {

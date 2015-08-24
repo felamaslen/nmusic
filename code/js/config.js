@@ -3,14 +3,17 @@
  */
 
 /* You can modify these settings */
+// all times are measured in seconds
 export const PREVIOUS_SONG_DELAY = 2.5;
-export const NAVIGATION_WARNING_MESSAGE = 'This action will stop the music.';
+export const TIME_DISPLAY_NOTIFICATIONS = 5;
 
 export const REMEMBERME_DAYS = 30;
 /* Don't modify anything beyond here */
 
 // API urls
 const API = '/api';
+
+export const NAVIGATION_WARNING_MESSAGE = 'This action will stop the music.';
 
 export const AUTH_AUTHENTICATE = '/authenticate';
 export const AUTH_TEST = API + '/authtest';

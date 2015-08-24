@@ -119,7 +119,7 @@ export default class PlayerUI extends PureControllerView {
     this.dispatchAction(ctrlPrevious());
   }
   _ctrlNext() {
-    this.dispatchAction(ctrlNext());
+    this.dispatchAction(ctrlNext(true));
   }
   _ctrlPlayPause() {
     this.dispatchAction(togglePause(!this.props.paused));

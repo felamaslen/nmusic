@@ -13,6 +13,7 @@ export default new Record({
       browserArtists: false,
       songList: false
     },
+    canNotify: false,
     title: DOCUMENT_TITLE, // window title
     loadedOnLastRender: false,
     warnBeforeNavigation: false,

@@ -26,7 +26,7 @@ export const addToQueue = (reduction, options) => {
     .setIn(['appState', 'player', 'queueId'], playAfter ? queue.size : queueId)
     .setIn(['appState', 'player', 'currentSong'], newSong)
     .setIn(['appState', 'player', 'paused'], paused)
-    .setIn(['appState', 'title'], getDocumentTitle(newSong, paused))
+    .setIn(['appState', 'title'], getDocumentTitle(false, newSong, paused))
     .setIn(['appState', 'warnBeforeNavigation'], !paused)
   ;
 };
@@ -40,7 +40,7 @@ export const playQueueItem = (reduction, queueId) => {
     .setIn(['appState', 'player', 'paused'], false)
     .setIn(['appState', 'warnBeforeNavigation'], true)
     .setIn(['appState', 'player', 'currentSong'], song)
-    .setIn(['appState', 'title'], getDocumentTitle(song))
+    .setIn(['appState', 'title'], getDocumentTitle(false, song))
   ;
 };
 
@@ -52,7 +52,7 @@ export const playListItem = (reduction, song) => {
     .setIn(['appState', 'player', 'queueId'], -1)
     .setIn(['appState', 'player', 'paused'], false)
     .setIn(['appState', 'warnBeforeNavigation'], true)
-    .setIn(['appState', 'title'], getDocumentTitle(song))
+    .setIn(['appState', 'title'], getDocumentTitle(false, song))
   ;
 };
 
@@ -65,7 +65,7 @@ export const togglePause = (reduction, paused) => {
   return reduction
     .setIn(['appState', 'player', 'paused'], _paused)
     .setIn(['appState', 'warnBeforeNavigation'], !_paused)
-    .setIn(['appState', 'title'], getDocumentTitle(currentSong, _paused))
+    .setIn(['appState', 'title'], getDocumentTitle(false, currentSong, _paused))
   ;
 };
 
@@ -110,11 +110,11 @@ export const ctrlPrevious = reduction => {
   }
 
   return newReduction
-    .setIn(['appState', 'title'], getDocumentTitle(newSong))
+    .setIn(['appState', 'title'], getDocumentTitle(false, newSong))
   ;
 };
 
-export const ctrlNext = reduction => {
+export const ctrlNext = (reduction, manual) => {
   const currentSong = reduction.getIn(['appState', 'player', 'currentSong']);
   const queue = reduction.getIn(['appState', 'player', 'queue']);
   const queueId = reduction.getIn(['appState', 'player', 'queueId']);
@@ -142,7 +142,9 @@ export const ctrlNext = reduction => {
   return reduction
     .setIn(['appState', 'player', 'currentSong'], newSong)
     .setIn(['appState', 'player', 'queueId'], newQueueId)
-    .setIn(['appState', 'title'], getDocumentTitle(newSong))
+    .setIn(['appState', 'title'], getDocumentTitle(manual ? false : reduction.getIn(
+      ['appState', 'canNotify']
+    ), newSong))
   ;
 };
 

@@ -11,6 +11,10 @@ import { Dispatcher } from 'flux';
 // import reducers
 import globalReducer from '../reducers/GlobalReducer';
 
+import {
+  canNotify
+} from '../actions/AppActions';
+
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
 // import components here
@@ -60,6 +64,20 @@ export default class App extends Component {
       reduction: new Reduction(),
       actionLog: List.of() // This is only for debugging, we can perform replay of actions
     };
+  }
+
+  componentDidMount() {
+    if (!!window.Notification) {
+      if (Notification.permission === 'granted') {
+        this.state.dispatcher.dispatch(canNotify());
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(permission => {
+          if (permission === 'granted') {
+            this.state.dispatcher.dispatch(canNotify());
+          }
+        });
+      }
+    }
   }
 
   render() {

@@ -33,7 +33,8 @@ export default buildEffectHandler({
     }).then(
       response => dispatcher.dispatch(authGotResponse({
         response: response,
-        fromPersistentLogin: true
+        fromPersistentLogin: true,
+        token: token
       }))
     ).catch(
       error => console.error('Error getting auth test information', error)

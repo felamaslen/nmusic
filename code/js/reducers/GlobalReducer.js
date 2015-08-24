@@ -7,7 +7,8 @@ import {
 import {
   hideSpinner,
   storeEventHandler,
-  customSliderClicked
+  customSliderClicked,
+  canNotify
 } from './AppReducer';
 
 import {
@@ -60,6 +61,8 @@ export default (reduction, action) => {
     return storeEventHandler(reduction, action.payload);
   case 'APP_SLIDER_CLICKED':
     return customSliderClicked(reduction, action.payload);
+  case 'APP_NOTIFICATIONS_ALLOWED':
+    return canNotify(reduction);
 
   // Audio actions
   case 'AUDIO_STREAM_CANPLAY':
@@ -99,7 +102,7 @@ export default (reduction, action) => {
   case 'PLAYER_POSITION_SEEKED':
     return ctrlSeek(reduction, action.payload);
   case 'PLAYER_CTRL_PREVIOUS_CLICKED':
-    return ctrlPrevious(reduction, action.payload);
+    return ctrlPrevious(reduction);
   case 'PLAYER_CTRL_NEXT_CLICKED':
     return ctrlNext(reduction, action.payload);
 

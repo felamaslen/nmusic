@@ -6,5 +6,5 @@ export const playListItem = song => buildMessage('PLAYER_SONG_PLAYED', song);
 export const togglePause = paused => buildMessage('PLAYER_PAUSE_TOGGLED', paused);
 
 export const ctrlPrevious = () => buildMessage('PLAYER_CTRL_PREVIOUS_CLICKED');
-export const ctrlNext = () => buildMessage('PLAYER_CTRL_NEXT_CLICKED');
+export const ctrlNext = manual => buildMessage('PLAYER_CTRL_NEXT_CLICKED', manual);
 export const ctrlSeek = position => buildMessage('PLAYER_POSITION_SEEKED', position);

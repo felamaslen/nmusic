@@ -51,7 +51,7 @@ export const authGotResponse = (reduction, obj) => {
     }
 
     token = obj.fromPersistentLogin
-      ? reduction.getIn(['appState', 'auth', 'token'])
+      ? obj.token
       : obj.response.data.token;
   }
 
