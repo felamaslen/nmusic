@@ -1,6 +1,9 @@
 import { PREVIOUS_SONG_DELAY } from '../config';
 
-import { _warnBeforeNavigation } from '../common';
+import {
+  _warnBeforeNavigation,
+  getDocumentTitle
+} from '../common';
 
 export const addToQueue = (reduction, options) => {
   const playAfter = !!options.playAfter;
@@ -14,14 +17,16 @@ export const addToQueue = (reduction, options) => {
 
   _warnBeforeNavigation(!paused);
 
+  const newSong = playAfter
+    ? options.songs.first()
+    : reduction.getIn(['appState', 'player', 'currentSong']);
+
   return reduction
     .setIn(['appState', 'player', 'queue'], queue.concat(options.songs))
     .setIn(['appState', 'player', 'queueId'], playAfter ? queue.size : queueId)
-    .setIn(['appState', 'player', 'currentSong'], playAfter
-      ? options.songs.first()
-      : reduction.getIn(['appState', 'player', 'currentSong'])
-    )
+    .setIn(['appState', 'player', 'currentSong'], newSong)
     .setIn(['appState', 'player', 'paused'], paused)
+    .setIn(['appState', 'title'], getDocumentTitle(newSong, paused))
     .setIn(['appState', 'warnBeforeNavigation'], !paused)
   ;
 };
@@ -29,13 +34,13 @@ export const addToQueue = (reduction, options) => {
 export const playQueueItem = (reduction, queueId) => {
   _warnBeforeNavigation(true);
 
+  const song = reduction.getIn(['appState', 'player', 'queue']).get(queueId);
+
   return reduction
     .setIn(['appState', 'player', 'paused'], false)
     .setIn(['appState', 'warnBeforeNavigation'], true)
-    .setIn(
-      ['appState', 'player', 'currentSong'],
-      reduction.getIn(['appState', 'player', 'queue']).get(queueId)
-    )
+    .setIn(['appState', 'player', 'currentSong'], song)
+    .setIn(['appState', 'title'], getDocumentTitle(song))
   ;
 };
 
@@ -47,18 +52,20 @@ export const playListItem = (reduction, song) => {
     .setIn(['appState', 'player', 'queueId'], -1)
     .setIn(['appState', 'player', 'paused'], false)
     .setIn(['appState', 'warnBeforeNavigation'], true)
+    .setIn(['appState', 'title'], getDocumentTitle(song))
   ;
 };
 
 export const togglePause = (reduction, paused) => {
-  const _paused = reduction.getIn(['appState', 'player', 'currentSong']) !== null
-    ? paused : reduction.getIn(['appState', 'player', 'paused']);
+  const currentSong = reduction.getIn(['appState', 'player', 'currentSong']);
+  const _paused = currentSong ? paused : reduction.getIn(['appState', 'player', 'paused']);
 
   _warnBeforeNavigation(!_paused);
 
   return reduction
     .setIn(['appState', 'player', 'paused'], _paused)
     .setIn(['appState', 'warnBeforeNavigation'], !_paused)
+    .setIn(['appState', 'title'], getDocumentTitle(currentSong, _paused))
   ;
 };
 
@@ -68,13 +75,12 @@ export const ctrlPrevious = reduction => {
   const queueId = reduction.getIn(['appState', 'player', 'queueId']);
 
   let newReduction;
+  let newSong;
 
-  const changeSong = reduction.getIn(['appState', 'player', 'currentTime']) < PREVIOUS_SONG_DELAY;
-
-  if (changeSong) {
+  if (reduction.getIn(
+    ['appState', 'player', 'currentTime']
+  ) < PREVIOUS_SONG_DELAY) {
     // skip to previous track
-    let newSong;
-
     const newQueueId = Math.max(-1, queueId - 1);
 
     if (queueId > 0) {
@@ -103,7 +109,9 @@ export const ctrlPrevious = reduction => {
     ;
   }
 
-  return newReduction;
+  return newReduction
+    .setIn(['appState', 'title'], getDocumentTitle(newSong))
+  ;
 };
 
 export const ctrlNext = reduction => {
@@ -134,6 +142,7 @@ export const ctrlNext = reduction => {
   return reduction
     .setIn(['appState', 'player', 'currentSong'], newSong)
     .setIn(['appState', 'player', 'queueId'], newQueueId)
+    .setIn(['appState', 'title'], getDocumentTitle(newSong))
   ;
 };
 

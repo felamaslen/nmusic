@@ -68,6 +68,8 @@ export default class App extends Component {
     const currentSong = this.state.reduction.getIn(['appState', 'player', 'currentSong']);
     const currentSongId = currentSong === null ? -1 : currentSong.get('id');
 
+    document.title = this.state.reduction.getIn(['appState', 'title']);
+
     const userArea = authenticated ? (
       <section id="userAreaOuter">
         <LoadingSpinner dispatcher={this.state.dispatcher}

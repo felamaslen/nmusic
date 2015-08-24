@@ -1,5 +1,7 @@
 import { Record, fromJS, List } from 'immutable';
 
+import { DOCUMENT_TITLE } from './config';
+
 export default new Record({
   appState: fromJS({
     auth: {
@@ -11,6 +13,7 @@ export default new Record({
       browserArtists: false,
       songList: false
     },
+    title: DOCUMENT_TITLE, // window title
     loadedOnLastRender: false,
     warnBeforeNavigation: false,
     eventHandlers: {},

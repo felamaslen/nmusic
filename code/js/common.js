@@ -2,7 +2,31 @@
 
 import { List } from 'immutable';
 
-import { NAVIGATION_WARNING_MESSAGE } from './config';
+import {
+  NAVIGATION_WARNING_MESSAGE,
+  DOCUMENT_TITLE
+} from './config';
+
+export const getDocumentTitle = (song, paused) => {
+  const haveTitle = !!song && !!song.get('title');
+  const haveArtist = haveTitle && !!song.get('artist');
+
+  let newTitle = '';
+
+  if (haveTitle) {
+    if (paused) {
+      newTitle += '[Paused] ';
+    }
+
+    newTitle += song.get('title');
+    if (haveArtist) {
+      newTitle += ' - ' + song.get('artist');
+    }
+    newTitle += ' - ';
+  }
+
+  return newTitle + DOCUMENT_TITLE;
+};
 
 export const _warnBeforeNavigation = warn => {
   if (warn) {
