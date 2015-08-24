@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const moduleConfig = require('./module.config.js');
-// const serverConfig = require('../code/server/config.js');
 
 module.exports = {
   debug: true,

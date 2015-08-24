@@ -1,7 +1,7 @@
 {
   "name": "nMusic",
   "description": "Node-based music player and organiser",
-  "version": "0.0.1-dev",
+  "version": "0.0.1-preview",
   "author": "Fela Maslen",
   "license": "GPL-2.0",
   "keywords": [
@@ -15,11 +15,13 @@
     "url": "https://github.com/felamaslen/nmusic/"
   },
   "scripts": {
+    "preinstall": "./node_modules/.bin/babel-node ./code/scripts/dropdb.js",
     "postinstall": "./node_modules/.bin/webpack --config=webpack/webpack.staging.config.js",
     "test": "./node_modules/.bin/karma start --single-run",
-    "lint": "./node_modules/.bin/eslint ./code/js ./code/server",
+    "start": "./node_modules/.bin/gulp productionServer",
     "dropdb": "./node_modules/.bin/babel-node ./code/scripts/dropdb.js",
-    "updatedb": "./node_modules/.bin/babel-node ./code/scripts/updatedb.js"
+    "updatedb": "./node_modules/.bin/babel-node ./code/scripts/updatedb.js",
+    "lint": "./node_modules/.bin/eslint ./code/js ./code/server"
   },
   "dependencies": {
     "axios": "^0.5.4",
@@ -30,12 +32,15 @@
     "express": "^4.13.3",
     "flux": "^2.0.3",
     "fs": "0.0.2",
+    "gulp-env": "^0.2.0",
     "immutable": "^3.7.2",
     "js-cookie": "^2.0.3",
     "jsonwebtoken": "^5.0.5",
     "mongoose": "^4.1.1",
     "morgan": "^1.6.1",
     "musicmetadata": "^2.0.0",
+    "path": "^0.11.14",
+    "proxy-middleware": "^0.13.1",
     "querystring": "^0.2.0",
     "react": "^0.13.1",
     "react-pure-render": "^1.0.2",
@@ -45,15 +50,13 @@
   "devDependencies": {
     "autoprefixer-loader": "^2.0.0",
     "babel": "^5.8.19",
+    "babel-core": "^5.8.22",
     "babel-eslint": "^4.0.5",
     "babel-loader": "^5.3.2",
     "eslint": "^0.24.1",
     "eslint-plugin-react": "^3.1.0",
     "gulp": "^3.9.0",
     "kerberos": "0.0.12",
-    "nodemon": "^1.4.1",
-    "path": "^0.11.14",
-    "proxy-middleware": "^0.13.1",
     "uglifyjs": "^2.4.10",
     "webpack-dev-server": "^1.10.1"
   }

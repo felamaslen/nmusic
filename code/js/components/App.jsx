@@ -60,31 +60,9 @@ export default class App extends Component {
       reduction: new Reduction(),
       actionLog: List.of() // This is only for debugging, we can perform replay of actions
     };
-
-    // If there is hot-reloading available
-    // We want to perform a replay after the code has been refreshed
-    if (module.hot) {
-      module.hot.addStatusHandler(() => setTimeout(() => window.replay()));
-    }
-  }
-
-  componentDidUpdate() {
-    // The method is here only for hot-reloading
-    window.replay = () => {
-      // We will take the action log, reduce it in reducers and pass an them initial empty reduction
-      // strip down the effects so that we are not replaying them.
-      const reduction = this.state
-        .actionLog
-        .reduce(globalReducer, new Reduction())
-        .set('effects', List.of());
-
-      this.setState({reduction});
-    };
   }
 
   render() {
-    let main;
-
     const authenticated = !this.state.reduction.getIn(['appState', 'auth', 'status']);
 
     const currentSong = this.state.reduction.getIn(['appState', 'player', 'currentSong']);

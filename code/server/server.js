@@ -17,7 +17,9 @@ export default app => {
   app.use(bodyParser.json());
 
   // use morgan to log requests to the console
-  app.use(morgan('dev'));
+  if (process.env.DEVSERVER) {
+    app.use(morgan('dev'));
+  }
 
   // default headers
   app.all('/*', (req, res, next) => {
