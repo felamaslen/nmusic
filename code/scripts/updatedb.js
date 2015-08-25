@@ -12,33 +12,26 @@ import {
 
 import mm from 'musicmetadata';
 import fs from 'fs';
-
 import mongoose, { Schema } from 'mongoose';
+import ProgressBar from 'progress';
 
+/* DATABASE */
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
 
 const startTime = new Date().getTime();
 const execTimes = [];
-const execTime = (name, fromStart) => {
-  const time = new Date().getTime();
 
-  const thisTime = fromStart || !execTimes.length
-    ? time - startTime : time - execTimes[execTimes.length - 1][0];
-
-  execTimes.push([time, ['  ' + name + ':', Math.round(thisTime) / 1000 + 's']]);
-
-  return true;
+// handle counters
+const findAndModify = (scope, query, sort, doc, options, callback) => {
+  scope.collection.findAndModify(query, sort, doc, options, callback);
 };
 
-const basename = filename => {
-  return filename.substring(filename.lastIndexOf('/') + 1);
-};
+const Counter = mongoose.model('counter', new Schema(DB_SCHEMA.counters));
+const Song = mongoose.model('song', new Schema(DB_SCHEMA.songs));
+/* END DATABASE */
 
-const logProcess = (msg) => {
-  console.log('[' + formatTime() + ']', msg);
-};
-
+/* GENERAL FUNCTIONS */
 const inArray = (needle, haystack) => {
   for (const key in haystack) {
     if (haystack[key] === needle) {
@@ -57,51 +50,57 @@ const inArraySubkey = (needle, haystack, subkey) => {
   return false;
 };
 
-const arrayDiffSubkey = (array1, array2, subkey) => {
+const arrayDiffSubkey = (array1, array2, subkey, progressbar) => {
   const diff = [];
   array1.forEach(item => {
     if (!inArraySubkey(item[subkey], array2, subkey)) {
       diff.push(item);
     }
+    progressbar.tick();
   });
 
   return diff;
 };
+/* END GENERAL FUNCTIONS */
 
-const addDirRecursive = dir => {
-  const _files = fs.readdirSync(dir);
-  const files = [];
+/* PROGRESS INFO */
+const execTime = (name, fromStart) => {
+  const time = new Date().getTime();
 
-  _files.forEach(file => {
-    const path = dir + '/' + file;
+  const thisTime = fromStart || !execTimes.length
+    ? time - startTime : time - execTimes[execTimes.length - 1][0];
 
-    if (fs.lstatSync(path).isDirectory()) {
-      const files_ = addDirRecursive(path);
-      files_.forEach(obj => {
-        files.push(obj);
-      });
-    } else {
-      const extension = path.substring(path.lastIndexOf('.') + 1);
+  execTimes.push([time, ['  ' + name + ':', Math.round(thisTime) / 1000 + 's']]);
 
-      if (inArray(extension, FORMATS)) {
-        files.push({ filename: path });
-      }
+  return true;
+};
+
+const logProcess = (msg) => {
+  console.log(`[${formatTime()}]`, msg);
+};
+
+// progress bars
+let progressbarDirscan;
+let progressbarMissingFiles;
+let progressbarExtraneous;
+let progressbarRemoveExtraneous;
+let progressbarProcessFiles;
+
+const CustomProgressBar = (total, title) => {
+  return new ProgressBar(
+    `[:bar] ${title} (:percent) ETA: :etas`,
+    {
+      total: total,
+      width: 19,
+      complete: '>',
+      incomplete: '-'
     }
-  });
-
-  return files;
+  );
 };
+/* END PROGRESS INFO */
 
-const Song = mongoose.model('song', new Schema(DB_SCHEMA.songs));
-
-// handle counters
-const findAndModify = (scope, query, sort, doc, options, callback) => {
-  scope.collection.findAndModify(query, sort, doc, options, callback);
-};
-
-const Counter = mongoose.model('counter', new Schema(DB_SCHEMA.counters));
-
-const getID = (name, callback) => {
+/* CALLBACK FUNCTIONS */
+const getNextSongId = (name, callback) => {
   findAndModify(
     Counter,
     { _id: name },
@@ -116,50 +115,75 @@ const getID = (name, callback) => {
   );
 };
 
-const addMissing = (missingFiles, total, callback) => {
+const saveNewSong = (info, next, files, total, ended, id) => {
+  const _info = info;
+  _info._id = id;
+
+  const error = null;
+
+  const item = new Song(_info);
+  item.save(error => {
+    if (error) throw error;
+
+    progressbarProcessFiles.tick();
+
+    next(files, total, ended);
+  });
+};
+
+const processFile = (doc, next, files, total, ended, error, tags) => {
+  if (error) throw error;
+
+  const albumartist = tags.albumartist && tags.albumartist[0]
+    ? tags.albumartist[0] : 'Unknown Artst';
+
+  const info = {
+    filename: doc.filename,
+    track: tags.track && tags.track.no ? tags.track.no : 0,
+    title: tags.title ? tags.title : 'Untitled Track',
+    artist: tags.artist && tags.artist[0] ? tags.artist[0] : albumartist,
+    album: tags.album ? tags.album : '',
+    genre: tags.genre && tags.genre[0] ? tags.genre[0] : '',
+    time: tags.duration ? parseFloat(tags.duration, 10) : 0,
+    year: tags.year ? parseInt(tags.year, 10) : 0
+  };
+
+  getNextSongId('songsid', saveNewSong.bind(
+    null, info, next, files, total, ended
+  ));
+};
+
+const addMissing = (missingFiles, total, ended, next) => {
   if (missingFiles.length > 0) {
     const doc = missingFiles.pop();
 
-    mm(fs.createReadStream(doc.filename), { duration: true }, (err, tags) => {
-      if (err) throw err;
-
-      const track = typeof tags.track === 'object' && typeof tags.track.no === 'number' ? tags.track.no : 0;
-      const title = typeof tags.title !== 'undefined' ? tags.title : 'Untitled Track';
-
-      const artist0 = typeof tags.albumartist === 'object' ? tags.albumartist[0] : 'Unknown Artist';
-      const artist = typeof tags.artist === 'object' ? tags.artist[0] : artist0;
-
-      const album = typeof tags.album !== 'undefined' ? tags.album : '';
-      const genre = typeof tags.genre === 'object' ? tags.genre[0] : '';
-      const time = typeof tags.duration !== 'undefined' ? parseFloat(tags.duration, 10) : 0;
-      const year = typeof tags.year !== 'undefined' ? parseInt(tags.year, 10) : 0;
-
-      getID('songsid', id => {
-        const item = new Song({
-          _id: id,
-          filename: doc.filename,
-          track: track,
-          title: title,
-          artist: artist,
-          album: album,
-          genre: genre,
-          time: time,
-          year: year
-        });
-
-        item.save(err2 => {
-          if (err2) throw err2;
-
-          const progress = '[' + Math.round((total - missingFiles.length) / total * 100, 2).toString() + '%]';
-          console.log(progress, 'Processed', basename(doc.filename));
-
-          addMissing(missingFiles, total, callback);
-        });
-      });
-    });
+    // mm <-> musicmetadata
+    mm(
+      fs.createReadStream(doc.filename),
+      { duration: true }, // get the duration of the song
+      processFile.bind(null, doc, next, missingFiles, total, ended)
+    );
   } else {
-    callback();
+    ended();
   }
+};
+
+const afterAddMissing = () => {
+  execTime('Process missing files');
+
+  // show execution times for each process, at the end of the script
+  execTime('Total', true);
+  console.log('Exec times:');
+  execTimes.forEach(time => {
+    console.log(time[1][0], time[1][1]);
+  });
+
+  console.log('Successfully updated the music database.');
+  mongoose.disconnect();
+};
+
+const nextMissingTrack = (files, total, ended) => {
+  addMissing(files, total, ended, nextMissingTrack);
 };
 
 const removeExtraneous = (extraneous, callback) => {
@@ -171,10 +195,13 @@ const removeExtraneous = (extraneous, callback) => {
         throw err;
       }
 
+      progressbarRemoveExtraneous.tick();
+
       if (extraneous.length > 0) {
         removeExtraneous(extraneous, callback);
       } else {
         callback();
+        execTime('Remove extraneous db entries');
       }
     });
   } else {
@@ -182,50 +209,114 @@ const removeExtraneous = (extraneous, callback) => {
   }
 };
 
-const _onDBOpen = () => {
-  // find all files in the filesystem
-  logProcess('Recursing through ' + MUSIC_DIR + '...');
-  const files = addDirRecursive(MUSIC_DIR);
-  execTime('Scan music directory (' + files.length + ' files)');
+const addFilesToDB = files => {
+  progressbarProcessFiles = new CustomProgressBar(
+    files.length, 'Processing missing files'
+  );
+
+  addMissing(
+    files,
+    files.length,
+    afterAddMissing,
+    nextMissingTrack
+  );
+};
+
+const dbScanned = (files, error, dbFiles) => {
+  if (error) {
+    throw error;
+  }
+  execTime(`Fetch all songs from DB (${dbFiles.length} items)`);
+
+  // things in the filesystem not in DB
+  progressbarMissingFiles = new CustomProgressBar(
+    files.length, 'Calculating missing files'
+  );
+
+  const missingFiles = arrayDiffSubkey(
+    files, dbFiles, 'filename', progressbarMissingFiles
+  );
+
+  execTime(`Find missing files (${missingFiles.length}) items`);
+
+  // things in DB which no longer exist in filesystem
+  progressbarExtraneous = new CustomProgressBar(
+    dbFiles.length, 'Calculating extraneous db entries'
+  );
+
+  const extraneous = arrayDiffSubkey(
+    dbFiles, files, 'filename', progressbarExtraneous
+  );
+
+  execTime(`Find extraneous db entries (${extraneous.length} items)`);
+
+  progressbarRemoveExtraneous = new CustomProgressBar(
+    extraneous.length, 'Removing extraneous db entries'
+  );
+
+  removeExtraneous(extraneous, addFilesToDB.bind(null, missingFiles));
+};
+
+const filesScanned = files => {
+  execTime(`Scan music directory (${files.length} files)`);
 
   // find all entries in the DB
   logProcess('Looking through database...');
-  Song.find({}, { filename: true }, (err2, dbFiles) => {
-    if (err2) {
-      throw err2;
-    }
-    execTime('Fetch all songs from DB (' + dbFiles.length + ' items)');
+  Song.find({}, { filename: true }, dbScanned.bind(null, files));
+};
 
-    // things in the filesystem not in DB
-    logProcess('Calculating missing files...');
-    const missingFiles = arrayDiffSubkey(files, dbFiles, 'filename');
-    execTime('Find missing files (' + missingFiles.length + ' items)');
+const addDirRecursive = (dir, level, callback) => {
+  const _files = fs.readdirSync(dir);
+  const files = [];
 
-    // things in DB which no longer exist in filesystem
-    logProcess('Calculating extraneous db entries...');
-    const extraneous = arrayDiffSubkey(dbFiles, files, 'filename');
-    execTime('Find extraneous db entries (' + extraneous.length + ' items)');
+  _files.forEach(file => {
+    const path = dir + '/' + file;
 
-    logProcess('Removing extraneous db entries...');
-    removeExtraneous(extraneous, () => {
-      execTime('Remove extraneous db entries');
-
-      logProcess('Processing missing files...');
-      addMissing(missingFiles, missingFiles.length, () => {
-        execTime('Process missing files');
-
-        // show execution times for each process, at the end of the script
-        execTime('Total', true);
-        console.log('Exec times:');
-        execTimes.forEach(time => {
-          console.log(time[1][0], time[1][1]);
+    if (fs.lstatSync(path).isDirectory()) {
+      addDirRecursive(path, level + 1, files_ => {
+        files_.forEach(obj => {
+          files.push(obj);
         });
 
-        console.log('Successfully updated the music database.');
-        mongoose.disconnect();
+        if (!level) {
+          progressbarDirscan.tick();
+        }
       });
-    });
+    } else {
+      const extension = path.substring(path.lastIndexOf('.') + 1);
+
+      if (inArray(extension, FORMATS)) {
+        files.push({ filename: path });
+      }
+    }
   });
+
+  if (callback) {
+    callback(files);
+  }
+};
+/* END CALLBACK FUNCTIONS */
+
+// first get the number of directories in the top level,
+// for an estimate of progress
+const _files = fs.readdirSync(MUSIC_DIR);
+let numDirs = 0;
+
+_files.forEach(file => {
+  const path = MUSIC_DIR + '/' + file;
+
+  if (fs.lstatSync(path).isDirectory()) {
+    numDirs++;
+  }
+});
+
+const _onDBOpen = () => {
+  // find all files in the music directory
+  progressbarDirscan = new CustomProgressBar(
+    numDirs, `Recursing through ${MUSIC_DIR}`
+  );
+
+  addDirRecursive(MUSIC_DIR, 0, filesScanned);
 };
 
 logProcess('Starting updatedb process...');
