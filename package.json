@@ -1,7 +1,7 @@
 {
   "name": "nMusic",
   "description": "Node-based music player and organiser",
-  "version": "0.0.2-dev",
+  "version": "0.0.2-preview",
   "author": "Fela Maslen",
   "license": "GPL-2.0",
   "keywords": [
