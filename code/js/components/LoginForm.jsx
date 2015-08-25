@@ -14,10 +14,7 @@ import {
 export default class LoginForm extends PureControllerView {
   componentWillMount() {
     // persistent login
-    const tokenCookie = Cookies.get('token');
-    if (!!tokenCookie) {
-      this.dispatchAction(setPersistentToken(tokenCookie));
-    }
+    this.dispatchNext(setPersistentToken(Cookies.get('token')));
   }
 
   render() {

@@ -10,6 +10,7 @@ export default new Record({
       token: ''
     },
     loaded: {
+      authStatus: false,
       browserArtists: false,
       songList: false
     },

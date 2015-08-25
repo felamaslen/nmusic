@@ -90,10 +90,6 @@ export default class App extends Component {
 
     const userArea = authenticated ? (
       <section id="userAreaOuter">
-        <LoadingSpinner dispatcher={this.state.dispatcher}
-          loaded={!this.state.reduction.getIn(['appState', 'loaded']).some(loadedItem => !loadedItem)}
-          loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
-        />
         <PlayerEngine dispatcher={this.state.dispatcher}
           currentSong={currentSong}
           setTime={this.state.reduction.getIn(['appState', 'player', 'setTime'])}
@@ -145,6 +141,10 @@ export default class App extends Component {
 
     return (
       <main>
+        <LoadingSpinner dispatcher={this.state.dispatcher}
+          loaded={!this.state.reduction.getIn(['appState', 'loaded']).some(loadedItem => !loadedItem)}
+          loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
+        />
         <LoginForm dispatcher={this.state.dispatcher}
           status={this.state.reduction.getIn(['appState', 'auth', 'status'])}
         />

@@ -14,14 +14,22 @@ export const attemptLogin = (reduction, details) => {
   ;
 };
 
+const afterCheckAuth = (reduction, displayAuth) => {
+  const newLoaded = reduction.getIn(['appState', 'loaded']).map(() => displayAuth)
+    .set('authStatus', true);
+
+  return reduction.setIn(['appState', 'loaded'], newLoaded);
+};
+
 export const setPersistentToken = (reduction, token) => {
-  return reduction
-    .setIn(['appState', 'auth', 'status'], 3.1)
-    .setIn(['appState', 'auth', 'token'], token)
-    .set('effects', reduction.get('effects').push(
-      buildMessage('AUTHTEST_API_CALL', token)
-    ))
-  ;
+  return !!token
+    ? reduction
+      .setIn(['appState', 'auth', 'status'], 3.1)
+      .setIn(['appState', 'auth', 'token'], token)
+      .set('effects', reduction.get('effects').push(
+        buildMessage('AUTHTEST_API_CALL', token)
+      ))
+    : afterCheckAuth(reduction, true);
 };
 
 export const authGotResponse = (reduction, obj) => {
@@ -55,7 +63,7 @@ export const authGotResponse = (reduction, obj) => {
       : obj.response.data.token;
   }
 
-  return reduction
+  return afterCheckAuth(reduction, false)
     .setIn(['appState', 'auth', 'status'], newStatus)
     .setIn(['appState', 'auth', 'token'], token)
   ;
