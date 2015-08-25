@@ -15,7 +15,7 @@ export const attemptLogin = (reduction, details) => {
 };
 
 const afterCheckAuth = (reduction, displayAuth) => {
-  const newLoaded = reduction.getIn(['appState', 'loaded']).map(() => displayAuth)
+  const newLoaded = reduction.getIn(['appState', 'loaded']).map(() => !!displayAuth)
     .set('authStatus', true);
 
   return reduction.setIn(['appState', 'loaded'], newLoaded);
@@ -63,7 +63,7 @@ export const authGotResponse = (reduction, obj) => {
       : obj.response.data.token;
   }
 
-  return afterCheckAuth(reduction, false)
+  return afterCheckAuth(reduction, newStatus)
     .setIn(['appState', 'auth', 'status'], newStatus)
     .setIn(['appState', 'auth', 'token'], token)
   ;
