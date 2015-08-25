@@ -15,8 +15,7 @@
     "url": "https://github.com/felamaslen/nmusic/"
   },
   "scripts": {
-    "preinstall": "./node_modules/.bin/babel-node ./code/scripts/dropdb.js",
-    "postinstall": "./node_modules/.bin/webpack --config=webpack/webpack.staging.config.js",
+    "postinstall": "./node_modules/.bin/babel-node ./code/scripts/dropdb.js && ./node_modules/.bin/webpack --config=webpack/webpack.staging.config.js",
     "test": "./node_modules/.bin/karma start --single-run",
     "start": "./node_modules/.bin/gulp productionServer",
     "dropdb": "./node_modules/.bin/babel-node ./code/scripts/dropdb.js",
