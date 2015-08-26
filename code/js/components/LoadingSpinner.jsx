@@ -18,7 +18,20 @@ export default class LoadingSpinner extends PureControllerView {
 
     return this.props.loadedOnLastRender ? false : (
       <div id="spinnerBG" className={spinnerClass}>
-        <div className="spinner">Loading...</div>
+        <div className="spinner">
+          <div className="bar bar1"/>
+          <div className="bar bar2"/>
+          <div className="bar bar3"/>
+          <div className="bar bar4"/>
+          <div className="bar bar5"/>
+          <div className="bar bar6"/>
+          <div className="bar bar7"/>
+          <div className="bar bar8"/>
+          <div className="bar bar9"/>
+          <div className="bar bar10"/>
+          <div className="bar bar11"/>
+          <div className="bar bar12"/>
+        </div>
       </div>
     );
   }

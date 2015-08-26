@@ -109,20 +109,142 @@ input {
 }
 
 .spinner {
-  width: 30px;
-  height: 30px;
-  background: url(../img/loading.png) 0 0;
-  animation: spinner .8s steps(18, end) infinite;
-  text-indent: -9999px;
+  position: fixed;
   left: 50%;
   top: 50%;
-  margin-left: -15px;
-  margin-top: -15px;
-  position: absolute;
+  width: 54px;
+  height: 54px;
+  margin-left: -27px;
+  margin-top: -27px;
 }
-@keyframes spinner {
-  from { background-position: 0 0; }
-  to { background-position: 0 -540px; }
+.spinner .inside {
+  position: relative;
+}
+.spinner .bar {
+  width: 12%;
+  height: 26%;
+  background: #000;
+  position: absolute;
+  left: 44.5%;
+  top: 37%;
+  opacity: 0;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.2);
+  -webkit-animation: fade 1s linear infinite;
+  -moz-animation: fade 1s linear infinite;
+  animation: fade 1s linear infinite;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: 1;}
+  to {opacity: 0.25;}
+}
+@-moz-keyframes fade {
+  from {opacity: 1;}
+  to {opacity: 0.25;}
+}
+@keyframes fade {
+  from {opacity: 1;}
+  to {opacity: 0.25;}
+}
+
+.spinner .bar1 {
+  -webkit-transform: rotate(0deg) translate(0, -142%);
+  -moz-transform: rotate(0deg) translate(0, -142%);
+  transform: rotate(0deg) translate(0, -142%);
+  -webkit-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  animation-delay: 0s;
+}    
+.spinner .bar2 {
+  -webkit-transform: rotate(30deg) translate(0, -142%); 
+  -moz-transform: rotate(30deg) translate(0, -142%); 
+  transform: rotate(30deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.9167s;
+  -moz-animation-delay: -0.9167s;
+  animation-delay: -0.9167s;
+}
+.spinner .bar3 {
+  -webkit-transform: rotate(60deg) translate(0, -142%); 
+  -moz-transform: rotate(60deg) translate(0, -142%); 
+  transform: rotate(60deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.8333s;
+  -moz-animation-delay: -0.8333s;
+  animation-delay: -0.8333s;
+}
+.spinner .bar4 {
+  -webkit-transform: rotate(90deg) translate(0, -142%); 
+  -moz-transform: rotate(90deg) translate(0, -142%); 
+  transform: rotate(90deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.75s;
+  -moz-animation-delay: -0.75s;
+  animation-delay: -0.75s;
+}
+.spinner .bar5 {
+  -webkit-transform: rotate(120deg) translate(0, -142%); 
+  -moz-transform: rotate(120deg) translate(0, -142%); 
+  transform: rotate(120deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.6667s;
+  -moz-animation-delay: -0.6667s;
+  animation-delay: -0.6667s;
+}
+.spinner .bar6 {
+  -webkit-transform: rotate(150deg) translate(0, -142%); 
+  -moz-transform: rotate(150deg) translate(0, -142%); 
+  transform: rotate(150deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.5833s;
+  -moz-animation-delay: -0.5833s;
+  animation-delay: -0.5833s;
+}
+.spinner .bar7 {
+  -webkit-transform: rotate(180deg) translate(0, -142%); 
+  -moz-transform: rotate(180deg) translate(0, -142%); 
+  transform: rotate(180deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.5s;
+  -moz-animation-delay: -0.5s;
+  animation-delay: -0.5s;
+}
+.spinner .bar8 {
+  -webkit-transform: rotate(210deg) translate(0, -142%); 
+  -moz-transform: rotate(210deg) translate(0, -142%); 
+  transform: rotate(210deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.4167s;
+  -moz-animation-delay: -0.4167s;
+  animation-delay: -0.4167s;
+}
+.spinner .bar9 {
+  -webkit-transform: rotate(240deg) translate(0, -142%); 
+  -moz-transform: rotate(240deg) translate(0, -142%); 
+  transform: rotate(240deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.3333s;
+  -moz-animation-delay: -0.3333s;
+  animation-delay: -0.3333s;
+}
+.spinner .bar10 {
+  -webkit-transform: rotate(270deg) translate(0, -142%); 
+  -moz-transform: rotate(270deg) translate(0, -142%); 
+  transform: rotate(270deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.25s;
+  -moz-animation-delay: -0.25s;
+  animation-delay: -0.25s;
+}
+.spinner .bar11 {
+  -webkit-transform: rotate(300deg) translate(0, -142%); 
+  -moz-transform: rotate(300deg) translate(0, -142%); 
+  transform: rotate(300deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.1667s;
+  -moz-animation-delay: -0.1667s;
+  animation-delay: -0.1667s;
+}
+.spinner .bar12 {
+  -webkit-transform: rotate(330deg) translate(0, -142%); 
+  -moz-transform: rotate(330deg) translate(0, -142%); 
+  transform: rotate(330deg) translate(0, -142%); 
+  -webkit-animation-delay: -0.0833s;
+  -moz-animation-delay: -0.0833s;
+  animation-delay: -0.0833s;
 }
 
 /** Meta */
