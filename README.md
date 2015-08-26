@@ -1,7 +1,7 @@
 # nmusic
 Node-based music player and organiser, written using React.
 
-Version: 0.0.1-preview
+Version: 0.0.2-preview
 
 ### Prerequisites
 * Install _nodejs_ if you haven't already
