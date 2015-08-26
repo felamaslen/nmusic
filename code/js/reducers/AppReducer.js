@@ -9,5 +9,8 @@ export const storeEventHandler = (reduction, handler) =>
 export const customSliderClicked = (reduction, data) =>
   reduction.setIn(['appState', 'customSlider', data.name + 'Clicked'], data.clickPosition);
 
+export const userMenuToggle = (reduction, status) =>
+  reduction.setIn(['appState', 'userMenuActive'], status);
+
 export const canNotify = reduction =>
   reduction.setIn(['appState', 'canNotify'], true);

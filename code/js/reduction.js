@@ -18,6 +18,7 @@ export default new Record({
       songList: false
     },
     loadedOnLastRender: false,
+    userMenuActive: false,
     canNotify: false,
     title: DOCUMENT_TITLE, // window title
     warnBeforeNavigation: false,

@@ -117,6 +117,10 @@ export default class App extends Component {
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_seekbar']),
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_seekbar'])
             )}
+            userMenuActive={this.state.reduction.getIn(['appState', 'userMenuActive'])}
+            userMenuEvents={List.of(
+              this.state.reduction.getIn(['appState', 'eventHandlers', 'UserMenuClear'])
+            )}
           />
         </section>
         <section id="section-browsers">

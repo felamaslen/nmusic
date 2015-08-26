@@ -438,6 +438,31 @@ input {
   border-radius: 5px;
   box-shadow: inset 0 0 14px rgba(100,100,100,.5),inset 0 2px 3px 1px rgba(30,30,30,.4),0 1px 1px #eee;
 }
+/* user menu */
+#user-menu-btn {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  text-indent: -9999px;
+}
+.user-menu {
+  position: absolute;
+  left: -97px;
+  top: 22px;
+  text-shadow: none;
+  color: #000;
+  font-weight: normal;
+  font-size: 1.1em;
+  background: rgba(255, 255, 255, .8);
+  padding: 4px 2px;
+  width: 220px;
+  z-index: 10;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, .3);
+}
+
 /* seek bar */
 .seekbar .slider {
   width: 288px;

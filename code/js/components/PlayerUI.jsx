@@ -7,6 +7,8 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { Dispatcher } from 'flux';
 
+import UserMenu from './UserMenu';
+
 import PureControllerView from './PureControllerView';
 
 import {
@@ -108,6 +110,9 @@ export default class PlayerUI extends PureControllerView {
         <section className={songInfoClass}>
           <div className="songinfo-inside">
             <div className="glow"></div>
+            <UserMenu dispatcher={this.props.dispatcher}
+              active={this.props.userMenuActive}
+            />
             {currentSongInfo}
           </div>
         </section>
@@ -128,6 +133,7 @@ export default class PlayerUI extends PureControllerView {
 
 PlayerUI.propTypes = {
   paused: PropTypes.bool,
+  userMenuActive: PropTypes.bool,
   volumeClicked: PropTypes.number,
   seekbarClicked: PropTypes.number,
   currentTime: PropTypes.number,

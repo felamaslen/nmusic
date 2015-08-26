@@ -1,6 +1,5 @@
 // displays a login form
 
-import { } from 'immutable';
 import React, { PropTypes } from 'react';
 import Cookies from 'js-cookie';
 

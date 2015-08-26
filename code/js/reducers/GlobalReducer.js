@@ -9,6 +9,7 @@ import {
   hideSpinner,
   storeEventHandler,
   customSliderClicked,
+  userMenuToggle,
   canNotify
 } from './AppReducer';
 
@@ -64,6 +65,8 @@ export default (reduction, action) => {
     return storeEventHandler(reduction, action.payload);
   case 'APP_SLIDER_CLICKED':
     return customSliderClicked(reduction, action.payload);
+  case 'APP_MENU_TOGGLED':
+    return userMenuToggle(reduction, action.payload);
   case 'APP_NOTIFICATIONS_ALLOWED':
     return canNotify(reduction);
 
