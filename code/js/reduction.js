@@ -1,11 +1,14 @@
 import { Record, fromJS, List } from 'immutable';
 
-import { DOCUMENT_TITLE } from './config';
+import {
+  DOCUMENT_TITLE,
+  AUTH_STATUS_WAITING
+} from './config';
 
 export default new Record({
   appState: fromJS({
     auth: {
-      status: 2,  // 0: logged in, 1: bad login, 2: waiting for user, 3: loading, 4: server error
+      status: AUTH_STATUS_WAITING,
       username: null,
       token: ''
     },

@@ -4,6 +4,15 @@ import { } from 'immutable';
 import React, { PropTypes } from 'react';
 import Cookies from 'js-cookie';
 
+import {
+  AUTH_STATUS_LOGGED_IN,
+  AUTH_STATUS_BAD_LOGIN,
+  AUTH_STATUS_WAITING,
+  AUTH_STATUS_LOADING,
+  AUTH_STATUS_LOADING_FROM_COOKIE,
+  AUTH_STATUS_SERVER_ERROR
+} from '../config';
+
 import PureControllerView from './PureControllerView';
 
 import {
@@ -23,28 +32,28 @@ export default class LoginForm extends PureControllerView {
     let renderForm = true;
 
     switch (this.props.status) {
-    case 0:
+    case AUTH_STATUS_LOGGED_IN:
       statusMessage = 'Logged in!';
       statusType = 'success';
       break;
-    case 1:
+    case AUTH_STATUS_BAD_LOGIN:
       statusMessage = 'Bad info!';
       statusType = 'error';
       break;
-    case 2:
+    case AUTH_STATUS_WAITING:
       statusMessage = 'Please log in';
       statusType = 'input';
       break;
-    case 3:
+    case AUTH_STATUS_LOADING:
       statusMessage = 'Loading...';
       statusType = 'loading';
       break;
-    case 3.1:
+    case AUTH_STATUS_LOADING_FROM_COOKIE:
       statusMessage = 'Authenticating using stored session...';
       statusType = 'loading-fromstored';
       renderForm = false;
       break;
-    case 4:
+    case AUTH_STATUS_SERVER_ERROR:
     default:
       statusMessage = 'Unknown error';
       statusType = 'error';
@@ -63,12 +72,12 @@ export default class LoginForm extends PureControllerView {
       </form>
     ) : false;
 
-    return this.props.status ? (
+    return this.props.status === AUTH_STATUS_LOGGED_IN ? false : (
       <section id="loginArea">
         {statusBlock}
         {form}
       </section>
-    ) : false;
+    );
   }
 
   _attemptLogin(ev) {

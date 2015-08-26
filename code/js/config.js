@@ -22,3 +22,10 @@ export const API_LIST_SONGS_FROM_BROWSER = API + '/list/songs/';
 export const STREAM_URL = API + '/play/';
 
 export const DOCUMENT_TITLE = 'nMusic\u2122';
+
+export const AUTH_STATUS_LOGGED_IN = 0;
+export const AUTH_STATUS_BAD_LOGIN = 1;
+export const AUTH_STATUS_WAITING = 2;
+export const AUTH_STATUS_LOADING = 3;
+export const AUTH_STATUS_LOADING_FROM_COOKIE = 4;
+export const AUTH_STATUS_SERVER_ERROR = 5;

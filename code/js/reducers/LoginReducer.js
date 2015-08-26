@@ -1,13 +1,21 @@
 import { } from 'immutable';
 import Cookie from 'js-cookie';
 
-import { REMEMBERME_DAYS } from '../config';
+import {
+  REMEMBERME_DAYS,
+  AUTH_STATUS_LOGGED_IN,
+  AUTH_STATUS_BAD_LOGIN,
+  AUTH_STATUS_LOADING,
+  AUTH_STATUS_WAITING,
+  AUTH_STATUS_LOADING_FROM_COOKIE,
+  AUTH_STATUS_SERVER_ERROR
+} from '../config';
 
 import buildMessage from '../MessageBuilder';
 
 export const attemptLogin = (reduction, details) => {
   return reduction
-    .setIn(['appState', 'auth', 'status'], 3)
+    .setIn(['appState', 'auth', 'status'], AUTH_STATUS_LOADING)
     .set('effects', reduction.get('effects').push(
       buildMessage('AUTHENTICATE_API_CALL', details)
     ))
@@ -24,7 +32,7 @@ const afterCheckAuth = (reduction, displayAuth) => {
 export const setPersistentToken = (reduction, token) => {
   return !!token
     ? reduction
-      .setIn(['appState', 'auth', 'status'], 3.1)
+      .setIn(['appState', 'auth', 'status'], AUTH_STATUS_LOADING_FROM_COOKIE)
       .setIn(['appState', 'auth', 'token'], token)
       .set('effects', reduction.get('effects').push(
         buildMessage('AUTHTEST_API_CALL', token)
@@ -37,14 +45,14 @@ export const authGotResponse = (reduction, obj) => {
 
   let token = '';
 
-  let newStatus = 2;
+  let newStatus = AUTH_STATUS_WAITING;
 
   if (serverError) {
-    newStatus = 4;
+    newStatus = AUTH_STATUS_SERVER_ERROR;
   } else if (!obj.response.data.success) {
-    newStatus = obj.fromPersistentLogin ? 2 : 1;
+    newStatus = obj.fromPersistentLogin ? AUTH_STATUS_LOADING : AUTH_STATUS_BAD_LOGIN;
   } else {
-    newStatus = 0;
+    newStatus = AUTH_STATUS_LOGGED_IN;
 
     if (!obj.fromPersistentLogin) {
       // Set cookie for persistent login
