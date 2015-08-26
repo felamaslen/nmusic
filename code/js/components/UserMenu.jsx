@@ -1,6 +1,8 @@
 // displays a user menu
 
+import { List } from 'immutable';
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 import PureControllerView from './PureControllerView';
 
@@ -24,27 +26,51 @@ export default class UserMenu extends PureControllerView {
   render() {
     const menuButton = (
       <button id="user-menu-btn"
-        onClick={this._toggle.bind(this, !this.props.active)}>Menu</button>
+        onMouseDown={this._toggle.bind(this, !this.props.active)}>Menu</button>
     );
 
-    const menu = this.props.active ? (
-      <div className="user-menu">
-        <ul>
-          <li><a onClick={this._actionLogout.bind(this)}>Log out</a></li>
-        </ul>
-      </div>
-    ) : false;
+    const menuItems = List.of(
+      List.of('Log out', this._actionLogout),
+    );
+
+    const menuClass = classNames({
+      'user-menu': true,
+      'context-menu': true,
+      active: this.props.active
+    });
+
+    const menu = menuItems.map(
+      (item, index) => (
+        <li key={index}>
+          <a onClick={item.get(1).bind(this)}>{item.get(0)}</a>
+        </li>
+      )
+    );
 
     return (
       <div className="user-menu-wrapper">
         {menuButton}
-        {menu}
+        <div onMouseDown={this._cancelEvent} className={menuClass}>
+          <ul>{menu}</ul>
+        </div>
       </div>
     );
   }
 
-  _toggle(status) {
+  _cancelEvent(ev) {
+    ev.stopPropagation();
+  }
+
+  _toggle(status, ev) {
+    ev.stopPropagation();
+
     this.dispatchAction(userMenuToggle(status));
+
+    if (status) {
+      window.addEventListener('mousedown', this.props.events.get(0), false);
+    } else {
+      window.removeEventListener('mousedown', this.props.events.get(0), false);
+    }
   }
 
   _actionLogout() {
@@ -53,5 +79,6 @@ export default class UserMenu extends PureControllerView {
 }
 
 UserMenu.propTypes = {
-  active: PropTypes.bool
+  active: PropTypes.bool,
+  events: PropTypes.instanceOf(List)
 };

@@ -112,6 +112,7 @@ export default class PlayerUI extends PureControllerView {
             <div className="glow"></div>
             <UserMenu dispatcher={this.props.dispatcher}
               active={this.props.userMenuActive}
+              events={this.props.userMenuEvents}
             />
             {currentSongInfo}
           </div>
@@ -140,6 +141,7 @@ PlayerUI.propTypes = {
   volume: PropTypes.number,
   seekbarEvents: PropTypes.instanceOf(List),
   volumeControlEvents: PropTypes.instanceOf(List),
+  userMenuEvents: PropTypes.instanceOf(List),
   currentSong: PropTypes.instanceOf(Map),
   dispatcher: PropTypes.instanceOf(Dispatcher)
 };

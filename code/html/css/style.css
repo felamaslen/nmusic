@@ -54,7 +54,6 @@ input {
 ::-webkit-scrollbar-thumb:window-inactive {
 }
 ::-webkit-scrollbar-thumb:active {
-  /*background-color: rgba(78, 109, 146, .9);*/
   box-shadow: inset 0 0 16px 6px rgba(0, 0, 0, .3);
 }
 ::-webkit-scrollbar-corner {
@@ -138,16 +137,65 @@ input {
 }
 
 @-webkit-keyframes fade {
-  from {opacity: 1;}
-  to {opacity: 0.25;}
+  from { opacity: 1; }
+  to { opacity: 0.25; }
 }
 @-moz-keyframes fade {
-  from {opacity: 1;}
-  to {opacity: 0.25;}
+  from { opacity: 1; }
+  to { opacity: 0.25; }
 }
 @keyframes fade {
-  from {opacity: 1;}
-  to {opacity: 0.25;}
+  from { opacity: 1; }
+  to { opacity: 0.25; }
+}
+
+@-webkit-keyframes gobelow {
+  from { z-index: 10; }
+  to { z-index: -1; }
+}
+@-webkit-keyframes goabove {
+  from { z-index: -1; }
+  to { z-index: 10; }
+}
+.context-menu {
+  color: #000;
+  font-weight: normal;
+  font-size: 1.25em;
+  cursor: default;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .8);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, .3);
+  padding: 0;
+  position: relative;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity .18s ease-in;
+  -webkit-animation: gobelow .18s steps(2);
+}
+.context-menu.active {
+  opacity: 1;
+  z-index: 10;
+  -webkit-animation: goabove .18s steps(2);
+}
+.context-menu ul {
+  padding: 4px 0;
+}
+.context-menu li {
+}
+.context-menu a {
+  line-height: 22px;
+  padding: 0 2px 0 8px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  outline: none;
+}
+.context-menu a:hover {
+    color: #fff;
+    background: linear-gradient(to bottom,rgba(89,128,239,1) 0,rgba(100,137,248,1) 6%,rgba(45,102,246,1) 72%,rgba(34,96,246,1) 94%,rgba(13,82,235,1) 100%);
+}
+.context-menu a:focus {
 }
 
 .spinner .bar1 {
@@ -451,16 +499,8 @@ input {
   position: absolute;
   left: -97px;
   top: 22px;
-  text-shadow: none;
-  color: #000;
-  font-weight: normal;
-  font-size: 1.1em;
-  background: rgba(255, 255, 255, .8);
-  padding: 4px 2px;
   width: 220px;
-  z-index: 10;
-  border-radius: 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, .3);
+  text-shadow: none;
 }
 
 /* seek bar */
@@ -514,7 +554,7 @@ input {
 }
 #section-browsers .inside {
   background: #fff;
-  z-index: 4;
+  z-index: 2;
   height: 100%;
   position: relative;
   box-shadow: 0 2px 9px #666;
@@ -535,7 +575,7 @@ input {
   height: 22px;
   line-height: 22px;
   font-size: 12px;
-  /* white-space: nowrap; */
+  white-space: nowrap;
   overflow: hidden;
   box-shadow: inset 0 1px 1px 0 rgba(180,180,180,0.57);
 }
