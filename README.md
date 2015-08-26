@@ -11,6 +11,7 @@ Version: 0.0.1-preview
 * 2. Set `MUSIC_DIR` to the directory containing your music files.
 * 3. Set `SERVER_PORT` to the port on which you wish to run the server.
 * 4. Set `GET_ALL_SONGS` to `false` if you have more than a couple of hundred songs.
+* Create a clean database: `npm run dropdb`
 * **Most important:** Install the app: `npm install`
 
 #### Tasks
