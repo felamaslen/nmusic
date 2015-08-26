@@ -328,50 +328,116 @@ input {
   float: left;
   position: relative;
 }
+
 .ctrl {
-  background: url(../img/sprite.png) transparent no-repeat;
   display: block;
   float: left;
   text-indent: -9999px;
   border: none;
   outline: none;
 }
+.controls button {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(#ffffff, #cccccc), #c9c5c9;
+  border-radius: 100%;
+  border: 0 solid #d0d0d0;
+  box-shadow: 0 3px 11px rgba(0, 0, 0, 0.4);
+}
+.controls button::before, .controls button::after {
+  position: absolute;
+  content: "";
+}
+.controls button:hover {
+  background: linear-gradient(#f5f5f5, #b9b9b9), #c9c5c9;
+}
+.controls button:active {
+  top: 1px;
+  box-shadow: 0 0.06em 0.09em rgba(0, 0, 0, 0.4);
+}
+
+/* next/previous */
 .ctrl-previous, .ctrl-next {
   width: 24px;
-  height: 32px;
+  height: 24px;
 }
 .ctrl-previous {
-  background-position: -100px -4px;
-  margin: 10px 0 0 10px;
+  margin: 14px 0 0 10px;
 }
 .ctrl-next {
-  background-position: -68px -4px;
-  margin: 10px 10px 0 0;
+  margin: 14px 10px 0 10px;
+}
+.ctrl-previous::before, .ctrl-previous::after,
+.ctrl-next::before, .ctrl-next::after {
+  width: 0;
+  height: 0;
+  top: 6px;
+  border: 6px solid transparent;
+}
+.ctrl-previous::before, .ctrl-previous::after {
+  border-right-color: rgba(100, 100, 100, 0.8);
+  border-right-width: 8px;
+  left: 4px;
+}
+.ctrl-next::before, .ctrl-next::after {
+  border-left-color: rgba(100, 100, 100, 0.8);
+  border-left-width: 8px;
+  left: 6px;
+}
+.ctrl-previous::before {
+  left: -2px;
+}
+.ctrl-next::before {
+  left: 13px;
+}
+.ctrl-previous:hover::before, .ctrl-previous:hover::after {
+  border-right-color: rgba(36, 36, 36, 0.8);
+}
+.ctrl-next:hover::before, .ctrl-next:hover::after {
+  border-left-color: rgba(36, 36, 36, 0.8);
+}
+.ctrl-playpause:active {
 }
 .ctrl-playpause {
-  background-position: -36px -3px;
-  margin: 10px 0 0 12px;
+  margin: 10px 0 0 10px;
   width: 32px;
   height: 32px;
 }
+.playing .ctrl-playpause::before,
+.playing .ctrl-playpause::after {
+  height: 18px;
+  width: 5px;
+  left: 9px;
+  top: 7px;
+  display: block;
+  background-color: rgba(100, 100, 100, 0.8);
+}
+.playing .ctrl-playpause::after {
+  left: 17px;
+}
+.playing .ctrl-playpause:hover::before, .playing .ctrl-playpause:hover::after {
+  background-color: rgba(36, 36, 36, 0.8);
+}
 .paused .ctrl-playpause {
-  background-position: -4px -3px;
 }
-.ctrl-previous:active {
-  background-position: -100px -36px;
+.paused .ctrl-playpause::before {
+  z-index: 2;
+  top: 6px;
+  left: 10px;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-left-color: rgba(100, 100, 100, 0.8);
+  border-left-width: 16px;
 }
-.ctrl-next:active {
-  background-position: -68px -36px;
+.paused .ctrl-playpause::after{
 }
-.ctrl-playpause:active {
-  background-position: -36px -35px;
+.paused .ctrl-playpause:hover::before {
+  border-left-color: rgba(36, 36, 36, 0.8);
 }
 .paused .ctrl-playpause:active {
-  background-position: -4px -35px;
 }
-.ctrl-volume {
-  
-}
+
 .ctrl-volume .slider {
   width: 84px;
   height: 10px;
@@ -439,16 +505,6 @@ input {
   width: 4px;
   height: 6px;
   margin-top: -3px;
-}
-
-.volume-indicator.mute::before {
-  width:16px;
-  height:16px;
-  border:1px solid #000;
-  margin-top:-9px;
-  -webkit-border-radius:16px;
-  -moz-border-radius:16px;
-  border-radius:16px;
 }
 
 .volume-indicator.mute::after {
@@ -527,15 +583,54 @@ input {
 .info-artist {
   top: 16px;
 }
-.no-info .songinfo-inside::after {
-  background: url(../img/sprite.png) 0 -96px;
+.app-icon-outer {
   width: 48px;
   height: 48px;
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 50%;
   margin-left: -24px;
+  margin-top: -24px;
+  border-radius: 100%;
+  box-shadow: inset 0 0 14px rgb(102, 51, 153);
+}
+.app-icon {
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  font-style: normal;
+  color: #333;
+  text-align: left;
+  text-indent: -9999px;
+  direction: ltr;
+  width: 18px;
+  height: 6px;
+  -webkit-transform: skewY(-15deg);
+  -ms-transform: skewY(-15deg);
+  transform: skewY(-15deg);
+  box-shadow: inset 0 0 0 32px;
+  border-radius: 2px 2px 0 0;
+  margin: 10px 5px 16px 17px;
+}
+.app-icon::before {
   content: "";
+  position: absolute;
+  width: 2px;
+  height: 16px;
+  left: 0;
+  top: 4px;
+  box-shadow: inset 0 0 0 32px,16px 0 0 0;
+}
+.app-icon::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 8px;
+  left: -8px;
+  top: 17px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 32px,16px 0 0 0;
 }
 .songinfo-inside {
   position: relative;
@@ -547,12 +642,30 @@ input {
 }
 /* user menu */
 #user-menu-btn {
-  width: 20px;
+  width: 16px;
   height: 20px;
   position: absolute;
-  left: 3px;
-  top: 3px;
+  left: 4px;
+  top: 6px;
   text-indent: -9999px;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+#user-menu-btn::after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 16px;
+  height: 3px;
+  background: #333;
+  box-shadow: 0 6px 0 0 #333, 0 12px 0 0 #333;
+}
+#user-menu-btn:hover::after {
+  background: #06c;
+  box-shadow: 0 6px 0 0 #06c, 0 12px 0 0 #06c;
 }
 .user-menu {
   position: absolute;
@@ -564,29 +677,30 @@ input {
 
 /* seek bar */
 .seekbar .slider {
-  width: 288px;
+  width: 280px;
+  padding: 0 4px;
   height: 8px;
   left: 54px;
   bottom: 11px;
   position: absolute;
-  border: 1px solid #000;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: rgba(46,78,112,.4);
+  background-image: linear-gradient(90deg,rgba(255,255,255,.2) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.2) 75%,transparent 75%,transparent);
+  background-size: 8px 8px;
+  background-position: 0 0;
 }
 .seekbar .slider .inside {
   height: 8px;
   width: 0;
   position: relative;
-  background-color: rgba(46,78,112,.4);
-  background-position: 0 0;
-  background-image: linear-gradient(90deg,rgba(255,255,255,.2) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.2) 75%,transparent 75%,transparent);
-  -webkit-background-size: 8px 8px;
-  -moz-background-size: 8px 8px;
-  background-size: 8px 8px;
   -webkit-animation: slide 1s linear infinite;
 }
 .seekbar .slider-ctrl {
-  background: url(../img/sprite.png) -216px -51px;
   width: 8px;
-  height: 10px;
+  height: 8px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, .8);
   position: absolute;
   top: 0;
   right: -4px;

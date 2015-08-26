@@ -34,15 +34,15 @@ const volumeControlColors = volume =>
   List.of(
     16 / 9 * Math.pow(volume - 0.25, 2),
     Math.pow(Math.E, -2.5 * Math.pow(volume, 2)),
-    volume * Math.sin(3 * volume)
+    volume * Math.sin(3 * volume),
+    0.4
   );
 
 export default class PlayerUI extends PureControllerView {
   render() {
     const playPauseText = this.props.paused ? 'Play' : 'Pause';
 
-    const seekbarColors = () =>
-      List.of(0.3, 0.3, 0.3);
+    const seekbarColors = () => List.of(0, 0, 0, 0);
 
     const currentSongInfo = this.props.currentSong ? (
       <div>
@@ -70,9 +70,16 @@ export default class PlayerUI extends PureControllerView {
       'song-info': true
     });
 
+    const appIcon = this.props.currentSong ? false : (
+      <div className="app-icon-outer">
+        <i className="app-icon"/>
+      </div>
+    );
+
     const playerClass = classNames({
       player: true,
-      paused: this.props.paused
+      paused: this.props.paused,
+      playing: !this.props.paused
     });
 
     const volumeLow = 0.3;
@@ -117,6 +124,7 @@ export default class PlayerUI extends PureControllerView {
               events={this.props.userMenuEvents}
             />
             {currentSongInfo}
+            {appIcon}
           </div>
         </section>
       </div>

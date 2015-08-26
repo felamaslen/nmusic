@@ -19,7 +19,7 @@ export default class CustomSlider extends PureControllerView {
         name: 'CustomSliderMouseup_' + this.props.name,
         func: this._mouseup.bind(this)
       }));
-      
+
       this.dispatchNext(storeEventHandler({
         name: 'CustomSliderMousemove_' + this.props.name,
         func: this._mousemove.bind(this)
@@ -51,7 +51,7 @@ export default class CustomSlider extends PureControllerView {
           this.props.min + (this.props.max - this.props.min) * position / sliderMeasure.width
         )
       );
-   
+
       this.dispatchAction(this.props.changedAction(newValue));
     });
   }
@@ -79,8 +79,8 @@ export default class CustomSlider extends PureControllerView {
 
       backgroundColor:
         'rgba(' + this.props.colors(this.props.value)
-        .map(color => Math.round(255 * color))
-        .reduce((r, s) => r + ',' + s) + ',0.4)'
+        .map((color, index) => index < 3 ? Math.round(255 * color) : color)
+        .reduce((r, s) => r + ',' + s) + ')'
     };
 
     return (
