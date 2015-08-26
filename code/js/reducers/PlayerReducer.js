@@ -110,6 +110,7 @@ export const ctrlPrevious = reduction => {
   }
 
   return newReduction
+    .setIn(['appState', 'player', 'currentTime'], 0)
     .setIn(['appState', 'title'], getDocumentTitle(false, newSong))
   ;
 };
@@ -140,6 +141,7 @@ export const ctrlNext = (reduction, manual) => {
   }
 
   return reduction
+    .setIn(['appState', 'player', 'currentTime'], 0)
     .setIn(['appState', 'player', 'currentSong'], newSong)
     .setIn(['appState', 'player', 'queueId'], newQueueId)
     .setIn(['appState', 'title'], getDocumentTitle(manual ? false : reduction.getIn(
