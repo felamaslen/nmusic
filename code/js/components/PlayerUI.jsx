@@ -75,8 +75,8 @@ export default class PlayerUI extends PureControllerView {
       paused: this.props.paused
     });
 
-    const volumeLow = 0.4;
-    const volumeHigh = 0.9;
+    const volumeLow = 0.3;
+    const volumeHigh = 0.6;
 
     return (
       <div id="player" className={playerClass}>
@@ -103,7 +103,9 @@ export default class PlayerUI extends PureControllerView {
                 low: this.props.volume < volumeLow && this.props.volume > 0,
                 med: this.props.volume < volumeHigh && this.props.volume >= volumeLow,
                 high: this.props.volume >= volumeHigh
-              })}/>
+              })}>
+                <a/>
+              </div>
             </div>
           </div>
         </section>

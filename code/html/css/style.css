@@ -407,24 +407,83 @@ input {
   margin-left: -8px;
 }
 .volume-indicator {
-  background-image: url(../img/sprite.png);
   position: absolute;
   top: 13px;
   left: 101px;
   width: 22px;
   height: 24px;
 }
-.volume-indicator.mute {
-  background-position: -132px -62px;
+.volume-indicator::before,
+.volume-indicator::after,
+.volume-indicator a::before,
+.volume-indicator a::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
 }
-.volume-indicator.low {
-  background-position: -155px -62px;
+.volume-indicator a::before,
+.volume-indicator a::after {
+  margin: -8px 0 0;
+  background: #000;
 }
-.volume-indicator.med {
-  background-position: -178px -62px;
+.volume-indicator a::before {
+  left: -2px;
+  border: 7px solid transparent;
+  border-right-color: #000;
+  margin-top: -7px;
+  background: transparent;
 }
-.volume-indicator.high {
-  background-position: -201px -62px;
+.volume-indicator a::after {
+  left: 4px;
+  width: 4px;
+  height: 6px;
+  margin-top: -3px;
+}
+
+.volume-indicator.mute::before {
+  width:16px;
+  height:16px;
+  border:1px solid #000;
+  margin-top:-9px;
+  -webkit-border-radius:16px;
+  -moz-border-radius:16px;
+  border-radius:16px;
+}
+
+.volume-indicator.mute::after {
+  width:18px;
+  border-top:1px solid #000;
+  -webkit-transform:rotate(-45deg);
+  -moz-transform:rotate(-45deg);
+  -ms-transform:rotate(-45deg);
+  -o-transform:rotate(-45deg);
+  transform:rotate(-45deg);
+}
+
+.volume-indicator.med::before,
+.volume-indicator.high::before {
+  left: 12px;
+  width: 5px;
+  height: 5px;
+  margin-top: -3px;
+  border: 2px solid #000;
+  border-width: 1px 1px 0 0;
+  -webkit-border-radius: 0 15px 0 0;
+  -moz-border-radius: 0 15px 0 0;
+  border-radius: 0 15px 0 0;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.volume-indicator.high::before {
+  width: 6px;
+  height: 6px;
+  margin-top: -5px;
+  border: 4px double #000;
+  border-width: 4px 4px 0 0;
 }
 
 /* song info */
