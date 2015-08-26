@@ -24,6 +24,7 @@ export default class LoadingSpinner extends PureControllerView {
   }
 
   _hideSpinner() {
+    // sets loadedOnLastRender to true
     this.dispatchAction(hideSpinner());
   }
 }

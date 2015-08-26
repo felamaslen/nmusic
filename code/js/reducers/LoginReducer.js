@@ -15,6 +15,8 @@ import buildMessage from '../MessageBuilder';
 
 export const attemptLogin = (reduction, details) => {
   return reduction
+    .setIn(['appState', 'loaded', 'authStatus'], false)
+    .setIn(['appState', 'loadedOnLastRender'], false)
     .setIn(['appState', 'auth', 'status'], AUTH_STATUS_LOADING)
     .set('effects', reduction.get('effects').push(
       buildMessage('AUTHENTICATE_API_CALL', details)
@@ -23,10 +25,19 @@ export const attemptLogin = (reduction, details) => {
 };
 
 const afterCheckAuth = (reduction, displayAuth) => {
-  const newLoaded = reduction.getIn(['appState', 'loaded']).map(() => !!displayAuth)
+  const loadedOld = reduction.getIn(['appState', 'loaded']);
+  const loadedThen = loadedOld.every(item => !!item);
+
+  const loadedNew = loadedOld
+    .map(() => !!displayAuth)
     .set('authStatus', true);
 
-  return reduction.setIn(['appState', 'loaded'], newLoaded);
+  const loadedNow = loadedNew.every(item => !!item);
+
+  return reduction
+    .setIn(['appState', 'loaded'], loadedNew)
+    .setIn(['appState', 'loadedOnLastRender'], loadedThen && loadedNow)
+  ;
 };
 
 export const setPersistentToken = (reduction, token) => {
@@ -71,7 +82,7 @@ export const authGotResponse = (reduction, obj) => {
       : obj.response.data.token;
   }
 
-  return afterCheckAuth(reduction, newStatus)
+  return afterCheckAuth(reduction, newStatus !== AUTH_STATUS_LOGGED_IN)
     .setIn(['appState', 'auth', 'status'], newStatus)
     .setIn(['appState', 'auth', 'token'], token)
   ;

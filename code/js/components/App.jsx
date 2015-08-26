@@ -2,7 +2,9 @@
  * the main nmusic-app JSX component
  */
 
-import { } from '../config';
+import {
+  AUTH_STATUS_LOGGED_IN
+} from '../config';
 
 import { List } from 'immutable';
 import React, { Component } from 'react';
@@ -81,7 +83,9 @@ export default class App extends Component {
   }
 
   render() {
-    const authenticated = !this.state.reduction.getIn(['appState', 'auth', 'status']);
+    const authenticated = this.state.reduction.getIn(
+      ['appState', 'auth', 'status']
+    ) === AUTH_STATUS_LOGGED_IN;
 
     const currentSong = this.state.reduction.getIn(['appState', 'player', 'currentSong']);
     const currentSongId = currentSong === null ? -1 : currentSong.get('id');
@@ -142,7 +146,7 @@ export default class App extends Component {
     return (
       <main>
         <LoadingSpinner dispatcher={this.state.dispatcher}
-          loaded={!this.state.reduction.getIn(['appState', 'loaded']).some(loadedItem => !loadedItem)}
+          loaded={this.state.reduction.getIn(['appState', 'loaded']).every(loadedItem => !!loadedItem)}
           loadedOnLastRender={this.state.reduction.getIn(['appState', 'loadedOnLastRender'])}
         />
         <LoginForm dispatcher={this.state.dispatcher}
