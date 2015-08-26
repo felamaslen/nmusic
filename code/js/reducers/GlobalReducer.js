@@ -1,6 +1,7 @@
 import {
   setPersistentToken,
   attemptLogin,
+  logout,
   authGotResponse
 } from './LoginReducer';
 
@@ -50,6 +51,8 @@ export default (reduction, action) => {
     return setPersistentToken(reduction, action.payload);
   case 'AUTH_LOGIN_ATTEMPTED':
     return attemptLogin(reduction, action.payload);
+  case 'AUTH_LOGOUT_REQUESTED':
+    return logout(reduction);
   case 'AUTH_LOGIN_GOT_RESPONSE':
     return authGotResponse(reduction, action.payload);
 

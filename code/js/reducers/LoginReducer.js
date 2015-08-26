@@ -1,5 +1,5 @@
 import { } from 'immutable';
-import Cookie from 'js-cookie';
+import Cookies from 'js-cookie';
 
 import {
   REMEMBERME_DAYS,
@@ -12,17 +12,6 @@ import {
 } from '../config';
 
 import buildMessage from '../MessageBuilder';
-
-export const attemptLogin = (reduction, details) => {
-  return reduction
-    .setIn(['appState', 'loaded', 'authStatus'], false)
-    .setIn(['appState', 'loadedOnLastRender'], false)
-    .setIn(['appState', 'auth', 'status'], AUTH_STATUS_LOADING)
-    .set('effects', reduction.get('effects').push(
-      buildMessage('AUTHENTICATE_API_CALL', details)
-    ))
-  ;
-};
 
 const afterCheckAuth = (reduction, displayAuth) => {
   const loadedOld = reduction.getIn(['appState', 'loaded']);
@@ -37,6 +26,26 @@ const afterCheckAuth = (reduction, displayAuth) => {
   return reduction
     .setIn(['appState', 'loaded'], loadedNew)
     .setIn(['appState', 'loadedOnLastRender'], loadedThen && loadedNow)
+  ;
+};
+
+export const attemptLogin = (reduction, details) => {
+  return reduction
+    .setIn(['appState', 'loaded', 'authStatus'], false)
+    .setIn(['appState', 'loadedOnLastRender'], false)
+    .setIn(['appState', 'auth', 'status'], AUTH_STATUS_LOADING)
+    .set('effects', reduction.get('effects').push(
+      buildMessage('AUTHENTICATE_API_CALL', details)
+    ))
+  ;
+};
+
+export const logout = reduction => {
+  Cookies.remove('token');
+
+  return afterCheckAuth(reduction, true)
+    .setIn(['appState', 'auth', 'status'], AUTH_STATUS_WAITING)
+    .setIn(['appState', 'auth', 'token'], '')
   ;
 };
 
@@ -74,7 +83,7 @@ export const authGotResponse = (reduction, obj) => {
         options.expires = REMEMBERME_DAYS;
       }
 
-      Cookie.set('token', obj.response.data.token, options);
+      Cookies.set('token', obj.response.data.token, options);
     }
 
     token = obj.fromPersistentLogin
