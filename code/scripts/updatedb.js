@@ -5,15 +5,19 @@
 import { formatTime } from '../server/common';
 import {
   FORMATS,
-  MONGO_URL,
+  MONGO_URL as CONFIG_MONGO_URL,
   DB_SCHEMA,
-  MUSIC_DIR
+  MUSIC_DIR as CONFIG_MUSIC_DIR
 } from '../server/config';
 
 import mm from 'musicmetadata';
 import fs from 'fs';
 import mongoose, { Schema } from 'mongoose';
 import ProgressBar from 'progress';
+
+// environment variable overrides
+const MONGO_URL = process.env.MONGO_URL || CONFIG_MONGO_URL;
+const MUSIC_DIR = process.env.MUSIC_DIR || CONFIG_MUSIC_DIR;
 
 /* DATABASE */
 const db = mongoose.connection;
@@ -32,15 +36,6 @@ const Song = mongoose.model('song', new Schema(DB_SCHEMA.songs));
 /* END DATABASE */
 
 /* GENERAL FUNCTIONS */
-const inArray = (needle, haystack) => {
-  for (const key in haystack) {
-    if (haystack[key] === needle) {
-      return true;
-    }
-  }
-  return false;
-};
-
 const inArraySubkey = (needle, haystack, subkey) => {
   for (const key in haystack) {
     if (haystack[key][subkey] === needle) {
@@ -86,6 +81,9 @@ let progressbarExtraneous;
 let progressbarRemoveExtraneous;
 let progressbarProcessFiles;
 
+// warnings
+const fileWarnings = [];
+
 const CustomProgressBar = (total, title) => {
   return new ProgressBar(
     `[:bar] ${title} (:percent) ETA: :etas`,
@@ -119,8 +117,6 @@ const saveNewSong = (info, next, files, total, ended, id) => {
   const _info = info;
   _info._id = id;
 
-  const error = null;
-
   const item = new Song(_info);
   item.save(error => {
     if (error) throw error;
@@ -132,25 +128,31 @@ const saveNewSong = (info, next, files, total, ended, id) => {
 };
 
 const processFile = (doc, next, files, total, ended, error, tags) => {
-  if (error) throw error;
+  if (error) {
+    // if one file has an error, skip it and move on to the next (give a warning)
+    fileWarnings.push(doc.filename);
 
-  const albumartist = tags.albumartist && tags.albumartist[0]
-    ? tags.albumartist[0] : 'Unknown Artst';
+    progressbarProcessFiles.tick();
+    next(files, total, ended);
+  } else {
+    const albumartist = tags.albumartist && tags.albumartist[0]
+      ? tags.albumartist[0] : 'Unknown Artst';
 
-  const info = {
-    filename: doc.filename,
-    track: tags.track && tags.track.no ? tags.track.no : 0,
-    title: tags.title ? tags.title : 'Untitled Track',
-    artist: tags.artist && tags.artist[0] ? tags.artist[0] : albumartist,
-    album: tags.album ? tags.album : '',
-    genre: tags.genre && tags.genre[0] ? tags.genre[0] : '',
-    time: tags.duration ? parseFloat(tags.duration, 10) : 0,
-    year: tags.year ? parseInt(tags.year, 10) : 0
-  };
+    const info = {
+      filename: doc.filename,
+      track: tags.track && tags.track.no ? tags.track.no : 0,
+      title: tags.title ? tags.title : 'Untitled Track',
+      artist: tags.artist && tags.artist[0] ? tags.artist[0] : albumartist,
+      album: tags.album ? tags.album : '',
+      genre: tags.genre && tags.genre[0] ? tags.genre[0] : '',
+      time: tags.duration ? parseFloat(tags.duration, 10) : 0,
+      year: tags.year ? parseInt(tags.year, 10) : 0
+    };
 
-  getNextSongId('songsid', saveNewSong.bind(
-    null, info, next, files, total, ended
-  ));
+    getNextSongId('songsid', saveNewSong.bind(
+      null, info, next, files, total, ended
+    ));
+  }
 };
 
 const addMissing = (missingFiles, total, ended, next) => {
@@ -178,7 +180,9 @@ const afterAddMissing = () => {
     console.log(time[1][0], time[1][1]);
   });
 
-  console.log('Successfully updated the music database.');
+  console.log(
+    `Successfully updated the music database (${fileWarnings.length} warnings).`
+  );
   mongoose.disconnect();
 };
 
@@ -190,9 +194,9 @@ const removeExtraneous = (extraneous, callback) => {
   if (extraneous.length > 0) {
     const doc = extraneous.pop();
 
-    Song.remove({ _id: doc._id }, err => {
-      if (err) {
-        throw err;
+    Song.remove({ _id: doc._id }, error => {
+      if (error) {
+        throw error;
       }
 
       progressbarRemoveExtraneous.tick();
@@ -237,7 +241,7 @@ const dbScanned = (files, error, dbFiles) => {
     files, dbFiles, 'filename', progressbarMissingFiles
   );
 
-  execTime(`Find missing files (${missingFiles.length}) items`);
+  execTime(`Find missing files (${missingFiles.length} items)`);
 
   // things in DB which no longer exist in filesystem
   progressbarExtraneous = new CustomProgressBar(
@@ -267,53 +271,42 @@ const filesScanned = files => {
 
 const addDirRecursive = (dir, level, callback) => {
   const _files = fs.readdirSync(dir);
-  const files = [];
+  if (!!_files) {
+    const files = [];
 
-  _files.forEach(file => {
-    const path = dir + '/' + file;
+    _files.forEach(file => {
+      const path = dir + '/' + file;
 
-    if (fs.lstatSync(path).isDirectory()) {
-      addDirRecursive(path, level + 1, files_ => {
-        files_.forEach(obj => {
-          files.push(obj);
+      if (fs.lstatSync(path).isDirectory()) {
+        addDirRecursive(path, level + 1, files_ => {
+          files_.forEach(obj => files.push(obj));
         });
+      } else {
+        const extension = path.substring(path.lastIndexOf('.') + 1);
 
-        if (!level) {
-          progressbarDirscan.tick();
+        if (FORMATS.indexOf(extension) > -1) {
+          files.push({ filename: path });
         }
-      });
-    } else {
-      const extension = path.substring(path.lastIndexOf('.') + 1);
-
-      if (inArray(extension, FORMATS)) {
-        files.push({ filename: path });
       }
-    }
-  });
 
-  if (callback) {
-    callback(files);
+      if (!level) {
+        progressbarDirscan.tick();
+      }
+    });
+
+    if (callback) {
+      callback(files);
+    }
   }
 };
 /* END CALLBACK FUNCTIONS */
 
-// first get the number of directories in the top level,
-// for an estimate of progress
-const _files = fs.readdirSync(MUSIC_DIR);
-let numDirs = 0;
-
-_files.forEach(file => {
-  const path = MUSIC_DIR + '/' + file;
-
-  if (fs.lstatSync(path).isDirectory()) {
-    numDirs++;
-  }
-});
+const getNumFiles = () => fs.readdirSync(MUSIC_DIR).length;
 
 const _onDBOpen = () => {
   // find all files in the music directory
   progressbarDirscan = new CustomProgressBar(
-    numDirs, `Recursing through ${MUSIC_DIR}`
+    getNumFiles(), `Recursing through ${MUSIC_DIR}`
   );
 
   addDirRecursive(MUSIC_DIR, 0, filesScanned);
