@@ -127,7 +127,9 @@ const saveNewSong = (info, next, files, total, ended, id) => {
   });
 };
 
-const processFile = (doc, next, files, total, ended, error, tags) => {
+const processFile = (stream, doc, next, files, total, ended, error, tags) => {
+  stream.close();
+
   if (error) {
     // if one file has an error, skip it and move on to the next (give a warning)
     fileWarnings.push(doc.filename);
@@ -149,6 +151,10 @@ const processFile = (doc, next, files, total, ended, error, tags) => {
       year: tags.year ? parseInt(tags.year, 10) : 0
     };
 
+    if (isNaN(info.track)) { info.track = 0; }
+    if (isNaN(info.time)) { info.time = 0; }
+    if (isNaN(info.year)) { info.year = 0; }
+
     getNextSongId('songsid', saveNewSong.bind(
       null, info, next, files, total, ended
     ));
@@ -159,12 +165,19 @@ const addMissing = (missingFiles, total, ended, next) => {
   if (missingFiles.length > 0) {
     const doc = missingFiles.pop();
 
-    // mm <-> musicmetadata
-    mm(
-      fs.createReadStream(doc.filename),
-      { duration: true }, // get the duration of the song
-      processFile.bind(null, doc, next, missingFiles, total, ended)
-    );
+    const stream = fs.createReadStream(doc.filename);
+
+    if (!!stream) {
+      // mm <-> musicmetadata
+      mm(
+        stream,
+        { duration: true }, // get the duration of the song
+        processFile.bind(null, stream, doc, next, missingFiles, total, ended)
+      );
+    } else {
+      fileWarnings.push(doc.filename);
+      next(missingFiles, total, ended);
+    }
   } else {
     ended();
   }
@@ -233,15 +246,20 @@ const dbScanned = (files, error, dbFiles) => {
   execTime(`Fetch all songs from DB (${dbFiles.length} items)`);
 
   // things in the filesystem not in DB
-  progressbarMissingFiles = new CustomProgressBar(
-    files.length, 'Calculating missing files'
-  );
+  let missingFiles;
+  if (dbFiles.length > 0) {
+    progressbarMissingFiles = new CustomProgressBar(
+      files.length, 'Calculating missing files'
+    );
 
-  const missingFiles = arrayDiffSubkey(
-    files, dbFiles, 'filename', progressbarMissingFiles
-  );
+    missingFiles = arrayDiffSubkey(
+      files, dbFiles, 'filename', progressbarMissingFiles
+    );
 
-  execTime(`Find missing files (${missingFiles.length} items)`);
+    execTime(`Find missing files (${missingFiles.length} items)`);
+  } else {
+    missingFiles = files;
+  }
 
   // things in DB which no longer exist in filesystem
   progressbarExtraneous = new CustomProgressBar(
@@ -258,7 +276,10 @@ const dbScanned = (files, error, dbFiles) => {
     extraneous.length, 'Removing extraneous db entries'
   );
 
-  removeExtraneous(extraneous, addFilesToDB.bind(null, missingFiles));
+  removeExtraneous(
+    extraneous,
+    addFilesToDB.bind(null, missingFiles)
+  );
 };
 
 const filesScanned = files => {
