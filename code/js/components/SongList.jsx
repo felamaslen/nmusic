@@ -55,7 +55,7 @@ export default class SongList extends PureControllerView {
     };
 
     return (
-      <section id="section-songlist">
+      <section id="section-songlist" className="noselect">
         <header style={headerStyle}>
           <song-track>#</song-track>
           <song-title>Title</song-title>

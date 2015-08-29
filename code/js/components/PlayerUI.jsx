@@ -12,6 +12,9 @@ import UserMenu from './UserMenu';
 import PureControllerView from './PureControllerView';
 
 import {
+  customSliderClicked
+} from '../actions/AppActions';
+import {
   ctrlPrevious,
   ctrlNext,
   togglePause,
@@ -51,10 +54,12 @@ export default class PlayerUI extends PureControllerView {
         <div className="seekbar">
           <div className="current-time">{secondsToTime(this.props.currentTime)}</div>
           <CustomSlider dispatcher={this.props.dispatcher}
+            vertical={false}
             name="seekbar"
             min={0} max={this.props.currentSong.get('time')}
             value={this.props.currentTime}
             clicked={this.props.seekbarClicked}
+            clickedAction={customSliderClicked}
             changedAction={ctrlSeek}
             eventHandlers={this.props.seekbarEvents}
             colors={seekbarColors}
@@ -97,9 +102,11 @@ export default class PlayerUI extends PureControllerView {
           <div className="controls-volume">
             <div className="ctrl-volume">
               <CustomSlider dispatcher={this.props.dispatcher}
+                vertical={false}
                 name="volume"
                 min={0} max={1} value={this.props.volume}
                 clicked={this.props.volumeClicked}
+                clickedAction={customSliderClicked}
                 changedAction={audioVolumeChange}
                 eventHandlers={this.props.volumeControlEvents}
                 colors={volumeControlColors}

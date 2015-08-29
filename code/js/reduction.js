@@ -26,7 +26,8 @@ export default new Record({
     eventHandlers: {},
     customSlider: {
       volumeClicked: -1,
-      seekbarClicked: -1
+      seekbarClicked: -1,
+      resizeBrowserClicked: -1
     },
     player: {
       queue: [],
@@ -45,6 +46,7 @@ export default new Record({
     },
     browser: {
       height: 220,
+      maxHeight: 400, // TODO: change to be dynamic as the window resizes
       selectedArtists: [],
       selectedAlbums: [],
       artistClickedLast: null,

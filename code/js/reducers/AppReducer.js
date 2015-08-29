@@ -20,12 +20,12 @@ export const storeEventHandler = (reduction, handler) =>
 export const customSliderClicked = (reduction, data) => {
   let effects = reduction.get('effects');
 
-  if (data.clickPosition < 0) {
+  if (data.name === 'volume' && data.clickPosition < 0) {
     effects = effects.push(buildMessage(SETTINGS_UPDATE_TRIGGERED));
   }
 
   return reduction
-    .setIn(['appState', 'customSlider', data.name + 'Clicked'], data.clickPosition)
+    .setIn(['appState', 'customSlider', `${data.name}Clicked`], data.clickPosition)
     .set('effects', effects);
 };
 

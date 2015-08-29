@@ -1,12 +1,56 @@
 // common client functions
 
 import { List } from 'immutable';
+import { PropTypes } from 'react';
 
 import {
   NAVIGATION_WARNING_MESSAGE,
   DOCUMENT_TITLE,
   TIME_DISPLAY_NOTIFICATIONS
 } from './config';
+
+export const getOffset = element => element.getBoundingClientRect();
+
+export const sliderProps = {
+  vertical: PropTypes.bool,
+  drag: PropTypes.bool,
+  clicked: PropTypes.number,
+  min: PropTypes.number,
+  max: PropTypes.number,
+  value: PropTypes.number,
+  name: PropTypes.string,
+  colors: PropTypes.func,
+  changedAction: PropTypes.func,
+  clickedAction: PropTypes.func,
+  eventHandlers: PropTypes.instanceOf(List)
+};
+
+export function sliderMouseDown(ref, ev) {
+  ev.stopPropagation();
+  if (this.props.drag) {
+    const _offset = getOffset(this.refs[ref].getDOMNode());
+
+    // "vertical" means "movement in the vertical direction"
+    const offset = this.props.vertical ? _offset.top : _offset.left;
+
+    this.dispatchAction(this.props.clickedAction({
+      name: this.props.name,
+      clickPosition: (this.props.vertical ? ev.clientY : ev.clientX) - offset
+    }));
+  }
+}
+
+export function sliderOnShouldComponentUpdate(nextProps) {
+  if (nextProps.clicked > -1 && this.props.clicked < 0) {
+    window.addEventListener('mouseup', this.props.eventHandlers.get(0), false);
+    window.addEventListener('mousemove', this.props.eventHandlers.get(1), false);
+  } else if (nextProps.clicked < 0 && this.props.clicked > -1) {
+    window.removeEventListener('mouseup', this.props.eventHandlers.get(0), false);
+    window.removeEventListener('mousemove', this.props.eventHandlers.get(1), false);
+  }
+
+  return true;
+}
 
 export const getDocumentTitle = (canNotify, song, paused) => {
   const haveTitle = !!song && !!song.get('title');

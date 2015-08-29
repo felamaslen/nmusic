@@ -14,14 +14,19 @@ import { Dispatcher } from 'flux';
 import globalReducer from '../reducers/GlobalReducer';
 
 import {
-  canNotify
+  canNotify,
+  customSliderClicked
 } from '../actions/AppActions';
+import {
+  browserResized
+} from '../actions/BrowserActions';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
 
 // import components here
 import LoginForm from './LoginForm';
 import LoadingSpinner from './LoadingSpinner';
+import ResizeSlider from './ResizeSlider';
 import PlayerEngine from './PlayerEngine';
 import PlayerUI from './PlayerUI';
 import BrowserArtists from './BrowserArtists';
@@ -127,6 +132,24 @@ export default class App extends Component {
           ['appState', 'browser', 'height']
         )}}>
           <div className="inside">
+            <ResizeSlider dispatcher={this.state.dispatcher}
+              vertical={true}
+              name="resizeBrowser"
+              eventHandlers={List.of(
+                this.state.reduction.getIn(
+                  ['appState', 'eventHandlers', 'ResizeSliderMouseup_resizeBrowser']
+                ),
+                this.state.reduction.getIn(
+                  ['appState', 'eventHandlers', 'ResizeSliderMousemove_resizeBrowser']
+                )
+              )}
+              min={40}
+              max={this.state.reduction.getIn(['appState', 'browser', 'maxHeight'])}
+              value={this.state.reduction.getIn(['appState', 'browser', 'height'])}
+              clicked={this.state.reduction.getIn(['appState', 'customSlider', 'resizeBrowserClicked'])}
+              clickedAction={customSliderClicked}
+              changedAction={browserResized}
+            />
             <BrowserArtists dispatcher={this.state.dispatcher}
               loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
               selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtists'])}

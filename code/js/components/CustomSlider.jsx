@@ -1,16 +1,22 @@
 // Provides a slider component for e.g. setting the volume
 
-import { List } from 'immutable';
-import React, { PropTypes } from 'react';
+import { } from 'immutable';
+import React from 'react';
 
 import {
   storeEventHandler,
-  customSliderClicked
+  customSliderClicked,
+  setSettings
 } from '../actions/AppActions';
 
 import PureControllerView from './PureControllerView';
 
-const getOffset = element => element.getBoundingClientRect();
+import {
+  getOffset,
+  sliderMouseDown,
+  sliderOnShouldComponentUpdate,
+  sliderProps
+} from '../common';
 
 export default class CustomSlider extends PureControllerView {
   componentWillMount() {
@@ -28,20 +34,14 @@ export default class CustomSlider extends PureControllerView {
   }
 
   componentDidMount() {
-    this.refs.btn.getDOMNode().addEventListener('mousedown', ev => {
-      ev.stopPropagation();
-      if (this.props.drag) {
-        const offset = getOffset(this.refs.btn.getDOMNode()).left;
-
-        this.dispatchAction(customSliderClicked({
-          name: this.props.name,
-          clickPosition: ev.clientX - offset
-        }));
-      }
-    });
+    // click the button to grab it and start moving it
+    this.refs.btn.getDOMNode().addEventListener(
+      'mousedown', sliderMouseDown.bind(this, 'btn')
+    );
 
     const sliderMeasure = this._sliderMeasure();
 
+    // click the slider to skip to a value
     this.refs.slider.getDOMNode().addEventListener('mousedown', ev => {
       const position = ev.clientX - sliderMeasure.left;
 
@@ -53,19 +53,12 @@ export default class CustomSlider extends PureControllerView {
       );
 
       this.dispatchAction(this.props.changedAction(newValue));
+      this.dispatchAction(setSettings());
     });
   }
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.clicked > -1 && this.props.clicked < 0) {
-      window.addEventListener('mouseup', this.props.eventHandlers.get(0), false);
-      window.addEventListener('mousemove', this.props.eventHandlers.get(1), false);
-    } else if (nextProps.clicked < 0 && this.props.clicked > -1) {
-      window.removeEventListener('mouseup', this.props.eventHandlers.get(0), false);
-      window.removeEventListener('mousemove', this.props.eventHandlers.get(1), false);
-    }
-
-    return true;
+    return sliderOnShouldComponentUpdate.bind(this, nextProps)();
   }
 
   render() {
@@ -120,18 +113,7 @@ export default class CustomSlider extends PureControllerView {
   }
 }
 
-CustomSlider.propTypes = {
-  drag: PropTypes.bool,
-  clicked: PropTypes.number,
-  min: PropTypes.number,
-  max: PropTypes.number,
-  value: PropTypes.number,
-  name: PropTypes.string,
-  colors: PropTypes.func,
-  changedAction: PropTypes.func,
-  clickedAction: PropTypes.func,
-  eventHandlers: PropTypes.instanceOf(List)
-};
+CustomSlider.propTypes = sliderProps;
 
 CustomSlider.defaultProps = {
   drag: true

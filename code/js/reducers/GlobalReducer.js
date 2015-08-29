@@ -24,6 +24,7 @@ import {
   AUDIO_VOLUME_SET,
 
   // Browser actions
+  BROWSER_RESIZED,
   BROWSER_ARTISTS_REQUESTED,
   BROWSER_ARTISTS_FETCHED,
   BROWSER_ARTIST_SELECTED,
@@ -71,6 +72,7 @@ import {
 } from './AudioReducer';
 
 import {
+  browserResized,
   loadListArtists,
   gotListArtists,
   selectArtist,
@@ -138,6 +140,8 @@ export default (reduction, action) => {
     return audioVolumeChange(reduction, action.payload);
 
   // Browser actions
+  case BROWSER_RESIZED:
+    return browserResized(reduction, action.payload);
   case BROWSER_ARTISTS_REQUESTED:
     return loadListArtists(reduction);
   case BROWSER_ARTISTS_FETCHED:

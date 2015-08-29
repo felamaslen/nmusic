@@ -720,6 +720,17 @@ input {
 }
 
 /** Browsers */
+#resize-slider-resizeBrowser {
+  width: 100%;
+  height: 10px;
+  position: absolute;
+  background: red;
+  left: 0;
+  bottom: -5px;
+  z-index: 100;
+  cursor: n-resize;
+}
+
 #section-browsers {
   height: 180px;
   width: 100%;

@@ -9,6 +9,12 @@ import { List, fromJS } from 'immutable';
 
 import buildMessage from '../MessageBuilder';
 
+export const browserResized = (reduction, height) => {
+  return reduction
+    .setIn(['appState', 'browser', 'height'], height)
+  ;
+};
+
 export const loadListArtists = reduction => {
   return reduction
     .set('effects', reduction
