@@ -41,9 +41,10 @@ export const canNotify = reduction =>
 
 export const setSettings = reduction => {
   // implement settings cookie here
+  // Since cookie size is limited to 4093 bytes, use short keys
   const settings = JSON.stringify({
-    volume: Math.round(reduction.getIn(['appState', 'player', 'volume']) * 1000) / 1000,
-    browserHeight: reduction.getIn(['appState', 'browser', 'height'])
+    v: Math.round(reduction.getIn(['appState', 'player', 'volume']) * 1000) / 1000,
+    b: reduction.getIn(['appState', 'browser', 'height'])
   });
 
   Cookies.set('settings', settings, { expires: SETTINGS_EXPIRY_DAYS });
@@ -62,13 +63,13 @@ export const getSettings = reduction => {
   const cookie = Cookies.get('settings');
   const settings = cookie ? JSON.parse(cookie) : {};
 
-  if (typeof settings.volume !== 'undefined') {
-    _new.volume = Math.max(0, Math.min(1, parseFloat(settings.volume, 10)));
+  if (typeof settings.v !== 'undefined') {
+    _new.volume = Math.max(0, Math.min(1, parseFloat(settings.v, 10)));
   }
 
-  if (typeof settings.browserHeight !== 'undefined') {
+  if (typeof settings.b !== 'undefined') {
     _new.browserHeight = Math.max(BROWSER_MIN_HEIGHT, Math.min(
-      parseInt(settings.browserHeight, 10),
+      parseInt(settings.b, 10),
       reduction.getIn(['appState', 'browser', 'maxHeight'])
     ));
   }
