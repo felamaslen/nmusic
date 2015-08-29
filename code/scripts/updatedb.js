@@ -421,15 +421,21 @@ const addMissing = (missingFiles, total, ended, next) => {
         // don't stop the script because of one bad file
         next(missingFiles, total, ended);
       } else {
-        id3({ file: file, type: id3.OPEN_LOCAL }, (error, _tags) => {
-          if (error) {
-            throw error;
-          }
+        try {
+          id3({ file: file, type: id3.OPEN_LOCAL }, (error, _tags) => {
+            if (error) {
+              throw error;
+            }
 
-          const tags = processTags(_tags, file, duration);
+            const tags = processTags(_tags, file, duration);
 
-          processFile(next, missingFiles, total, ended, tags);
-        });
+            processFile(next, missingFiles, total, ended, tags);
+          });
+        } catch (id3Error) {
+          console.log('[ERROR]', 'ID3 error', file);
+
+          next(missingFiles, total, ended);
+        }
       }
     });
   } else {
