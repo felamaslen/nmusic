@@ -13,13 +13,16 @@ import {
   AUTHTEST_API_CALL,
   AUTHENTICATE_API_CALL,
   BROWSER_ARTISTS_API_CALL,
-  LIST_BROWSER_API_CALL
+  LIST_BROWSER_API_CALL,
+  SETTINGS_UPDATE_TRIGGERED
 } from '../constants/effects';
 
 import {
+  setSettings
+} from '../actions/AppActions';
+import {
   authGotResponse
 } from '../actions/LoginActions';
-
 import {
   gotListArtists,
   insertBrowserResults
@@ -102,5 +105,11 @@ export default buildEffectHandler({
     ).catch(
       () => dispatcher.dispatch(insertBrowserResults(null))
     );
+  },
+
+  [SETTINGS_UPDATE_TRIGGERED]: (_, dispatcher) => {
+    window.setTimeout(() => {
+      dispatcher.dispatch(setSettings());
+    }, 0);
   }
 });

@@ -8,11 +8,11 @@ import {
   // App actions
   APP_SPINNER_HIDDEN,
   APP_EVENT_HANDLER_STORED,
-
-  // store all bound events which might need to be de-bound in the appState
   APP_SLIDER_CLICKED,
   APP_MENU_TOGGLED,
   APP_NOTIFICATIONS_ALLOWED,
+  APP_SETTINGS_APPLIED,
+  APP_SETTINGS_REQUESTED,
 
   // Audio actions
   AUDIO_STREAM_CANPLAY,
@@ -44,19 +44,21 @@ import {
 } from '../constants/actions';
 
 import {
+  hideSpinner,
+  storeEventHandler,
+  customSliderClicked,
+  userMenuToggle,
+  canNotify,
+  setSettings,
+  getSettings
+} from './AppReducer';
+
+import {
   setPersistentToken,
   attemptLogin,
   logout,
   authGotResponse
 } from './LoginReducer';
-
-import {
-  hideSpinner,
-  storeEventHandler,
-  customSliderClicked,
-  userMenuToggle,
-  canNotify
-} from './AppReducer';
 
 import {
   audioCanPlay,
@@ -114,6 +116,10 @@ export default (reduction, action) => {
     return userMenuToggle(reduction, action.payload);
   case APP_NOTIFICATIONS_ALLOWED:
     return canNotify(reduction);
+  case APP_SETTINGS_APPLIED:
+    return setSettings(reduction);
+  case APP_SETTINGS_REQUESTED:
+    return getSettings(reduction);
 
   // Audio actions
   case AUDIO_STREAM_CANPLAY:

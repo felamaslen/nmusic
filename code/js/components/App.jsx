@@ -14,7 +14,8 @@ import { Dispatcher } from 'flux';
 import globalReducer from '../reducers/GlobalReducer';
 
 import {
-  canNotify
+  canNotify,
+  getSettings
 } from '../actions/AppActions';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
@@ -80,6 +81,8 @@ export default class App extends Component {
         });
       }
     }
+
+    this.state.dispatcher.dispatch(getSettings());
   }
 
   render() {

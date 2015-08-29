@@ -7,11 +7,11 @@ export const AUTH_LOGIN_GOT_RESPONSE = 'AUTH_LOGIN_GOT_RESPONSE';
 // App actions
 export const APP_SPINNER_HIDDEN = 'APP_SPINNER_HIDDEN';
 export const APP_EVENT_HANDLER_STORED = 'APP_EVENT_HANDLER_STORED';
-
-// store all bound events which might need to be de-bound in the appState
 export const APP_SLIDER_CLICKED = 'APP_SLIDER_CLICKED';
 export const APP_MENU_TOGGLED = 'APP_MENU_TOGGLED';
 export const APP_NOTIFICATIONS_ALLOWED = 'APP_NOTIFICATIONS_ALLOWED';
+export const APP_SETTINGS_APPLIED = 'APP_SETTINGS_APPLIED';
+export const APP_SETTINGS_REQUESTED = 'APP_SETTINGS_REQUESTED';
 
 // Audio actions
 export const AUDIO_STREAM_CANPLAY = 'AUDIO_STREAM_CANPLAY';
