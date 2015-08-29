@@ -1,10 +1,11 @@
-import { Map as map } from 'immutable';
+import { } from 'immutable';
 import Cookies from 'js-cookie';
 
 import buildMessage from '../MessageBuilder';
 
 import {
-  SETTINGS_EXPIRY_DAYS
+  SETTINGS_EXPIRY_DAYS,
+  BROWSER_MIN_HEIGHT
 } from '../config';
 
 import {
@@ -20,7 +21,10 @@ export const storeEventHandler = (reduction, handler) =>
 export const sliderClicked = (reduction, data) => {
   let effects = reduction.get('effects');
 
-  if (data.name === 'volume' && data.clickPosition < 0) {
+  if ((
+    data.name === 'volume' ||
+    data.name === 'resizeBrowser'
+  ) && data.clickPosition < 0) {
     effects = effects.push(buildMessage(SETTINGS_UPDATE_TRIGGERED));
   }
 
@@ -38,7 +42,8 @@ export const canNotify = reduction =>
 export const setSettings = reduction => {
   // implement settings cookie here
   const settings = JSON.stringify({
-    volume: Math.round(reduction.getIn(['appState', 'player', 'volume']) * 1000) / 1000
+    volume: Math.round(reduction.getIn(['appState', 'player', 'volume']) * 1000) / 1000,
+    browserHeight: reduction.getIn(['appState', 'browser', 'height'])
   });
 
   Cookies.set('settings', settings, { expires: SETTINGS_EXPIRY_DAYS });
@@ -47,15 +52,36 @@ export const setSettings = reduction => {
 };
 
 export const getSettings = reduction => {
+  const _old = {
+    volume: reduction.getIn(['appState', 'player', 'volume']),
+    browserHeight: reduction.getIn(['appState', 'browser', 'height'])
+  };
+
+  const _new = {};
+
   const cookie = Cookies.get('settings');
+  const settings = cookie ? JSON.parse(cookie) : {};
 
-  const settings = cookie ? JSON.parse(cookie) : map();
+  if (typeof settings.volume !== 'undefined') {
+    _new.volume = Math.max(0, Math.min(1, parseFloat(settings.volume, 10)));
+  }
 
-  const volumeOld = reduction.getIn(['appState', 'player', 'volume']);
-  const volumeNew = Math.max(0, Math.min(1, parseFloat(settings.volume, 10)));
+  if (typeof settings.browserHeight !== 'undefined') {
+    _new.browserHeight = Math.max(BROWSER_MIN_HEIGHT, Math.min(
+      parseInt(settings.browserHeight, 10),
+      reduction.getIn(['appState', 'browser', 'maxHeight'])
+    ));
+  }
+
+  const newVolume = typeof _new.volume !== 'undefined' && !isNaN(_new.volume)
+    ? _new.volume : _old.volume;
+
+  const newBrowserHeight = typeof _new.browserHeight !== 'undefined' && !isNaN(_new.browserHeight)
+    ? _new.browserHeight : _old.browserHeight;
 
   return reduction
     .setIn(['appState', 'loaded', 'settingsCookie'], true)
-    .setIn(['appState', 'player', 'volume'], isNaN(volumeNew) ? volumeOld : volumeNew)
+    .setIn(['appState', 'player', 'volume'], newVolume)
+    .setIn(['appState', 'browser', 'height'], newBrowserHeight)
   ;
 };

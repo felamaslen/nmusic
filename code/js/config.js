@@ -9,6 +9,8 @@ export const TIME_DISPLAY_NOTIFICATIONS = 5;
 
 export const REMEMBERME_DAYS = 30;
 export const SETTINGS_EXPIRY_DAYS = 30;
+
+export const BROWSER_MIN_HEIGHT = 40;
 /* Don't modify anything beyond here */
 
 // API urls

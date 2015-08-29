@@ -3,7 +3,8 @@
  */
 
 import {
-  AUTH_STATUS_LOGGED_IN
+  AUTH_STATUS_LOGGED_IN,
+  BROWSER_MIN_HEIGHT
 } from '../config';
 
 import { List } from 'immutable';
@@ -143,7 +144,7 @@ export default class App extends Component {
                   ['appState', 'eventHandlers', 'ResizeSliderMousemove_resizeBrowser']
                 )
               )}
-              min={40}
+              min={BROWSER_MIN_HEIGHT}
               max={this.state.reduction.getIn(['appState', 'browser', 'maxHeight'])}
               value={this.state.reduction.getIn(['appState', 'browser', 'height'])}
               clicked={this.state.reduction.getIn(['appState', 'slider', 'resizeBrowserClicked'])}
