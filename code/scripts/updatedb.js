@@ -11,7 +11,7 @@ import {
 } from '../server/config';
 
 import fs from 'fs';
-import id3 from 'id3js';
+import ffmetadata from 'ffmetadata';
 import mongoose, { Schema } from 'mongoose';
 import ProgressBar from 'progress';
 
@@ -296,24 +296,15 @@ const getDuration = (file, estimate, callback) => {
   });
 };
 
-const trimDud = string => string && string.replace(/\0/g, '') || '';
+const trimDud = (string, fallback) => string && string.replace(/\0/g, '') || fallback;
 
 const processTags = (tags, filename, duration) => {
-  const title = trimDud(tags.title);
-  const artist = trimDud(tags.artist);
-  const album = trimDud(tags.album);
-  const year = trimDud(tags.year);
-
-  const haveV1 = !!tags.v1;
-  const haveV2 = !!tags.v2;
-
-  const trackV1 = haveV1 ? tags.v1.track : 0;
-  const genreV1 = haveV1 ? tags.v1.genre : '';
-
-  const track = getTrackNo(haveV2 && tags.v2.track ? tags.v2.track : trackV1);
-  const genre = trimDud(
-    haveV2 && tags.v2.genre ? tags.v2.genre : genreV1
-  );
+  const track = getTrackNo(trimDud(tags.track, '0'));
+  const title = trimDud(tags.title, 'Untitled Track');
+  const artist = trimDud(tags.artist, 'Unknown Artist');
+  const album = trimDud(tags.album, 'Unknown Album');
+  const genre = trimDud(tags.genre, '');
+  const year = trimDud(tags.date, '');
 
   return { filename, track, title, artist, album, genre, duration, year };
 };
@@ -416,26 +407,20 @@ const addMissing = (missingFiles, total, ended, next) => {
 
     getDuration(file, false, (durationError, duration) => {
       if (durationError) {
-        console.log('[ERROR]', durationError, file);
+        console.log('\n[ERROR]', durationError, file);
 
         // don't stop the script because of one bad file
         next(missingFiles, total, ended);
       } else {
-        try {
-          id3({ file: file, type: id3.OPEN_LOCAL }, (error, _tags) => {
-            if (error) {
-              throw error;
-            }
+        ffmetadata.read(file, (error, _tags) => {
+          if (error) {
+            throw error;
+          }
 
-            const tags = processTags(_tags, file, duration);
+          const tags = processTags(_tags, file, duration);
 
-            processFile(next, missingFiles, total, ended, tags);
-          });
-        } catch (id3Error) {
-          console.log('[ERROR]', 'ID3 error', file);
-
-          next(missingFiles, total, ended);
-        }
+          processFile(next, missingFiles, total, ended, tags);
+        });
       }
     });
   } else {
