@@ -15,6 +15,11 @@ import {
   _warnBeforeNavigation
 } from '../common';
 
+import {
+  AUTHTEST_API_CALL,
+  AUTHENTICATE_API_CALL
+} from '../constants/effects';
+
 import buildMessage from '../MessageBuilder';
 
 const afterCheckAuth = (reduction, displayAuth) => {
@@ -39,7 +44,7 @@ export const attemptLogin = (reduction, details) => {
     .setIn(['appState', 'loadedOnLastRender'], false)
     .setIn(['appState', 'auth', 'status'], AUTH_STATUS_LOADING)
     .set('effects', reduction.get('effects').push(
-      buildMessage('AUTHENTICATE_API_CALL', details)
+      buildMessage(AUTHENTICATE_API_CALL, details)
     ))
   ;
 };
@@ -61,7 +66,7 @@ export const setPersistentToken = (reduction, token) => {
       .setIn(['appState', 'auth', 'status'], AUTH_STATUS_LOADING_FROM_COOKIE)
       .setIn(['appState', 'auth', 'token'], token)
       .set('effects', reduction.get('effects').push(
-        buildMessage('AUTHTEST_API_CALL', token)
+        buildMessage(AUTHTEST_API_CALL, token)
       ))
     : afterCheckAuth(reduction, true);
 };

@@ -10,6 +10,13 @@ import { Map as map } from 'immutable';
 import axios from 'axios';
 
 import {
+  AUTHTEST_API_CALL,
+  AUTHENTICATE_API_CALL,
+  BROWSER_ARTISTS_API_CALL,
+  LIST_BROWSER_API_CALL
+} from '../constants/effects';
+
+import {
   authGotResponse
 } from '../actions/LoginActions';
 
@@ -27,7 +34,7 @@ const buildEffectHandler = handlers => {
 };
 
 export default buildEffectHandler({
-  AUTHTEST_API_CALL: (token, dispatcher) => {
+  [AUTHTEST_API_CALL]: (token, dispatcher) => {
     axios.get(AUTH_TEST, {
       headers: { 'x-access-token': token }
     }).then(
@@ -41,7 +48,7 @@ export default buildEffectHandler({
     );
   },
 
-  AUTHENTICATE_API_CALL: (details, dispatcher) => {
+  [AUTHENTICATE_API_CALL]: (details, dispatcher) => {
     axios.post(AUTH_AUTHENTICATE, {
       username: details.username,
       password: details.password
@@ -60,7 +67,7 @@ export default buildEffectHandler({
     );
   },
 
-  BROWSER_ARTISTS_API_CALL: (token, dispatcher) => {
+  [BROWSER_ARTISTS_API_CALL]: (token, dispatcher) => {
     axios.get(API_LIST_ARTISTS, {
       headers: { 'x-access-token': token }
     }).then(
@@ -70,7 +77,7 @@ export default buildEffectHandler({
     );
   },
 
-  LIST_BROWSER_API_CALL: (query, dispatcher) => {
+  [LIST_BROWSER_API_CALL]: (query, dispatcher) => {
     const params = [];
     if (!!query.artists) {
       params.push('artists');
