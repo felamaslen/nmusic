@@ -47,7 +47,7 @@ import {
 import {
   hideSpinner,
   storeEventHandler,
-  customSliderClicked,
+  sliderClicked,
   userMenuToggle,
   canNotify,
   setSettings,
@@ -113,7 +113,7 @@ export default (reduction, action) => {
     // store all bound events which might need to be de-bound in the appState
     return storeEventHandler(reduction, action.payload);
   case APP_SLIDER_CLICKED:
-    return customSliderClicked(reduction, action.payload);
+    return sliderClicked(reduction, action.payload);
   case APP_MENU_TOGGLED:
     return userMenuToggle(reduction, action.payload);
   case APP_NOTIFICATIONS_ALLOWED:

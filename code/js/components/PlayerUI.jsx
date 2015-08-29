@@ -12,7 +12,7 @@ import UserMenu from './UserMenu';
 import PureControllerView from './PureControllerView';
 
 import {
-  customSliderClicked
+  sliderClicked
 } from '../actions/AppActions';
 import {
   ctrlPrevious,
@@ -59,7 +59,7 @@ export default class PlayerUI extends PureControllerView {
             min={0} max={this.props.currentSong.get('time')}
             value={this.props.currentTime}
             clicked={this.props.seekbarClicked}
-            clickedAction={customSliderClicked}
+            clickedAction={sliderClicked}
             changedAction={ctrlSeek}
             eventHandlers={this.props.seekbarEvents}
             colors={seekbarColors}
@@ -106,7 +106,7 @@ export default class PlayerUI extends PureControllerView {
                 name="volume"
                 min={0} max={1} value={this.props.volume}
                 clicked={this.props.volumeClicked}
-                clickedAction={customSliderClicked}
+                clickedAction={sliderClicked}
                 changedAction={audioVolumeChange}
                 eventHandlers={this.props.volumeControlEvents}
                 colors={volumeControlColors}

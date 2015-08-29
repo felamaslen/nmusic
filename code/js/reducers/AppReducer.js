@@ -17,7 +17,7 @@ export const hideSpinner = reduction =>
 export const storeEventHandler = (reduction, handler) =>
   reduction.setIn(['appState', 'eventHandlers', handler.name], handler.func);
 
-export const customSliderClicked = (reduction, data) => {
+export const sliderClicked = (reduction, data) => {
   let effects = reduction.get('effects');
 
   if (data.name === 'volume' && data.clickPosition < 0) {
@@ -25,7 +25,7 @@ export const customSliderClicked = (reduction, data) => {
   }
 
   return reduction
-    .setIn(['appState', 'customSlider', `${data.name}Clicked`], data.clickPosition)
+    .setIn(['appState', 'slider', `${data.name}Clicked`], data.clickPosition)
     .set('effects', effects);
 };
 

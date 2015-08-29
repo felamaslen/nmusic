@@ -15,7 +15,7 @@ import globalReducer from '../reducers/GlobalReducer';
 
 import {
   canNotify,
-  customSliderClicked
+  sliderClicked
 } from '../actions/AppActions';
 import {
   browserResized
@@ -112,8 +112,8 @@ export default class App extends Component {
             paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
             currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
             volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
-            volumeClicked={this.state.reduction.getIn(['appState', 'customSlider', 'volumeClicked'])}
-            seekbarClicked={this.state.reduction.getIn(['appState', 'customSlider', 'seekbarClicked'])}
+            volumeClicked={this.state.reduction.getIn(['appState', 'slider', 'volumeClicked'])}
+            seekbarClicked={this.state.reduction.getIn(['appState', 'slider', 'seekbarClicked'])}
             volumeControlEvents={List.of(
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_volume']),
               this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_volume'])
@@ -146,8 +146,8 @@ export default class App extends Component {
               min={40}
               max={this.state.reduction.getIn(['appState', 'browser', 'maxHeight'])}
               value={this.state.reduction.getIn(['appState', 'browser', 'height'])}
-              clicked={this.state.reduction.getIn(['appState', 'customSlider', 'resizeBrowserClicked'])}
-              clickedAction={customSliderClicked}
+              clicked={this.state.reduction.getIn(['appState', 'slider', 'resizeBrowserClicked'])}
+              clickedAction={sliderClicked}
               changedAction={browserResized}
             />
             <BrowserArtists dispatcher={this.state.dispatcher}

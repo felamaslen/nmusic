@@ -24,7 +24,7 @@ export default new Record({
     title: DOCUMENT_TITLE, // window title
     warnBeforeNavigation: false,
     eventHandlers: {},
-    customSlider: {
+    slider: {
       volumeClicked: -1,
       seekbarClicked: -1,
       resizeBrowserClicked: -1

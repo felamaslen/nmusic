@@ -724,7 +724,7 @@ input {
   width: 100%;
   height: 10px;
   position: absolute;
-  background: red;
+  background: transparent;
   left: 0;
   bottom: -5px;
   z-index: 100;

@@ -5,7 +5,7 @@ import React from 'react';
 
 import {
   storeEventHandler,
-  customSliderClicked,
+  sliderClicked,
   setSettings
 } from '../actions/AppActions';
 
@@ -106,7 +106,7 @@ export default class CustomSlider extends PureControllerView {
   }
 
   _mouseup() {
-    this.dispatchAction(customSliderClicked({
+    this.dispatchAction(sliderClicked({
       name: this.props.name,
       clickPosition: -1
     }));
