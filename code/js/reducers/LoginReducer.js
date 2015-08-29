@@ -23,13 +23,15 @@ import {
 import buildMessage from '../MessageBuilder';
 
 const afterCheckAuth = (reduction, displayAuth) => {
+  // these are maps (objects), containing each items' loaded state boolean
   const loadedOld = reduction.getIn(['appState', 'loaded']);
-  const loadedThen = loadedOld.every(item => !!item);
-
   const loadedNew = loadedOld
     .map(() => !!displayAuth)
     .set('authStatus', true);
 
+  // these are booleans, representing whether or not
+  // everything is / was loaded
+  const loadedThen = loadedOld.every(item => !!item);
   const loadedNow = loadedNew.every(item => !!item);
 
   return reduction

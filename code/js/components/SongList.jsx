@@ -46,9 +46,17 @@ export default class SongList extends PureControllerView {
       noselect: true
     });
 
+    const songListStyle = {
+      top: this.props.browserHeight + 89
+    };
+
+    const headerStyle = {
+      top: this.props.browserHeight + 65
+    };
+
     return (
       <section id="section-songlist">
-        <header>
+        <header style={headerStyle}>
           <song-track>#</song-track>
           <song-title>Title</song-title>
           <song-artist>Artist</song-artist>
@@ -56,7 +64,7 @@ export default class SongList extends PureControllerView {
           <song-year>Year</song-year>
           <song-genre>Genre</song-genre>
         </header>
-        <ul className={songListClass}>
+        <ul className={songListClass} style={songListStyle}>
           {songList}
         </ul>
       </section>
@@ -79,6 +87,7 @@ export default class SongList extends PureControllerView {
 SongList.propTypes = {
   loaded: PropTypes.bool,
   currentSongId: PropTypes.number,
+  browserHeight: PropTypes.number,
   selected: PropTypes.instanceOf(List),
   list: PropTypes.instanceOf(List)
 };

@@ -15,7 +15,8 @@ export default new Record({
     loaded: {
       authStatus: false,
       browserArtists: false,
-      songList: false
+      songList: false,
+      settingsCookie: false
     },
     loadedOnLastRender: false,
     userMenuActive: false,
@@ -43,6 +44,7 @@ export default new Record({
       selectedSongs: []
     },
     browser: {
+      height: 220,
       selectedArtists: [],
       selectedAlbums: [],
       artistClickedLast: null,

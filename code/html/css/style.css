@@ -773,8 +773,13 @@ input {
 }
 
 #section-songlist {
-  width: 100%;
   cursor: default;
+  clear: both;
+}
+#section-songlist header, .songlist {
+  position: fixed;
+  width: 100%;
+  min-width: 920px;
 }
 #section-songlist header {
   height: 24px;
@@ -784,21 +789,20 @@ input {
   line-height: 24px;
   font-weight: bold;
   float: left;
+  top: 244px;
   background: #e4e4e4;
   box-shadow: inset 0 -7px 11px -1px rgba(255,255,255,.4);
   border-bottom: 1px solid #dadada;
   z-index: 1;
-  position: fixed;
-  width: 100%;
 }
-
 .songlist {
-  position: fixed;
-  left: 0;
-  right: 0;
+  padding: 0;
+  margin: 0;
+  font-size: .8em;
+  overflow-y: scroll;
   top: 268px;
   bottom: 0;
-  overflow-y: scroll;
+  padding-bottom: 120px;
 }
 
 .songlist li > *,

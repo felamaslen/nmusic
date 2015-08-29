@@ -8,11 +8,13 @@ import React, { PropTypes } from 'react';
 import PureControllerView from './PureControllerView';
 
 import {
+  getSettings
+} from '../actions/AppActions';
+import {
   togglePause,
   ctrlNext,
   ctrlSeek,
 } from '../actions/PlayerActions';
-
 import {
   audioCanPlay,
   audioLoadStart,
@@ -24,6 +26,10 @@ import {
 } from '../actions/AudioActions';
 
 export default class PlayerEngine extends PureControllerView {
+  componentWillMount() {
+    this.dispatchNext(getSettings());
+  }
+
   componentDidMount() {
     const audioElement = this.refs.audioObject.getDOMNode();
 

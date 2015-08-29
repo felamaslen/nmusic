@@ -14,8 +14,7 @@ import { Dispatcher } from 'flux';
 import globalReducer from '../reducers/GlobalReducer';
 
 import {
-  canNotify,
-  getSettings
+  canNotify
 } from '../actions/AppActions';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
@@ -81,8 +80,6 @@ export default class App extends Component {
         });
       }
     }
-
-    this.state.dispatcher.dispatch(getSettings());
   }
 
   render() {
@@ -126,7 +123,9 @@ export default class App extends Component {
             )}
           />
         </section>
-        <section id="section-browsers">
+        <section id="section-browsers" style={{height: this.state.reduction.getIn(
+          ['appState', 'browser', 'height']
+        )}}>
           <div className="inside">
             <BrowserArtists dispatcher={this.state.dispatcher}
               loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
@@ -142,6 +141,7 @@ export default class App extends Component {
           </div>
         </section>
         <SongList dispatcher={this.state.dispatcher}
+          browserHeight={this.state.reduction.getIn(['appState', 'browser', 'height'])}
           currentSongId={currentSongId}
           list={this.state.reduction.getIn(['appState', 'songList', 'list'])}
           selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSongs'])}

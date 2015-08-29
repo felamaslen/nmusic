@@ -55,6 +55,7 @@ export const getSettings = reduction => {
   const volumeNew = Math.max(0, Math.min(1, parseFloat(settings.volume, 10)));
 
   return reduction
+    .setIn(['appState', 'loaded', 'settingsCookie'], true)
     .setIn(['appState', 'player', 'volume'], isNaN(volumeNew) ? volumeOld : volumeNew)
   ;
 };
