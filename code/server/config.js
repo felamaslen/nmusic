@@ -41,7 +41,7 @@ export const DB_SCHEMA = {
     album: String,
     genre: String,
     time: Number,
-    year: Number
+    year: String
   },
   counters: {
     _id: String,
