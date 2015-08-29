@@ -138,11 +138,21 @@ const _parseFrameHeader = fourBytes => {
   // const b3 = ord(fourBytes[3]);
 
   const versionBits = (b1 & 0x18) >> 3;
-  const version = versions.filter(item => item[0] === versionBits)[0][1];
-  const simpleVersion = parseInt((version === '2.5' ? '2' : version), 10);
+  const versionsFiltered = versions.filter(item => item[0] === versionBits);
+  if (!versionsFiltered.length) {
+    return 'Invalid version';
+  }
+
+  const version = versionsFiltered[0][1].toString();
+  const simpleVersion = parseInt((version === '2.5' ? 2 : version), 10);
 
   const layerBits = (b1 & 0x06) >> 1;
-  const layer = parseInt(layers.filter(item => item[0] === layerBits)[0][1], 10);
+  const layersFiltered = layers.filter(item => item[0] === layerBits);
+  if (!layersFiltered.length) {
+    return 'Invalid layer';
+  }
+
+  const layer = parseInt(layersFiltered[0][1], 10);
 
   // const protectionBit = (b1 & 0x01);
   const bitrateKey = 'V' + simpleVersion.toString() + 'L' + layer.toString();
@@ -153,8 +163,11 @@ const _parseFrameHeader = fourBytes => {
 
   const sampleRateIdx = (b2 & 0x0c) >> 2;
   const sampleRateFiltered = sampleRates.filter(item => item[0] === version);
-  const sampleRate = sampleRateFiltered.length > 0 && sampleRateFiltered[0][1][sampleRateIdx]
-    ? sampleRateFiltered[0][1][sampleRateIdx] : 0;
+  if (!sampleRateFiltered.length) {
+    return 'Invalid sample rate';
+  }
+
+  const sampleRate = sampleRateFiltered[0][1][sampleRateIdx] || 0;
   const paddingBit = (b2 & 0x02) >> 1;
   // const privateBit = (b2 & 0x01);
   // const channelModeBits = (b3 & 0xc0) >> 6;
@@ -178,9 +191,20 @@ const _parseFrameHeader = fourBytes => {
   // info.Original = originalBit;
   // info.Emphasis = emphasis;
   info.frameSize = _frameSize(layer, bitrate, sampleRate, paddingBit);
-  info.samples = samples.filter(item => item[0] === simpleVersion)[0][1].filter(
-    _item => _item[0] === layer
-  )[0][1];
+
+  const samplesFiltered = samples.filter(item => item[0] === simpleVersion);
+  if (!samplesFiltered.length) {
+    return 'Invalid sample version';
+  }
+
+  const samplesFilteredAgain = samplesFiltered[0][1].filter(
+    item => item[0] === layer
+  );
+  if (!samplesFilteredAgain.length) {
+    return 'Invalid layer for sample version';
+  }
+
+  info.samples = samplesFilteredAgain[0][1];
 
   return info;
 };
@@ -215,13 +239,19 @@ const getDuration = (file, estimate, callback) => {
       if (block[0] === '\xff' && (ord(block[1]) & 0xe0)) {
         info = _parseFrameHeader(buffer.toString('binary').substring(0, 4));
 
-        if (!info.frameSize) {
-          // corrupt MP3 file
-          callback(duration);
+        if (typeof info === 'string') {
+          // something bad happened
+          callback(info, null);
           ended = true;
         } else {
-          offset += info.frameSize - 10;
-          duration += info.samples / info.sampleRate;
+          if (!info.frameSize) {
+            // corrupt MP3 file
+            callback(false, duration);
+            ended = true;
+          } else {
+            offset += info.frameSize - 10;
+            duration += info.samples / info.sampleRate;
+          }
         }
       } else if (block.substring(0, 3) === 'TAG') {
         offset += 128 - 10;
@@ -233,7 +263,7 @@ const getDuration = (file, estimate, callback) => {
         const kbps = (info.bitRate * 1000) / 8;
         const dataSize = fileSize - offset;
 
-        callback(dataSize / kbps);
+        callback(false, dataSize / kbps);
 
         ended = true;
       }
@@ -255,7 +285,7 @@ const getDuration = (file, estimate, callback) => {
           }
           fs.close(fd);
 
-          callback(duration);
+          callback(false, duration);
         }
 
         offset += 10;
@@ -384,16 +414,23 @@ const addMissing = (missingFiles, total, ended, next) => {
   if (missingFiles.length > 0) {
     const file = missingFiles.pop();
 
-    getDuration(file, false, duration => {
-      id3({ file: file, type: id3.OPEN_LOCAL }, (error, _tags) => {
-        if (error) {
-          throw error;
-        }
+    getDuration(file, false, (durationError, duration) => {
+      if (durationError) {
+        console.log('[ERROR]', durationError, file);
 
-        const tags = processTags(_tags, file, duration);
+        // don't stop the script because of one bad file
+        next(missingFiles, total, ended);
+      } else {
+        id3({ file: file, type: id3.OPEN_LOCAL }, (error, _tags) => {
+          if (error) {
+            throw error;
+          }
 
-        processFile(next, missingFiles, total, ended, tags);
-      });
+          const tags = processTags(_tags, file, duration);
+
+          processFile(next, missingFiles, total, ended, tags);
+        });
+      }
     });
   } else {
     ended();
