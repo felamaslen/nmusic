@@ -49,7 +49,7 @@ const getTrackNo = track => {
   return track && track.split ? parseInt(track.split('/')[0], 10) : 0;
 };
 
-const trimDud = (string, fallback) => string && string.replace(/\0/g, '') || fallback;
+const trimDud = (string, fallback) => string && string.replace(/\0/g, '').trim() || fallback;
 
 const processTags = (tags, filename) => {
   const track = getTrackNo(trimDud(tags.track, '0'));

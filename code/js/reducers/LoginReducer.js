@@ -11,6 +11,10 @@ import {
   AUTH_STATUS_SERVER_ERROR
 } from '../config';
 
+import {
+  _warnBeforeNavigation
+} from '../common';
+
 import buildMessage from '../MessageBuilder';
 
 const afterCheckAuth = (reduction, displayAuth) => {
@@ -42,6 +46,8 @@ export const attemptLogin = (reduction, details) => {
 
 export const logout = reduction => {
   Cookies.remove('token');
+
+  _warnBeforeNavigation(false);
 
   return afterCheckAuth(reduction, true)
     .setIn(['appState', 'auth', 'status'], AUTH_STATUS_WAITING)
