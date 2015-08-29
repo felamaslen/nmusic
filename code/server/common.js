@@ -27,7 +27,6 @@ export const compressSongs = songs => {
     song.artist,
     song.album,
     song.genre,
-    song.time,
     song.year
   ]);
 };

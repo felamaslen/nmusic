@@ -4,7 +4,6 @@
 
 import {
   itemInRanges,
-  secondsToTime,
   trackFormat
 } from '../common';
 
@@ -32,7 +31,6 @@ export default class SongList extends PureControllerView {
         >
           <song-track>{trackFormat(song.get('track'))}</song-track>
           <song-title>{song.get('title')}</song-title>
-          <song-time>{secondsToTime(song.get('time'))}</song-time>
           <song-artist>{song.get('artist')}</song-artist>
           <song-album>{song.get('album')}</song-album>
           <song-year>{song.get('year')}</song-year>
@@ -53,7 +51,6 @@ export default class SongList extends PureControllerView {
         <header>
           <song-track>#</song-track>
           <song-title>Title</song-title>
-          <song-time>Time</song-time>
           <song-artist>Artist</song-artist>
           <song-album>Album</song-album>
           <song-year>Year</song-year>

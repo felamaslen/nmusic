@@ -58,7 +58,7 @@ export default (app, db) => {
 
       db.Song.find(
         query,
-        'track title artist album genre time year',
+        'track title artist album genre year',
         {
           sort: {
             artist: 1,
@@ -130,7 +130,7 @@ export default (app, db) => {
   // not used as of yet
   app.get('/list/tree', (req, res) => {
     // gets all the songs, but in an artist/album tree
-    db.Song.find({}, 'track title artist album genre time year', (error, songs) => {
+    db.Song.find({}, 'track title artist album genre year', (error, songs) => {
       if (error) {
         throw error;
       }
@@ -150,7 +150,6 @@ export default (app, db) => {
           song.track,
           song.title,
           song.genre,
-          song.time,
           song.year
         ]);
       });

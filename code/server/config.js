@@ -10,7 +10,7 @@
 export const MONGO_URL = 'mongodb://localhost:27017/nmusic';
 
 // Set this to the folder where all your music is stored
-export const MUSIC_DIR = '/home/fela/music';
+export const MUSIC_DIR = '/home/user/music/music';
 
 // Set this to false if you have many (>~200) songs
 // or if you want less of a delay on app startup
@@ -40,7 +40,6 @@ export const DB_SCHEMA = {
     artist: String,
     album: String,
     genre: String,
-    time: Number,
     year: String
   },
   counters: {
