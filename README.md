@@ -5,6 +5,7 @@ Version: 0.0.3-dev
 
 ### Prerequisites
 * Install _nodejs_ if you haven't already
+* Install ffmpeg (used for reading tags)
 * Get access to a running _MongoDB_ server
 * In `code/server/config.js`:
 * 1. Set `MONGO_URL` to your particular database instance.
