@@ -288,6 +288,6 @@ export const decompressSongs = song => {
     artist: song[3],
     album: song[4],
     genre: song[5],
-    year: song[7]
+    year: song[6]
   };
 };
