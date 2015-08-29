@@ -7,6 +7,10 @@ import {
   BROWSER_MIN_HEIGHT
 } from '../config';
 
+import {
+  debounce
+} from '../common';
+
 import { List } from 'immutable';
 import React, { Component } from 'react';
 import { Dispatcher } from 'flux';
@@ -16,7 +20,8 @@ import globalReducer from '../reducers/GlobalReducer';
 
 import {
   canNotify,
-  sliderClicked
+  sliderClicked,
+  resizeGlobal
 } from '../actions/AppActions';
 import {
   browserResized
@@ -86,6 +91,11 @@ export default class App extends Component {
         });
       }
     }
+
+    const _resizeGlobal = resizeGlobal();
+    window.addEventListener('resize', debounce(() => {
+      this.state.dispatcher.dispatch(_resizeGlobal);
+    }, 250));
   }
 
   render() {

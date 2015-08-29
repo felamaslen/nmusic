@@ -86,3 +86,13 @@ export const getSettings = reduction => {
     .setIn(['appState', 'browser', 'height'], newBrowserHeight)
   ;
 };
+
+export const resizeGlobal = reduction => {
+  const newBrowserMaxHeight = Math.max(60, window.innerHeight - 160);
+  const newBrowserHeight = Math.min(newBrowserMaxHeight, reduction.getIn(['appState', 'browser', 'height']));
+
+  return reduction
+    .setIn(['appState', 'browser', 'maxHeight'], newBrowserMaxHeight)
+    .setIn(['appState', 'browser', 'height'], newBrowserHeight)
+  ;
+};

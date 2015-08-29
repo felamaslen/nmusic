@@ -552,7 +552,6 @@ input {
   color: #fff;
 }
 .song-info .glow {
-  position: relative;
   overflow: hidden;
   height: 100%;
   width: 100%;

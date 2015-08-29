@@ -8,6 +8,7 @@ import {
   APP_NOTIFICATIONS_ALLOWED,
   APP_SETTINGS_APPLIED,
   APP_SETTINGS_REQUESTED,
+  APP_EVENT_RESIZED
 } from '../constants/actions';
 
 export const hideSpinner = () => buildMessage(APP_SPINNER_HIDDEN);
@@ -17,3 +18,4 @@ export const userMenuToggle = status => buildMessage(APP_MENU_TOGGLED, status);
 export const canNotify = () => buildMessage(APP_NOTIFICATIONS_ALLOWED);
 export const setSettings = () => buildMessage(APP_SETTINGS_APPLIED);
 export const getSettings = () => buildMessage(APP_SETTINGS_REQUESTED);
+export const resizeGlobal = () => buildMessage(APP_EVENT_RESIZED);

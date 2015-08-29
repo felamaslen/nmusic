@@ -9,6 +9,26 @@ import {
   TIME_DISPLAY_NOTIFICATIONS
 } from './config';
 
+export const debounce = (func, wait, immediate) => {
+  let timeout;
+  return () => {
+    const args = arguments;
+    const later = () => {
+      timeout = null;
+      if (!immediate) {
+        func.apply(this, args);
+      }
+    };
+
+    const callNow = immediate && !timeout;
+    window.clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) {
+      func.apply(this, args);
+    }
+  };
+};
+
 export const getOffset = element => element.getBoundingClientRect();
 
 export const sliderProps = {

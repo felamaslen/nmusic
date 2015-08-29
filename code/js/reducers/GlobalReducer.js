@@ -13,6 +13,7 @@ import {
   APP_NOTIFICATIONS_ALLOWED,
   APP_SETTINGS_APPLIED,
   APP_SETTINGS_REQUESTED,
+  APP_EVENT_RESIZED,
 
   // Audio actions
   AUDIO_STREAM_CANPLAY,
@@ -51,7 +52,8 @@ import {
   userMenuToggle,
   canNotify,
   setSettings,
-  getSettings
+  getSettings,
+  resizeGlobal
 } from './AppReducer';
 
 import {
@@ -122,6 +124,8 @@ export default (reduction, action) => {
     return setSettings(reduction);
   case APP_SETTINGS_REQUESTED:
     return getSettings(reduction);
+  case APP_EVENT_RESIZED:
+    return resizeGlobal(reduction);
 
   // Audio actions
   case AUDIO_STREAM_CANPLAY:
