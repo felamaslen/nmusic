@@ -141,15 +141,38 @@ export const selectAlbum = (reduction, evt) => {
   ;
 };
 
+const _sortSongList = (songs, orderBy) => {
+  return songs.sort((a, b) => {
+    const columnKey = orderBy.findIndex(column => {
+      const valueA = a.get(column.first());
+      const valueB = b.get(column.first());
+
+      return valueA > valueB || valueA < valueB;
+    });
+
+    if (columnKey < 0) {
+      return 0;
+    }
+
+    const column = orderBy.get(columnKey).first();
+    const direction = orderBy.get(columnKey).last();
+
+    const valueA = a.get(column);
+    const valueB = b.get(column);
+
+    return direction * (valueA > valueB ? 1 : -1);
+  });
+};
+
 export const insertBrowserResults = (reduction, response) => {
   const error = !response || typeof response.data !== 'object';
 
   const songs = error
   ? List.of()
-  : fromJS(typeof response.data.songs === 'object'
+  : _sortSongList(fromJS(typeof response.data.songs === 'object'
     ? response.data.songs.map(decompressSongs)
     : response.data.map(decompressSongs)
-  );
+  ), reduction.getIn(['appState', 'songList', 'orderBy']));
 
   const albums = error || !response.data.albums
     ? reduction.getIn(['appState', 'browser', 'listAlbums'])
