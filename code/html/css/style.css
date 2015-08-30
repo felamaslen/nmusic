@@ -340,21 +340,15 @@ input {
 .controls button {
   position: relative;
   display: inline-block;
-  background: linear-gradient(#ffffff, #cccccc), #c9c5c9;
   border-radius: 100%;
-  border: 0 solid #d0d0d0;
-  box-shadow: 0 3px 11px rgba(0, 0, 0, 0.4);
+  background-color: #fff;
 }
 .controls button::before, .controls button::after {
   position: absolute;
   content: "";
 }
-.controls button:hover {
-  background: linear-gradient(#f5f5f5, #b9b9b9), #c9c5c9;
-}
 .controls button:active {
-  top: 1px;
-  box-shadow: 0 0.06em 0.09em rgba(0, 0, 0, 0.4);
+  background-color: #666;
 }
 
 /* next/previous */
@@ -391,11 +385,11 @@ input {
 .ctrl-next::before {
   left: 13px;
 }
-.ctrl-previous:hover::before, .ctrl-previous:hover::after {
-  border-right-color: rgba(36, 36, 36, 0.8);
+.ctrl-previous:active::before, .ctrl-previous:active::after {
+  border-right-color: rgba(255, 255, 255, 0.8);
 }
-.ctrl-next:hover::before, .ctrl-next:hover::after {
-  border-left-color: rgba(36, 36, 36, 0.8);
+.ctrl-next:active::before, .ctrl-next:active::after {
+  border-left-color: rgba(255, 255, 255, 0.8);
 }
 .ctrl-playpause:active {
 }
@@ -414,10 +408,10 @@ input {
   background-color: rgba(100, 100, 100, 0.8);
 }
 .playing .ctrl-playpause::after {
-  left: 17px;
+  left: 18px;
 }
-.playing .ctrl-playpause:hover::before, .playing .ctrl-playpause:hover::after {
-  background-color: rgba(36, 36, 36, 0.8);
+.playing .ctrl-playpause:active::before, .playing .ctrl-playpause:active::after {
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .paused .ctrl-playpause {
 }
@@ -433,8 +427,8 @@ input {
 }
 .paused .ctrl-playpause::after{
 }
-.paused .ctrl-playpause:hover::before {
-  border-left-color: rgba(36, 36, 36, 0.8);
+.paused .ctrl-playpause:active::before {
+  border-left-color: rgba(255, 255, 255, 0.8);
 }
 .paused .ctrl-playpause:active {
 }
