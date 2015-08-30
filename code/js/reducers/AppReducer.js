@@ -19,17 +19,36 @@ export const storeEventHandler = (reduction, handler) =>
   reduction.setIn(['appState', 'eventHandlers', handler.name], handler.func);
 
 export const sliderClicked = (reduction, data) => {
+  let newReduction = reduction;
+
+  const cols = ['title'];
+  const colIndex = cols.indexOf(data.name);
+  const isCol = colIndex > -1;
+
   let effects = reduction.get('effects');
 
+  newReduction = newReduction
+    .setIn(['appState', 'slider', `${data.name}Clicked`], data.clickPosition);
+
   if ((
+    isCol ||
     data.name === 'volume' ||
     data.name === 'resizeBrowser'
   ) && data.clickPosition < 0) {
-    effects = effects.push(buildMessage(SETTINGS_UPDATE_TRIGGERED));
+    if (!isCol) { // change
+      effects = effects.push(buildMessage(SETTINGS_UPDATE_TRIGGERED));
+    }
+
+    if (isCol) {
+      newReduction = newReduction
+        .setIn(
+          ['appState', 'songList', 'colWidthActual', data.name],
+          reduction.getIn(['appState', 'songList', 'colWidthPreview', data.name])
+        );
+    }
   }
 
-  return reduction
-    .setIn(['appState', 'slider', `${data.name}Clicked`], data.clickPosition)
+  return newReduction
     .set('effects', effects);
 };
 

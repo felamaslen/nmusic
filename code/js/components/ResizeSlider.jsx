@@ -67,13 +67,16 @@ export default class ResizeSlider extends PureControllerView {
 
     const mouseDelta = this.props.vertical
       ? ev.clientY - this.props.clicked - sliderMeasure.offset
-      : ev.clientX - this.props.clicked - slideMeasure.offset;
+      : ev.clientX - this.props.clicked - sliderMeasure.offset;
 
     const newValue = Math.min(this.props.max, Math.max(
       this.props.min, this.props.value + mouseDelta
     ));
 
-    this.dispatchAction(this.props.changedAction(newValue));
+    this.dispatchAction(this.props.changedAction({
+      dim: newValue,
+      name: this.props.name
+    }));
   }
 
   _mouseup() {

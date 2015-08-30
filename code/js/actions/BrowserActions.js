@@ -9,7 +9,7 @@ import {
   LIST_REQUESTED_FROM_BROWSER
 } from '../constants/actions';
 
-export const browserResized = height => buildMessage(BROWSER_RESIZED, height);
+export const browserResized = options => buildMessage(BROWSER_RESIZED, options);
 
 // this fetches the artists from the server
 export const loadListArtists = () => buildMessage(BROWSER_ARTISTS_REQUESTED, {});

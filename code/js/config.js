@@ -13,6 +13,9 @@ export const SETTINGS_EXPIRY_DAYS = 30;
 export const BROWSER_MIN_HEIGHT = 40;
 /* Don't modify anything beyond here */
 
+export const COL_MIN = 60;
+export const COL_MAX = 250;
+
 // API urls
 const API = '/api';
 

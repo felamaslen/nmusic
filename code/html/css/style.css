@@ -828,6 +828,15 @@ input {
   position: relative;
   height: 100%;
 }
+#section-songlist .resize-slider {
+  width: 8px;
+  height: 100%;
+  background: transparent;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: e-resize;
+}
 #section-songlist song-track {
   width: 23px;
 }

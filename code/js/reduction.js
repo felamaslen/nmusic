@@ -27,7 +27,11 @@ export default new Record({
     slider: {
       volumeClicked: -1,
       seekbarClicked: -1,
-      resizeBrowserClicked: -1
+      browserClicked: -1,
+      titleClicked: -1,
+      artistClicked: -1,
+      albumClicked: -1,
+      genreClicked: -1
     },
     player: {
       queue: [],
@@ -42,7 +46,23 @@ export default new Record({
     songList: {
       list: [],
       clickedLast: null,
-      selectedSongs: []
+      selectedSongs: [],
+      // for resizing the columns
+      colWidthPreview: {
+        title: 220,
+        artist: 180,
+        album: 180,
+        year: 40,
+        genre: 120
+      },
+      // for saving the resized state
+      colWidthActual: {
+        title: 220,
+        artist: 180,
+        album: 180,
+        year: 40,
+        genre: 120
+      }
     },
     browser: {
       height: 220,

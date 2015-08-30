@@ -180,6 +180,13 @@ export default class App extends Component {
           list={this.state.reduction.getIn(['appState', 'songList', 'list'])}
           selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSongs'])}
           loaded={this.state.reduction.getIn(['appState', 'loaded', 'songList'])}
+          resizeTitleClicked={this.state.reduction.getIn(['appState', 'slider', 'titleClicked'])}
+          resizeTitleEvents={List.of(
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMouseup_title']),
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMousemove_title'])
+          )}
+          titleWidthPreview={this.state.reduction.getIn(['appState', 'songList', 'colWidthPreview', 'title'])}
+          titleWidthActual={this.state.reduction.getIn(['appState', 'songList', 'colWidthActual', 'title'])}
         />
       </section>
     ) : false;

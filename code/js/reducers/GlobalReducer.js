@@ -42,7 +42,8 @@ import {
 
   // SongList actions
   LIST_REQUESTED_FROM_BROWSER,
-  LIST_SONG_SELECTED
+  LIST_SONG_SELECTED,
+  LIST_COL_RESIZED
 } from '../constants/actions';
 
 import {
@@ -93,7 +94,8 @@ import {
 } from './PlayerReducer';
 
 import {
-  selectSong
+  selectSong,
+  columnResized
 } from './SongListReducer';
 
 export default (reduction, action) => {
@@ -176,6 +178,8 @@ export default (reduction, action) => {
     return insertBrowserResults(reduction, action.payload);
   case LIST_SONG_SELECTED:
     return selectSong(reduction, action.payload);
+  case LIST_COL_RESIZED:
+    return columnResized(reduction, action.payload);
 
   default:
     return reduction;

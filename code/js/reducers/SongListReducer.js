@@ -16,3 +16,14 @@ export const selectSong = (reduction, evt) => {
     .setIn(['appState', 'songList', 'selectedSongs'], newRanges)
   ;
 };
+
+export const columnResized = (reduction, options) => {
+  // this gets called on every mousemove event while resizing a column
+  const col = options.name;
+  const width = options.dim;
+
+  return reduction
+    .setIn(['appState', 'songList', 'colWidthPreview', col], width)
+  ;
+};
+

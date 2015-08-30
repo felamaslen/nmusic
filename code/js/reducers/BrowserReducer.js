@@ -9,9 +9,9 @@ import { List, fromJS } from 'immutable';
 
 import buildMessage from '../MessageBuilder';
 
-export const browserResized = (reduction, height) => {
+export const browserResized = (reduction, options) => {
   return reduction
-    .setIn(['appState', 'browser', 'height'], height)
+    .setIn(['appState', 'browser', 'height'], options.dim)
   ;
 };
 
