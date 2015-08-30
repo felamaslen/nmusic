@@ -5,6 +5,10 @@ import {
 
 import { List } from 'immutable';
 
+import { SETTINGS_UPDATE_TRIGGERED } from '../constants/effects';
+
+import buildMessage from '../MessageBuilder';
+
 export const selectSong = (reduction, evt) => {
   const newRanges = getRangesAfterClick(
     reduction.getIn(['appState', 'songList', 'selectedSongs']),
@@ -45,5 +49,6 @@ export const sortSongList = (reduction, column) => {
     .setIn(
       ['appState', 'songList', 'list'],
       _sortSongList(reduction.getIn(['appState', 'songList', 'list']), newOrderBy)
-    );
+    )
+    .set('effects', reduction.get('effects').push(buildMessage(SETTINGS_UPDATE_TRIGGERED)));
 };

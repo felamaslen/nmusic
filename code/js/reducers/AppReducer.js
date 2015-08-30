@@ -62,7 +62,8 @@ export const setSettings = reduction => {
   const settings = JSON.stringify({
     v: Math.round(reduction.getIn(['appState', 'player', 'volume']) * 1000) / 1000,
     b: reduction.getIn(['appState', 'browser', 'height']),
-    c: reduction.getIn(['appState', 'songList', 'colWidthActual']).toJS()
+    c: reduction.getIn(['appState', 'songList', 'colWidthActual']).toJS(),
+    o: reduction.getIn(['appState', 'songList', 'orderBy']).toJS()
   });
 
   Cookies.set('settings', settings, { expires: SETTINGS_EXPIRY_DAYS });
@@ -74,7 +75,8 @@ export const getSettings = reduction => {
   const _old = {
     volume: reduction.getIn(['appState', 'player', 'volume']),
     browserHeight: reduction.getIn(['appState', 'browser', 'height']),
-    colWidthActual: reduction.getIn(['appState', 'songList', 'colWidthActual'])
+    colWidthActual: reduction.getIn(['appState', 'songList', 'colWidthActual']),
+    orderBy: reduction.getIn(['appState', 'songList', 'orderBy'])
   };
 
   const _new = {};
@@ -97,6 +99,10 @@ export const getSettings = reduction => {
     _new.colWidth = fromJS(settings.c);
   }
 
+  if (typeof settings.o !== 'undefined') {
+    _new.orderBy = fromJS(settings.o);
+  }
+
   const newVolume = typeof _new.volume !== 'undefined' && !isNaN(_new.volume)
     ? _new.volume : _old.volume;
 
@@ -105,12 +111,15 @@ export const getSettings = reduction => {
 
   const newColWidth = _new.colWidth || _old.colWidthActual;
 
+  const newOrderBy = _new.orderBy || _old.orderBy;
+
   return reduction
     .setIn(['appState', 'loaded', 'settingsCookie'], true)
     .setIn(['appState', 'player', 'volume'], newVolume)
     .setIn(['appState', 'browser', 'height'], newBrowserHeight)
     .setIn(['appState', 'songList', 'colWidthPreview'], newColWidth)
     .setIn(['appState', 'songList', 'colWidthActual'], newColWidth)
+    .setIn(['appState', 'songList', 'orderBy'], newOrderBy)
   ;
 };
 
