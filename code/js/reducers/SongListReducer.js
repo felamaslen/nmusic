@@ -50,5 +50,6 @@ export const sortSongList = (reduction, column) => {
       ['appState', 'songList', 'list'],
       _sortSongList(reduction.getIn(['appState', 'songList', 'list']), newOrderBy)
     )
+    .setIn(['appState', 'songList', 'selectedSongs'], List.of())
     .set('effects', reduction.get('effects').push(buildMessage(SETTINGS_UPDATE_TRIGGERED)));
 };
