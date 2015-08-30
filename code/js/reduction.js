@@ -52,7 +52,6 @@ export default new Record({
         title: 220,
         artist: 180,
         album: 180,
-        year: 40,
         genre: 120
       },
       // for saving the resized state
@@ -60,13 +59,12 @@ export default new Record({
         title: 220,
         artist: 180,
         album: 180,
-        year: 40,
         genre: 120
       }
     },
     browser: {
       height: 220,
-      maxHeight: 400, // TODO: change to be dynamic as the window resizes
+      maxHeight: 400, // this is dynamic
       selectedArtists: [],
       selectedAlbums: [],
       artistClickedLast: null,

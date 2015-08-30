@@ -41,6 +41,18 @@ export default class SongList extends PureControllerView {
         width: this.props.titleWidthActual
       };
 
+      const artistStyle = {
+        width: this.props.artistWidthActual
+      };
+
+      const albumStyle = {
+        width: this.props.albumWidthActual
+      };
+
+      const genreStyle = {
+        width: this.props.genreWidthActual
+      };
+
       return (
         <li key={index} className={liClass}
           onMouseDown={this._selectSong.bind(this, index)}
@@ -48,10 +60,10 @@ export default class SongList extends PureControllerView {
         >
           <song-track>{trackFormat(song.get('track'))}</song-track>
           <song-title style={titleStyle}>{song.get('title')}</song-title>
-          <song-artist>{song.get('artist')}</song-artist>
-          <song-album>{song.get('album')}</song-album>
+          <song-artist style={artistStyle}>{song.get('artist')}</song-artist>
+          <song-album style={albumStyle}>{song.get('album')}</song-album>
           <song-year>{song.get('year')}</song-year>
-          <song-genre>{song.get('genre')}</song-genre>
+          <song-genre style={genreStyle}>{song.get('genre')}</song-genre>
         </li>
       );
     });
@@ -90,10 +102,46 @@ export default class SongList extends PureControllerView {
               changedAction={columnResized}
             />
           </song-title>
-          <song-artist>Artist</song-artist>
-          <song-album>Album</song-album>
+          <song-artist style={{width: this.props.artistWidthPreview}}>
+            Artist
+            <ResizeSlider dispatcher={this.props.dispatcher}
+              vertical={false}
+              name="artist"
+              eventHandlers={this.props.resizeArtistEvents}
+              min={COL_MIN} max={COL_MAX}
+              value={this.props.artistWidthPreview}
+              clicked={this.props.resizeArtistClicked}
+              clickedAction={sliderClicked}
+              changedAction={columnResized}
+            />
+          </song-artist>
+          <song-album style={{width: this.props.albumWidthPreview}}>
+            Album
+            <ResizeSlider dispatcher={this.props.dispatcher}
+              vertical={false}
+              name="album"
+              eventHandlers={this.props.resizeAlbumEvents}
+              min={COL_MIN} max={COL_MAX}
+              value={this.props.albumWidthPreview}
+              clicked={this.props.resizeAlbumClicked}
+              clickedAction={sliderClicked}
+              changedAction={columnResized}
+            />
+          </song-album>
           <song-year>Year</song-year>
-          <song-genre>Genre</song-genre>
+          <song-genre style={{width: this.props.genreWidthPreview}}>
+            Genre
+            <ResizeSlider dispatcher={this.props.dispatcher}
+              vertical={false}
+              name="genre"
+              eventHandlers={this.props.resizeGenreEvents}
+              min={COL_MIN} max={COL_MAX}
+              value={this.props.genreWidthPreview}
+              clicked={this.props.resizeGenreClicked}
+              clickedAction={sliderClicked}
+              changedAction={columnResized}
+            />
+          </song-genre>
         </header>
         <ul className={songListClass} style={songListStyle}>
           {songList}
@@ -120,11 +168,23 @@ SongList.propTypes = {
   currentSongId: PropTypes.number,
   browserHeight: PropTypes.number,
   resizeTitleClicked: PropTypes.number,
+  resizeArtistClicked: PropTypes.number,
+  resizeAlbumClicked: PropTypes.number,
+  resizeGenreClicked: PropTypes.number,
   titleWidthPreview: PropTypes.number,
+  artistWidthPreview: PropTypes.number,
+  albumWidthPreview: PropTypes.number,
+  genreWidthPreview: PropTypes.number,
   titleWidthActual: PropTypes.number,
+  artistWidthActual: PropTypes.number,
+  albumWidthActual: PropTypes.number,
+  genreWidthActual: PropTypes.number,
   selected: PropTypes.instanceOf(List),
   list: PropTypes.instanceOf(List),
   resizeTitleEvents: PropTypes.instanceOf(List),
+  resizeArtistEvents: PropTypes.instanceOf(List),
+  resizeAlbumEvents: PropTypes.instanceOf(List),
+  resizeGenreEvents: PropTypes.instanceOf(List),
   dispatcher: PropTypes.instanceOf(Dispatcher)
 };
 

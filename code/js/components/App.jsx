@@ -181,12 +181,33 @@ export default class App extends Component {
           selected={this.state.reduction.getIn(['appState', 'songList', 'selectedSongs'])}
           loaded={this.state.reduction.getIn(['appState', 'loaded', 'songList'])}
           resizeTitleClicked={this.state.reduction.getIn(['appState', 'slider', 'titleClicked'])}
+          resizeArtistClicked={this.state.reduction.getIn(['appState', 'slider', 'artistClicked'])}
+          resizeAlbumClicked={this.state.reduction.getIn(['appState', 'slider', 'albumClicked'])}
+          resizeGenreClicked={this.state.reduction.getIn(['appState', 'slider', 'genreClicked'])}
           resizeTitleEvents={List.of(
             this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMouseup_title']),
             this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMousemove_title'])
           )}
+          resizeArtistEvents={List.of(
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMouseup_artist']),
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMousemove_artist'])
+          )}
+          resizeAlbumEvents={List.of(
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMouseup_album']),
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMousemove_album'])
+          )}
+          resizeGenreEvents={List.of(
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMouseup_genre']),
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'ResizeSliderMousemove_genre'])
+          )}
           titleWidthPreview={this.state.reduction.getIn(['appState', 'songList', 'colWidthPreview', 'title'])}
+          artistWidthPreview={this.state.reduction.getIn(['appState', 'songList', 'colWidthPreview', 'artist'])}
+          albumWidthPreview={this.state.reduction.getIn(['appState', 'songList', 'colWidthPreview', 'album'])}
+          genreWidthPreview={this.state.reduction.getIn(['appState', 'songList', 'colWidthPreview', 'genre'])}
           titleWidthActual={this.state.reduction.getIn(['appState', 'songList', 'colWidthActual', 'title'])}
+          artistWidthActual={this.state.reduction.getIn(['appState', 'songList', 'colWidthActual', 'artist'])}
+          albumWidthActual={this.state.reduction.getIn(['appState', 'songList', 'colWidthActual', 'album'])}
+          genreWidthActual={this.state.reduction.getIn(['appState', 'songList', 'colWidthActual', 'genre'])}
         />
       </section>
     ) : false;

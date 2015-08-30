@@ -729,7 +729,7 @@ input {
   left: 0;
   bottom: -5px;
   z-index: 100;
-  cursor: n-resize;
+  cursor: row-resize;
 }
 
 #section-browsers {
@@ -837,7 +837,8 @@ input {
   position: absolute;
   right: 0;
   top: 0;
-  cursor: e-resize;
+  cursor: col-resize;
+  border-right: 1px solid #bbb;
 }
 #section-songlist song-track {
   width: 23px;

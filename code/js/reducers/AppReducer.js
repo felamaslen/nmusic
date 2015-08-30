@@ -21,7 +21,7 @@ export const storeEventHandler = (reduction, handler) =>
 export const sliderClicked = (reduction, data) => {
   let newReduction = reduction;
 
-  const cols = ['title'];
+  const cols = ['title', 'artist', 'album', 'genre'];
   const colIndex = cols.indexOf(data.name);
   const isCol = colIndex > -1;
 
