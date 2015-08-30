@@ -776,6 +776,9 @@ input {
   background: #f5f5d4;
   font-weight: bold;
 }
+.songlist .playing::after {
+  content: "♫";
+}
 .songlist .selected,
 .browser .selected {
   background: #8ba7c9;
