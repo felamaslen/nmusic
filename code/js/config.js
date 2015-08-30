@@ -11,6 +11,22 @@ export const REMEMBERME_DAYS = 30;
 export const SETTINGS_EXPIRY_DAYS = 30;
 
 export const BROWSER_MIN_HEIGHT = 40;
+
+// keyboard shorcuts
+export const KEYBOARD_SHORTCUTS = {
+  ctrlNext: [
+    { key: 'right', modifiers: { ctrl: true } },
+    { key: 'b' }
+  ],
+  ctrlPrevious: [
+    { key: 'left', modifiers: { ctrl: true } },
+    { key: 'z' }
+  ],
+  ctrlPlayPause: [
+    { key: 'space' },
+    { key: 'c' }
+  ]
+};
 /* Don't modify anything beyond here */
 
 export const COL_MIN = 60;

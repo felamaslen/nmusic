@@ -29,6 +29,56 @@ export const debounce = (func, wait, immediate) => {
   };
 };
 
+const keys = {
+  backspace: 8,
+  tab: 9,
+  enter: 13,
+  esc: 27,
+  space: 32,
+  end: 35,
+  home: 36,
+  left: 37,
+  right: 39,
+  up: 38,
+  down: 40,
+  insert: 45,
+  delete: 46,
+  h: 72,
+  j: 74,
+  k: 75,
+  l: 76,
+  z: 90,
+  c: 67,
+  b: 66
+};
+
+export const addKeyboardShortcut = (_action, shortcuts) => {
+  if (!!shortcuts) {
+    const action = debounce(_action, 100, true);
+
+    shortcuts.forEach(shortcut => {
+      const modifiers = shortcut.modifiers || {};
+
+      const noCtrl = modifiers.ctrl === false;
+      const noShift = modifiers.shift === false;
+
+      const shortcutKeyCode = keys[shortcut.key];
+
+      window.addEventListener('keydown', ev => {
+        if (
+          ev.keyCode === shortcutKeyCode &&
+          (!modifiers.ctrl || ev.ctrlKey) &&
+          (!noCtrl || !ev.ctrlKey) &&
+          (!modifiers.shift || ev.shiftKey) &&
+          (!noShift || !ev.shiftKey)
+        ) {
+          action();
+        }
+      });
+    });
+  }
+};
+
 export const getOffset = element => element.getBoundingClientRect();
 
 export const sliderProps = {

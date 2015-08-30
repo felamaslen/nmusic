@@ -1,6 +1,10 @@
 // builds the UI for playing music
 
-import { secondsToTime } from '../common';
+import {
+  secondsToTime,
+  addKeyboardShortcut
+} from '../common';
+import { KEYBOARD_SHORTCUTS } from '../config';
 
 import { List, Map } from 'immutable';
 import React, { PropTypes } from 'react';
@@ -42,6 +46,13 @@ const volumeControlColors = volume =>
   );
 
 export default class PlayerUI extends PureControllerView {
+  componentDidMount() {
+    // initialise player keyboard shortcuts
+    addKeyboardShortcut(this._ctrlNext.bind(this), KEYBOARD_SHORTCUTS.ctrlNext);
+    addKeyboardShortcut(this._ctrlPrevious.bind(this), KEYBOARD_SHORTCUTS.ctrlPrevious);
+    addKeyboardShortcut(this._ctrlPlayPause.bind(this), KEYBOARD_SHORTCUTS.ctrlPlayPause);
+  }
+
   render() {
     const playPauseText = this.props.paused ? 'Play' : 'Pause';
 
