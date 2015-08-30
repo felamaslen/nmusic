@@ -64,17 +64,19 @@ export default class CustomSlider extends PureControllerView {
   render() {
     // we set the styles here because CSS doesn't seem to
     // support using data attributes in the declaration :'(
-    const sliderStyle = {
-      width:
-        (
-          100 * this.props.value / (this.props.max - this.props.min)
-        ) + '%',
+    const sliderWidth = 100 * this.props.value / (this.props.max - this.props.min);
 
-      backgroundColor:
-        'rgba(' + this.props.colors(this.props.value)
-        .map((color, index) => index < 3 ? Math.round(255 * color) : color)
-        .reduce((r, s) => r + ',' + s) + ')'
+    const sliderStyle = {
+      width: `${sliderWidth}%`
     };
+
+    if (!!this.props.colors) {
+      const backgroundColor = this.props.colors(this.props.value).map(
+        (color, index) => index < 3 ? Math.round(255 * color) : color
+      ).reduce((r, s) => `${r},${s}`);
+
+      sliderStyle.backgroundColor = `rgba(${backgroundColor})`;
+    }
 
     return (
       <div ref="slider" className="slider">
@@ -116,6 +118,7 @@ export default class CustomSlider extends PureControllerView {
 CustomSlider.propTypes = sliderProps;
 
 CustomSlider.defaultProps = {
-  drag: true
+  drag: true,
+  colors: null
 };
 

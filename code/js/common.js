@@ -138,18 +138,20 @@ export const secondsToTime = _seconds => {
   const minutes = Math.floor((_seconds % 3600) / 60).toString();
   const seconds = Math.round(_seconds % 60).toString();
 
-  const dd = days > 0
-    ? (!!days.toString()[1] ? days.toString() : '0' + days.toString()) + ':'
-    : '';
+  if (isNaN(days) || isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
+    return '00:00';
+  }
 
-  const hh = days > 0 || hours > 0
-    ? (!!hours.toString()[1] ? hours.toString() : '0' + hours.toString()) + ':'
-    : '';
+  const _dd = days >= 10 ? days.toString() : `0${days}`;
+  const dd = days > 0 ? `${_dd}:` : '';
 
-  const mm = !!minutes[1] ? minutes : '0' + minutes;
-  const ss = !!seconds[1] ? seconds : '0' + seconds;
+  const _hh = hours >= 10 ? hours.toString() : `0${hours}`;
+  const hh = days > 0 || hours > 0 ? `${_hh}:` : '';
 
-  return dd + hh + mm + ':' + ss;
+  const mm = !!minutes[1] ? minutes : `0${minutes}`;
+  const ss = !!seconds[1] ? seconds : `0${seconds}`;
+
+  return `${dd}${hh}${mm}:${ss}`;
 };
 
 export const createRanges = list => {

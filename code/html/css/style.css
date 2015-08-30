@@ -442,9 +442,7 @@ input {
 .ctrl-volume .slider {
   width: 84px;
   height: 10px;
-  background-image: linear-gradient(135deg,rgba(255,255,255,.2) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.2) 75%,transparent 75%,transparent);
   background-color: #afafaf;
-  background-size: 10px 10px;
   position: absolute;
   left: 5px;
   top: 19px;
@@ -679,29 +677,29 @@ input {
 /* seek bar */
 .seekbar .slider {
   width: 280px;
-  padding: 0 4px;
   height: 8px;
   left: 54px;
-  bottom: 11px;
+  bottom: 14px;
   position: absolute;
-  border: 1px solid #333;
+  padding: 0 4px;
+  overflow: hidden;
+  background-color: #aaa;
   border-radius: 4px;
-  background-color: rgba(46,78,112,.4);
-  background-image: linear-gradient(90deg,rgba(255,255,255,.2) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.2) 75%,transparent 75%,transparent);
-  background-size: 8px 8px;
-  background-position: 0 0;
 }
 .seekbar .slider .inside {
   height: 8px;
   width: 0;
   position: relative;
-  -webkit-animation: slide 1s linear infinite;
+  background-color: #888;
+  border-radius: 4px;
+  padding-left: 4px;
+  margin-left: -4px;
 }
 .seekbar .slider-ctrl {
   width: 8px;
   height: 8px;
   border-radius: 8px;
-  background-color: rgba(0, 0, 0, .8);
+  background-color: #000;
   position: absolute;
   top: 0;
   right: -4px;
@@ -731,7 +729,6 @@ input {
   z-index: 100;
   cursor: row-resize;
 }
-
 #section-browsers {
   height: 180px;
   width: 100%;

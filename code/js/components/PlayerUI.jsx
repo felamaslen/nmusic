@@ -45,8 +45,6 @@ export default class PlayerUI extends PureControllerView {
   render() {
     const playPauseText = this.props.paused ? 'Play' : 'Pause';
 
-    const seekbarColors = () => List.of(0, 0, 0, 0);
-
     const currentSongInfo = this.props.currentSong ? (
       <div>
         <span className="info-title">{this.props.currentSong.get('title')}</span>
@@ -62,7 +60,6 @@ export default class PlayerUI extends PureControllerView {
             clickedAction={sliderClicked}
             changedAction={ctrlSeek}
             eventHandlers={this.props.seekbarEvents}
-            colors={seekbarColors}
             drag={false}
           />
           <div className="total-time">{secondsToTime(this.props.currentSong.get('time'))}</div>
