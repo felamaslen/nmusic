@@ -1,4 +1,4 @@
-import { } from 'immutable';
+import { fromJS } from 'immutable';
 import Cookies from 'js-cookie';
 
 import buildMessage from '../MessageBuilder';
@@ -35,9 +35,7 @@ export const sliderClicked = (reduction, data) => {
     data.name === 'volume' ||
     data.name === 'resizeBrowser'
   ) && data.clickPosition < 0) {
-    if (!isCol) { // change
-      effects = effects.push(buildMessage(SETTINGS_UPDATE_TRIGGERED));
-    }
+    effects = effects.push(buildMessage(SETTINGS_UPDATE_TRIGGERED));
 
     if (isCol) {
       newReduction = newReduction
@@ -63,7 +61,8 @@ export const setSettings = reduction => {
   // Since cookie size is limited to 4093 bytes, use short keys
   const settings = JSON.stringify({
     v: Math.round(reduction.getIn(['appState', 'player', 'volume']) * 1000) / 1000,
-    b: reduction.getIn(['appState', 'browser', 'height'])
+    b: reduction.getIn(['appState', 'browser', 'height']),
+    c: reduction.getIn(['appState', 'songList', 'colWidthActual']).toJS()
   });
 
   Cookies.set('settings', settings, { expires: SETTINGS_EXPIRY_DAYS });
@@ -74,7 +73,8 @@ export const setSettings = reduction => {
 export const getSettings = reduction => {
   const _old = {
     volume: reduction.getIn(['appState', 'player', 'volume']),
-    browserHeight: reduction.getIn(['appState', 'browser', 'height'])
+    browserHeight: reduction.getIn(['appState', 'browser', 'height']),
+    colWidthActual: reduction.getIn(['appState', 'songList', 'colWidthActual'])
   };
 
   const _new = {};
@@ -93,16 +93,24 @@ export const getSettings = reduction => {
     ));
   }
 
+  if (typeof settings.c !== 'undefined') {
+    _new.colWidth = fromJS(settings.c);
+  }
+
   const newVolume = typeof _new.volume !== 'undefined' && !isNaN(_new.volume)
     ? _new.volume : _old.volume;
 
   const newBrowserHeight = typeof _new.browserHeight !== 'undefined' && !isNaN(_new.browserHeight)
     ? _new.browserHeight : _old.browserHeight;
 
+  const newColWidth = _new.colWidth || _old.colWidthActual;
+
   return reduction
     .setIn(['appState', 'loaded', 'settingsCookie'], true)
     .setIn(['appState', 'player', 'volume'], newVolume)
     .setIn(['appState', 'browser', 'height'], newBrowserHeight)
+    .setIn(['appState', 'songList', 'colWidthPreview'], newColWidth)
+    .setIn(['appState', 'songList', 'colWidthActual'], newColWidth)
   ;
 };
 
