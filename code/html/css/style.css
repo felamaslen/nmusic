@@ -763,15 +763,18 @@ input {
 /** Song list */
 .songlist, .browser {
 }
-.songlist .playing {
+.songlist li:nth-child(even), .browser li:nth-child(even) {
+  background-color: #f1f4f7;
+}
+.songlist li.playing {
   background: #f5f5d4;
   font-weight: bold;
 }
-.songlist .playing::after {
+.songlist li.playing::after {
   content: "♫";
 }
-.songlist .selected,
-.browser .selected {
+.songlist li.selected,
+.browser li.selected {
   background: #8ba7c9;
   color: #fff;
   box-shadow: none;

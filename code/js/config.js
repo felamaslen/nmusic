@@ -37,7 +37,7 @@ export const KEYBOARD_SHORTCUTS = {
 /* Don't modify anything beyond here */
 
 export const META_HEIGHT = 65;
-export const SONGLIST_HEADER_HEIGHT = 12;
+export const SONGLIST_HEADER_HEIGHT = 14;
 
 export const COL_MIN = 60;
 export const COL_MAX = 320;
