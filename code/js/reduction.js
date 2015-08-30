@@ -71,6 +71,9 @@ export default new Record({
         genre: 120
       }
     },
+    search: {
+      searchTerm: ''
+    },
     browser: {
       height: 220,
       maxHeight: 400, // this is dynamic

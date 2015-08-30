@@ -35,6 +35,7 @@ import LoadingSpinner from './LoadingSpinner';
 import ResizeSlider from './ResizeSlider';
 import PlayerEngine from './PlayerEngine';
 import PlayerUI from './PlayerUI';
+import Search from './Search';
 import BrowserArtists from './BrowserArtists';
 import BrowserAlbums from './BrowserAlbums';
 import SongList from './SongList';
@@ -98,6 +99,10 @@ export default class App extends Component {
     }, 250));
   }
 
+  componentDidUpdate() {
+    document.title = this.state.reduction.getIn(['appState', 'title']);
+  }
+
   render() {
     const authenticated = this.state.reduction.getIn(
       ['appState', 'auth', 'status']
@@ -106,74 +111,15 @@ export default class App extends Component {
     const currentSong = this.state.reduction.getIn(['appState', 'player', 'currentSong']);
     const currentSongId = currentSong === null ? -1 : currentSong.get('id');
 
-    document.title = this.state.reduction.getIn(['appState', 'title']);
+    let songList;
+    let playerEngine;
+    let playerUI;
+    let browsersInside;
+    let browsersStyle;
+    let search;
 
-    const userArea = authenticated ? (
-      <section id="userAreaOuter">
-        <PlayerEngine dispatcher={this.state.dispatcher}
-          currentSong={currentSong}
-          setTime={this.state.reduction.getIn(['appState', 'player', 'setTime'])}
-          paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
-          volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
-          token={this.state.reduction.getIn(['appState', 'auth', 'token'])}
-        />
-        <section id="section-meta" className="noselect">
-          <PlayerUI dispatcher={this.state.dispatcher}
-            currentSong={currentSong}
-            paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
-            currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
-            volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
-            volumeClicked={this.state.reduction.getIn(['appState', 'slider', 'volumeClicked'])}
-            seekbarClicked={this.state.reduction.getIn(['appState', 'slider', 'seekbarClicked'])}
-            volumeControlEvents={List.of(
-              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_volume']),
-              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_volume'])
-            )}
-            seekbarEvents={List.of(
-              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_seekbar']),
-              this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_seekbar'])
-            )}
-            userMenuActive={this.state.reduction.getIn(['appState', 'userMenuActive'])}
-            userMenuEvents={List.of(
-              this.state.reduction.getIn(['appState', 'eventHandlers', 'UserMenuClear'])
-            )}
-          />
-        </section>
-        <section id="section-browsers" style={{height: this.state.reduction.getIn(
-          ['appState', 'browser', 'height']
-        )}}>
-          <div className="inside">
-            <ResizeSlider dispatcher={this.state.dispatcher}
-              vertical={true}
-              name="resizeBrowser"
-              eventHandlers={List.of(
-                this.state.reduction.getIn(
-                  ['appState', 'eventHandlers', 'ResizeSliderMouseup_resizeBrowser']
-                ),
-                this.state.reduction.getIn(
-                  ['appState', 'eventHandlers', 'ResizeSliderMousemove_resizeBrowser']
-                )
-              )}
-              min={BROWSER_MIN_HEIGHT}
-              max={this.state.reduction.getIn(['appState', 'browser', 'maxHeight'])}
-              value={this.state.reduction.getIn(['appState', 'browser', 'height'])}
-              clicked={this.state.reduction.getIn(['appState', 'slider', 'resizeBrowserClicked'])}
-              clickedAction={sliderClicked}
-              changedAction={browserResized}
-            />
-            <BrowserArtists dispatcher={this.state.dispatcher}
-              loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
-              selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtists'])}
-              list={this.state.reduction.getIn(['appState', 'browser', 'listArtists'])}
-            />
-            <BrowserAlbums dispatcher={this.state.dispatcher}
-              loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserAlbums'])}
-              selected={this.state.reduction.getIn(['appState', 'browser', 'selectedAlbums'])}
-              selectedArtists={this.state.reduction.getIn(['appState', 'browser', 'selectedArtists'])}
-              list={this.state.reduction.getIn(['appState', 'browser', 'listAlbums'])}
-            />
-          </div>
-        </section>
+    if (authenticated) {
+      songList = (
         <SongList dispatcher={this.state.dispatcher}
           orderBy={this.state.reduction.getIn(['appState', 'songList', 'orderBy'])}
           browserHeight={this.state.reduction.getIn(['appState', 'browser', 'height'])}
@@ -210,6 +156,97 @@ export default class App extends Component {
           albumWidthActual={this.state.reduction.getIn(['appState', 'songList', 'colWidthActual', 'album'])}
           genreWidthActual={this.state.reduction.getIn(['appState', 'songList', 'colWidthActual', 'genre'])}
         />
+      );
+
+      playerEngine = (
+        <PlayerEngine dispatcher={this.state.dispatcher}
+          currentSong={currentSong}
+          setTime={this.state.reduction.getIn(['appState', 'player', 'setTime'])}
+          paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
+          volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
+          token={this.state.reduction.getIn(['appState', 'auth', 'token'])}
+        />
+      );
+
+      playerUI = (
+        <PlayerUI dispatcher={this.state.dispatcher}
+          currentSong={currentSong}
+          paused={this.state.reduction.getIn(['appState', 'player', 'paused'])}
+          currentTime={this.state.reduction.getIn(['appState', 'player', 'currentTime'])}
+          volume={this.state.reduction.getIn(['appState', 'player', 'volume'])}
+          volumeClicked={this.state.reduction.getIn(['appState', 'slider', 'volumeClicked'])}
+          seekbarClicked={this.state.reduction.getIn(['appState', 'slider', 'seekbarClicked'])}
+          volumeControlEvents={List.of(
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_volume']),
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_volume'])
+          )}
+          seekbarEvents={List.of(
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMouseup_seekbar']),
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'CustomSliderMousemove_seekbar'])
+          )}
+          userMenuActive={this.state.reduction.getIn(['appState', 'userMenuActive'])}
+          userMenuEvents={List.of(
+            this.state.reduction.getIn(['appState', 'eventHandlers', 'UserMenuClear'])
+          )}
+        />
+      );
+
+      browsersInside = (
+        <div className="inside">
+          <ResizeSlider dispatcher={this.state.dispatcher}
+            vertical={true}
+            name="resizeBrowser"
+            eventHandlers={List.of(
+              this.state.reduction.getIn(
+                ['appState', 'eventHandlers', 'ResizeSliderMouseup_resizeBrowser']
+              ),
+              this.state.reduction.getIn(
+                ['appState', 'eventHandlers', 'ResizeSliderMousemove_resizeBrowser']
+              )
+            )}
+            min={BROWSER_MIN_HEIGHT}
+            max={this.state.reduction.getIn(['appState', 'browser', 'maxHeight'])}
+            value={this.state.reduction.getIn(['appState', 'browser', 'height'])}
+            clicked={this.state.reduction.getIn(['appState', 'slider', 'resizeBrowserClicked'])}
+            clickedAction={sliderClicked}
+            changedAction={browserResized}
+          />
+          <BrowserArtists dispatcher={this.state.dispatcher}
+            loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserArtists'])}
+            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedArtists'])}
+            list={this.state.reduction.getIn(['appState', 'browser', 'listArtists'])}
+          />
+          <BrowserAlbums dispatcher={this.state.dispatcher}
+            loaded={this.state.reduction.getIn(['appState', 'loaded', 'browserAlbums'])}
+            selected={this.state.reduction.getIn(['appState', 'browser', 'selectedAlbums'])}
+            selectedArtists={this.state.reduction.getIn(['appState', 'browser', 'selectedArtists'])}
+            list={this.state.reduction.getIn(['appState', 'browser', 'listAlbums'])}
+          />
+        </div>
+      );
+
+      browsersStyle = {
+        height: this.state.reduction.getIn(['appState', 'browser', 'height'])
+      };
+
+      search = (
+        <Search dispatcher={this.state.dispatcher}
+          searchTerm={this.state.reduction.getIn(['appState', 'search', 'searchTerm'])}
+        />
+      );
+    }
+
+    const userArea = authenticated ? (
+      <section id="userAreaOuter">
+        <section id="section-meta" className="noselect">
+          {playerEngine}
+          {playerUI}
+          {search}
+        </section>
+        <section id="section-browsers" style={browsersStyle}>
+          {browsersInside}
+        </section>
+        {songList}
       </section>
     ) : false;
 
