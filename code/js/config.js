@@ -25,6 +25,13 @@ export const KEYBOARD_SHORTCUTS = {
   ctrlPlayPause: [
     { key: 'space' },
     { key: 'c' }
+  ],
+
+  volumeDown: [
+    { key: 'down', modifiers: { ctrl: true } }
+  ],
+  volumeUp: [
+    { key: 'up', modifiers: { ctrl: true } }
   ]
 };
 /* Don't modify anything beyond here */

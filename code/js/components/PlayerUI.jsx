@@ -16,7 +16,8 @@ import UserMenu from './UserMenu';
 import PureControllerView from './PureControllerView';
 
 import {
-  sliderClicked
+  sliderClicked,
+  setSettings
 } from '../actions/AppActions';
 import {
   ctrlPrevious,
@@ -48,9 +49,23 @@ const volumeControlColors = volume =>
 export default class PlayerUI extends PureControllerView {
   componentDidMount() {
     // initialise player keyboard shortcuts
-    addKeyboardShortcut(this._ctrlNext.bind(this), KEYBOARD_SHORTCUTS.ctrlNext);
-    addKeyboardShortcut(this._ctrlPrevious.bind(this), KEYBOARD_SHORTCUTS.ctrlPrevious);
-    addKeyboardShortcut(this._ctrlPlayPause.bind(this), KEYBOARD_SHORTCUTS.ctrlPlayPause);
+    addKeyboardShortcut(KEYBOARD_SHORTCUTS.ctrlNext, this._ctrlNext.bind(this));
+    addKeyboardShortcut(KEYBOARD_SHORTCUTS.ctrlPrevious, this._ctrlPrevious.bind(this));
+    addKeyboardShortcut(KEYBOARD_SHORTCUTS.ctrlPlayPause, this._ctrlPlayPause.bind(this));
+
+    // this.dispatchAction(setSettings());
+
+    addKeyboardShortcut(
+      KEYBOARD_SHORTCUTS.volumeDown,
+      () => this.dispatchAction(audioVolumeChange('-0.05')),
+      () => this.dispatchAction(setSettings())
+    );
+
+    addKeyboardShortcut(
+      KEYBOARD_SHORTCUTS.volumeUp,
+      () => this.dispatchAction(audioVolumeChange('+0.05')),
+      () => this.dispatchAction(setSettings())
+    );
   }
 
   render() {

@@ -22,7 +22,7 @@ export const debounce = (func, wait, immediate) => {
 
     const callNow = immediate && !timeout;
     window.clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    timeout = window.setTimeout(later, wait);
     if (callNow) {
       func.apply(this, args);
     }
@@ -52,10 +52,8 @@ const keys = {
   b: 66
 };
 
-export const addKeyboardShortcut = (_action, shortcuts) => {
+export const addKeyboardShortcut = (shortcuts, action, ended) => {
   if (!!shortcuts) {
-    const action = debounce(_action, 100, true);
-
     shortcuts.forEach(shortcut => {
       const modifiers = shortcut.modifiers || {};
 
@@ -63,6 +61,8 @@ export const addKeyboardShortcut = (_action, shortcuts) => {
       const noShift = modifiers.shift === false;
 
       const shortcutKeyCode = keys[shortcut.key];
+
+      let started = false;
 
       window.addEventListener('keydown', ev => {
         if (
@@ -72,9 +72,20 @@ export const addKeyboardShortcut = (_action, shortcuts) => {
           (!modifiers.shift || ev.shiftKey) &&
           (!noShift || !ev.shiftKey)
         ) {
+          ev.stopPropagation();
+          started = true;
           action();
         }
       });
+
+      if (ended) {
+        window.addEventListener('keyup', () => {
+          if (started) {
+            started = false;
+            ended();
+          }
+        });
+      }
     });
   }
 };

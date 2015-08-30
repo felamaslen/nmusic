@@ -38,10 +38,22 @@ export const audioTimeUpdate = (reduction, position) => {
   ;
 };
 
-export const audioVolumeChange = (reduction, volume) => {
+export const audioVolumeChange = (reduction, _volume) => {
   // Sent when the audio volume changes (both when the volume is set
   // and when the muted attribute is changed).
+  const relative = _volume.toString().match(/^(\-|\+)/);
+
+  let factor;
+  if (relative) {
+    factor = _volume.substring(0, 1) === '+' ? 1 : -1;
+  }
+
+  const volume = relative
+    ? reduction.getIn(['appState', 'player', 'volume'])
+      + factor * parseFloat(_volume.substring(1), 10)
+    : parseFloat(_volume, 10);
+
   return reduction
-    .setIn(['appState', 'player', 'volume'], parseFloat(volume, 10))
+    .setIn(['appState', 'player', 'volume'], Math.max(0, Math.min(1, volume)))
   ;
 };
