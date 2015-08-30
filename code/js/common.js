@@ -97,7 +97,7 @@ export const getDocumentTitle = (canNotify, song, paused) => {
 
     const title = 'nmusic' + (haveTitle ? ': ' + song.get('title') + artistText : '');
 
-    const body = paused ? 'Paused' : 'Playing';
+    const body = paused || !song ? 'Paused' : 'Playing';
 
     const icon = 'img/app.png';
 
@@ -132,11 +132,13 @@ export const _warnBeforeNavigation = warn => {
 
 export const trackFormat = track => track < 10 ? '0' + track.toString() : track.toString();
 
-export const secondsToTime = _seconds => {
-  const days = Math.floor(_seconds / 86400);
-  const hours = Math.floor((_seconds % 86400) / 3600);
-  const minutes = Math.floor((_seconds % 3600) / 60).toString();
-  const seconds = Math.round(_seconds % 60).toString();
+export const secondsToTime = secondsFloat => {
+  const secondsInt = Math.round(secondsFloat);
+
+  const days = Math.floor(secondsInt / 86400);
+  const hours = Math.floor((secondsInt % 86400) / 3600);
+  const minutes = Math.floor((secondsInt % 3600) / 60).toString();
+  const seconds = (secondsInt % 60).toString();
 
   if (isNaN(days) || isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
     return '00:00';

@@ -56,9 +56,10 @@ export const playListItem = (reduction, song) => {
   ;
 };
 
-export const togglePause = (reduction, paused) => {
+const _togglePause = (reduction, paused, force) => {
   const currentSong = reduction.getIn(['appState', 'player', 'currentSong']);
-  const _paused = currentSong ? paused : reduction.getIn(['appState', 'player', 'paused']);
+  const _paused = force || currentSong
+    ? paused : reduction.getIn(['appState', 'player', 'paused']);
 
   _warnBeforeNavigation(!_paused);
 
@@ -69,13 +70,15 @@ export const togglePause = (reduction, paused) => {
   ;
 };
 
+export const togglePause = (reduction, paused) => _togglePause(reduction, paused);
+
 export const ctrlPrevious = reduction => {
   const currentSong = reduction.getIn(['appState', 'player', 'currentSong']);
   const queue = reduction.getIn(['appState', 'player', 'queue']);
   const queueId = reduction.getIn(['appState', 'player', 'queueId']);
 
   let newReduction;
-  let newSong;
+  let newSong = null;
 
   if (reduction.getIn(
     ['appState', 'player', 'currentTime']
@@ -86,7 +89,7 @@ export const ctrlPrevious = reduction => {
     if (queueId > 0) {
       // play previous song in queue
       newSong = queue.get(newQueueId);
-    } else {
+    } else if (!!currentSong) {
       // play previous song in songlist, if it exists, since
       // we are already at the bottom of the queue
       const currentSongId = currentSong.get('id');
@@ -96,12 +99,18 @@ export const ctrlPrevious = reduction => {
       );
 
       newSong = listId > 0 ? songList.get(listId - 1) : null;
+    } else {
+      return reduction;
     }
 
     newReduction = reduction
       .setIn(['appState', 'player', 'currentSong'], newSong)
       .setIn(['appState', 'player', 'queueId'], newQueueId)
     ;
+
+    if (!newSong) {
+      newReduction = _togglePause(newReduction, true, true);
+    }
   } else {
     // go back to the beginning of the track
     newReduction = reduction
@@ -116,18 +125,20 @@ export const ctrlPrevious = reduction => {
 };
 
 export const ctrlNext = (reduction, manual) => {
+  let newReduction = reduction;
+
   const currentSong = reduction.getIn(['appState', 'player', 'currentSong']);
   const queue = reduction.getIn(['appState', 'player', 'queue']);
   const queueId = reduction.getIn(['appState', 'player', 'queueId']);
 
-  let newSong;
+  let newSong = null;
 
   const newQueueId = queueId < queue.size - 1 ? queueId + 1 : -1;
 
   if (queueId < queue.size - 1) {
     // play next song in queue
     newSong = queue.get(queueId + 1);
-  } else {
+  } else if (!!currentSong) {
     // play next song in songlist, if it exists, since
     // we are already at the end of the queue
     const currentSongId = currentSong.get('id');
@@ -138,9 +149,15 @@ export const ctrlNext = (reduction, manual) => {
 
     newSong = listId > -1 && listId < songList.size - 1
       ? songList.get(listId + 1) : null;
+  } else {
+    return reduction;
   }
 
-  return reduction
+  if (!newSong) {
+    newReduction = _togglePause(newReduction, true, true);
+  }
+
+  return newReduction
     .setIn(['appState', 'player', 'currentTime'], 0)
     .setIn(['appState', 'player', 'currentSong'], newSong)
     .setIn(['appState', 'player', 'queueId'], newQueueId)
