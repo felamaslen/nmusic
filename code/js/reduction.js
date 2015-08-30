@@ -27,7 +27,7 @@ export default new Record({
     slider: {
       volumeClicked: -1,
       seekbarClicked: -1,
-      browserClicked: -1,
+      resizeBrowserClicked: -1,
       titleClicked: -1,
       artistClicked: -1,
       albumClicked: -1,
