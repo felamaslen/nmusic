@@ -3,7 +3,10 @@
  */
 
 import {
-  COL_MIN, COL_MAX
+  COL_MIN, COL_MAX,
+
+  META_HEIGHT,
+  SONGLIST_HEADER_HEIGHT
 } from '../config';
 
 import {
@@ -79,11 +82,11 @@ export default class SongList extends PureControllerView {
     });
 
     const songListStyle = {
-      top: this.props.browserHeight + 89
+      top: this.props.browserHeight + META_HEIGHT + SONGLIST_HEADER_HEIGHT
     };
 
     const headerStyle = {
-      top: this.props.browserHeight + 65
+      top: this.props.browserHeight + META_HEIGHT
     };
 
     const headerTrackClass = this._sortableClass('track');
