@@ -324,7 +324,7 @@ input {
   display: inline-block;
 }
 .controls-volume {
-  width: 120px;
+  width: 96px;
   height: 48px;
   float: left;
   position: relative;
@@ -434,7 +434,7 @@ input {
 }
 
 .ctrl-volume .slider {
-  width: 84px;
+  width: 64px;
   height: 10px;
   background-color: #afafaf;
   position: absolute;
@@ -468,8 +468,8 @@ input {
 }
 .volume-indicator {
   position: absolute;
-  top: 13px;
-  left: 101px;
+  top: 12px;
+  right: 0;
   width: 22px;
   height: 24px;
 }
