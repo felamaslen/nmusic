@@ -2,7 +2,8 @@ import {
   decompressSongs,
   getRangesAfterClick,
   itemInRanges,
-  createRanges
+  createRanges,
+  _sortSongList
 } from '../common';
 
 import { List, fromJS } from 'immutable';
@@ -139,29 +140,6 @@ export const selectAlbum = (reduction, evt) => {
     .setIn(['appState', 'browser', 'selectedAlbums'], newRanges)
     .set('effects', effects)
   ;
-};
-
-const _sortSongList = (songs, orderBy) => {
-  return songs.sort((a, b) => {
-    const columnKey = orderBy.findIndex(column => {
-      const valueA = a.get(column.first());
-      const valueB = b.get(column.first());
-
-      return valueA > valueB || valueA < valueB;
-    });
-
-    if (columnKey < 0) {
-      return 0;
-    }
-
-    const column = orderBy.get(columnKey).first();
-    const direction = orderBy.get(columnKey).last();
-
-    const valueA = a.get(column);
-    const valueB = b.get(column);
-
-    return direction * (valueA > valueB ? 1 : -1);
-  });
 };
 
 export const insertBrowserResults = (reduction, response) => {

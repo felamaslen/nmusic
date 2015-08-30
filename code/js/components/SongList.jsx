@@ -19,10 +19,13 @@ import classNames from 'classnames';
 import {
   sliderClicked
 } from '../actions/AppActions';
+
 import {
   selectSong,
-  columnResized
+  columnResized,
+  sortSongList
 } from '../actions/SongListActions';
+
 import { playListItem } from '../actions/PlayerActions';
 
 import ResizeSlider from './ResizeSlider';
@@ -83,13 +86,22 @@ export default class SongList extends PureControllerView {
       top: this.props.browserHeight + 65
     };
 
+    const headerTrackClass = this._sortableClass('track');
+    const headerTitleClass = this._sortableClass('title');
+    const headerArtistClass = this._sortableClass('artist');
+    const headerAlbumClass = this._sortableClass('album');
+    const headerGenreClass = this._sortableClass('genre');
+
     return (
       <section id="section-songlist" className="noselect">
         <header style={headerStyle}>
-          <song-track>
-            #
-          </song-track>
-          <song-title style={{width: this.props.titleWidthPreview}}>
+          <song-track className={headerTrackClass}
+            onClick={this._sort.bind(this, 'track')}>#</song-track>
+          <song-title
+            style={{width: this.props.titleWidthPreview}}
+            className={headerTitleClass}
+            onClick={this._sort.bind(this, 'title')}
+          >
             Title
             <ResizeSlider dispatcher={this.props.dispatcher}
               vertical={false}
@@ -102,7 +114,11 @@ export default class SongList extends PureControllerView {
               changedAction={columnResized}
             />
           </song-title>
-          <song-artist style={{width: this.props.artistWidthPreview}}>
+          <song-artist
+            style={{width: this.props.artistWidthPreview}}
+            className={headerArtistClass}
+            onClick={this._sort.bind(this, 'artist')}
+          >
             Artist
             <ResizeSlider dispatcher={this.props.dispatcher}
               vertical={false}
@@ -115,7 +131,11 @@ export default class SongList extends PureControllerView {
               changedAction={columnResized}
             />
           </song-artist>
-          <song-album style={{width: this.props.albumWidthPreview}}>
+          <song-album
+            style={{width: this.props.albumWidthPreview}}
+            className={headerAlbumClass}
+            onClick={this._sort.bind(this, 'album')}
+          >
             Album
             <ResizeSlider dispatcher={this.props.dispatcher}
               vertical={false}
@@ -129,7 +149,11 @@ export default class SongList extends PureControllerView {
             />
           </song-album>
           <song-year>Year</song-year>
-          <song-genre style={{width: this.props.genreWidthPreview}}>
+          <song-genre
+            style={{width: this.props.genreWidthPreview}}
+            className={headerGenreClass}
+            onClick={this._sort.bind(this, 'genre')}
+          >
             Genre
             <ResizeSlider dispatcher={this.props.dispatcher}
               vertical={false}
@@ -148,6 +172,22 @@ export default class SongList extends PureControllerView {
         </ul>
       </section>
     );
+  }
+
+  _sort(column) {
+    this.dispatchAction(sortSongList(column));
+  }
+
+  _sortableClass(column) {
+    const orderByColumn = this.props.orderBy.find(item => item.first() === column);
+    const ascending = orderByColumn && orderByColumn.last() > 0;
+    const descending = !ascending && orderByColumn && orderByColumn.last() < 0;
+
+    return classNames({
+      sort: true,
+      ascending: ascending,
+      descending: descending
+    });
   }
 
   _playListItem(index) {
@@ -185,6 +225,7 @@ SongList.propTypes = {
   resizeArtistEvents: PropTypes.instanceOf(List),
   resizeAlbumEvents: PropTypes.instanceOf(List),
   resizeGenreEvents: PropTypes.instanceOf(List),
+  orderBy: PropTypes.instanceOf(List),
   dispatcher: PropTypes.instanceOf(Dispatcher)
 };
 

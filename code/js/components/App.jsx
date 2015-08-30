@@ -175,6 +175,7 @@ export default class App extends Component {
           </div>
         </section>
         <SongList dispatcher={this.state.dispatcher}
+          orderBy={this.state.reduction.getIn(['appState', 'songList', 'orderBy'])}
           browserHeight={this.state.reduction.getIn(['appState', 'browser', 'height'])}
           currentSongId={currentSongId}
           list={this.state.reduction.getIn(['appState', 'songList', 'list'])}

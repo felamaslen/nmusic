@@ -1,6 +1,9 @@
-import { getRangesAfterClick } from '../common';
+import {
+  getRangesAfterClick,
+  _sortSongList
+} from '../common';
 
-import { } from 'immutable';
+import { List } from 'immutable';
 
 export const selectSong = (reduction, evt) => {
   const newRanges = getRangesAfterClick(
@@ -27,3 +30,20 @@ export const columnResized = (reduction, options) => {
   ;
 };
 
+export const sortSongList = (reduction, column) => {
+  const orderBy = reduction.getIn(['appState', 'songList', 'orderBy']);
+
+  const existingKey = orderBy.findIndex(item => item.first() === column);
+
+  const oldOrder = orderBy.get(existingKey).last();
+  const newOrder = (oldOrder + 2) % 3 - 1;
+
+  const newOrderBy = orderBy.delete(existingKey).push(List.of(column, newOrder));
+
+  return reduction
+    .setIn(['appState', 'songList', 'orderBy'], newOrderBy)
+    .setIn(
+      ['appState', 'songList', 'list'],
+      _sortSongList(reduction.getIn(['appState', 'songList', 'list']), newOrderBy)
+    );
+};

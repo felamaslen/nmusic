@@ -72,6 +72,29 @@ export function sliderOnShouldComponentUpdate(nextProps) {
   return true;
 }
 
+export const _sortSongList = (songs, orderBy) => {
+  return songs.sort((a, b) => {
+    const columnKey = orderBy.findIndex(column => {
+      const valueA = a.get(column.first());
+      const valueB = b.get(column.first());
+
+      return column.last() && (valueA > valueB || valueA < valueB);
+    });
+
+    if (columnKey < 0) {
+      return 0;
+    }
+
+    const column = orderBy.get(columnKey).first();
+    const direction = orderBy.get(columnKey).last();
+
+    const valueA = a.get(column);
+    const valueB = b.get(column);
+
+    return direction * (valueA > valueB ? 1 : -1);
+  });
+};
+
 export const getDocumentTitle = (canNotify, song, paused) => {
   const haveTitle = !!song && !!song.get('title');
   const haveArtist = haveTitle && !!song.get('artist');

@@ -43,7 +43,8 @@ import {
   // SongList actions
   LIST_REQUESTED_FROM_BROWSER,
   LIST_SONG_SELECTED,
-  LIST_COL_RESIZED
+  LIST_COL_RESIZED,
+  LIST_SORTED
 } from '../constants/actions';
 
 import {
@@ -95,7 +96,8 @@ import {
 
 import {
   selectSong,
-  columnResized
+  columnResized,
+  sortSongList
 } from './SongListReducer';
 
 export default (reduction, action) => {
@@ -180,6 +182,8 @@ export default (reduction, action) => {
     return selectSong(reduction, action.payload);
   case LIST_COL_RESIZED:
     return columnResized(reduction, action.payload);
+  case LIST_SORTED:
+    return sortSongList(reduction, action.payload);
 
   default:
     return reduction;
