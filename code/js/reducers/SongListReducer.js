@@ -34,8 +34,16 @@ export const columnResized = (reduction, options) => {
   ;
 };
 
-export const sortSongList = (reduction, column) => {
-  const orderBy = reduction.getIn(['appState', 'songList', 'orderBy']);
+export const sortSongList = (reduction, params) => {
+  const column = params.column;
+
+  let orderBy = reduction.getIn(['appState', 'songList', 'orderBy']);
+
+  if (params.startAgain) {
+    orderBy = orderBy.map(
+      item => List.of(item.first(), 0)
+    );
+  }
 
   const existingKey = orderBy.findIndex(item => item.first() === column);
 

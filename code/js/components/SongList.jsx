@@ -99,11 +99,11 @@ export default class SongList extends PureControllerView {
       <section id="section-songlist" className="noselect">
         <header style={headerStyle}>
           <song-track className={headerTrackClass}
-            onClick={this._sort.bind(this, 'track')}>#</song-track>
+            onMouseDown={this._sort.bind(this, 'track')}>#</song-track>
           <song-title
             style={{width: this.props.titleWidthPreview}}
             className={headerTitleClass}
-            onClick={this._sort.bind(this, 'title')}
+            onMouseDown={this._sort.bind(this, 'title')}
           >
             Title
             <ResizeSlider dispatcher={this.props.dispatcher}
@@ -120,7 +120,7 @@ export default class SongList extends PureControllerView {
           <song-artist
             style={{width: this.props.artistWidthPreview}}
             className={headerArtistClass}
-            onClick={this._sort.bind(this, 'artist')}
+            onMouseDown={this._sort.bind(this, 'artist')}
           >
             Artist
             <ResizeSlider dispatcher={this.props.dispatcher}
@@ -137,7 +137,7 @@ export default class SongList extends PureControllerView {
           <song-album
             style={{width: this.props.albumWidthPreview}}
             className={headerAlbumClass}
-            onClick={this._sort.bind(this, 'album')}
+            onMouseDown={this._sort.bind(this, 'album')}
           >
             Album
             <ResizeSlider dispatcher={this.props.dispatcher}
@@ -155,7 +155,7 @@ export default class SongList extends PureControllerView {
           <song-genre
             style={{width: this.props.genreWidthPreview}}
             className={headerGenreClass}
-            onClick={this._sort.bind(this, 'genre')}
+            onMouseDown={this._sort.bind(this, 'genre')}
           >
             Genre
             <ResizeSlider dispatcher={this.props.dispatcher}
@@ -177,8 +177,13 @@ export default class SongList extends PureControllerView {
     );
   }
 
-  _sort(column) {
-    this.dispatchAction(sortSongList(column));
+  _sort(column, ev) {
+    ev.stopPropagation();
+
+    this.dispatchAction(sortSongList({
+      column: column,
+      startAgain: ev.ctrlKey || ev.shiftKey
+    }));
   }
 
   _sortableClass(column) {
