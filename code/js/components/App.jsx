@@ -232,6 +232,10 @@ export default class App extends Component {
       search = (
         <Search dispatcher={this.state.dispatcher}
           searchTerm={this.state.reduction.getIn(['appState', 'search', 'searchTerm'])}
+          loading={this.state.reduction.getIn(['appState', 'search', 'loading'])}
+          artists={this.state.reduction.getIn(['appState', 'search', 'results', 'artists'])}
+          albums={this.state.reduction.getIn(['appState', 'search', 'results', 'albums'])}
+          songs={this.state.reduction.getIn(['appState', 'search', 'results', 'songs'])}
         />
       );
     }

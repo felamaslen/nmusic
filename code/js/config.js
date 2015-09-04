@@ -49,6 +49,7 @@ export const NAVIGATION_WARNING_MESSAGE = 'This action will stop the music.';
 
 export const AUTH_AUTHENTICATE = '/authenticate';
 export const AUTH_TEST = API + '/authtest';
+export const API_SEARCH_SUGGESTIONS = API + '/search/suggestions/';
 export const API_LIST_ARTISTS = API + '/list/artists';
 export const API_LIST_SONGS_FROM_BROWSER = API + '/list/songs/';
 export const STREAM_URL = API + '/play/';

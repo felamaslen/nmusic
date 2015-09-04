@@ -15,6 +15,10 @@ import {
   APP_SETTINGS_REQUESTED,
   APP_EVENT_RESIZED,
 
+  // Search actions
+  SEARCH_QUERY_RECEIVED,
+  SEARCH_SUGGESTIONS_RECEIVED,
+
   // Audio actions
   AUDIO_STREAM_CANPLAY,
   AUDIO_STREAM_BEGAN,
@@ -57,6 +61,11 @@ import {
   getSettings,
   resizeGlobal
 } from './AppReducer';
+
+import {
+  searchQueryReceived,
+  searchSuggestionsReceived
+} from './SearchReducer';
 
 import {
   setPersistentToken,
@@ -130,6 +139,12 @@ export default (reduction, action) => {
     return getSettings(reduction);
   case APP_EVENT_RESIZED:
     return resizeGlobal(reduction);
+
+  // Search actions
+  case SEARCH_QUERY_RECEIVED:
+    return searchQueryReceived(reduction, action.payload);
+  case SEARCH_SUGGESTIONS_RECEIVED:
+    return searchSuggestionsReceived(reduction, action.payload);
 
   // Audio actions
   case AUDIO_STREAM_CANPLAY:

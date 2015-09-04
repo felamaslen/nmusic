@@ -72,7 +72,13 @@ export default new Record({
       }
     },
     search: {
-      searchTerm: ''
+      searchTerm: '',
+      loading: false,
+      results: {
+        artists: [],
+        albums: [],
+        songs: []
+      }
     },
     browser: {
       height: 220,

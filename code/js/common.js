@@ -11,7 +11,7 @@ import {
 
 export const debounce = (func, wait, immediate) => {
   let timeout;
-  return () => {
+  return function debounced() {
     const args = arguments;
     const later = () => {
       timeout = null;
@@ -19,17 +19,16 @@ export const debounce = (func, wait, immediate) => {
         func.apply(this, args);
       }
     };
-
     const callNow = immediate && !timeout;
-    window.clearTimeout(timeout);
-    timeout = window.setTimeout(later, wait);
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
     if (callNow) {
       func.apply(this, args);
     }
   };
 };
 
-const keys = {
+export const keys = {
   backspace: 8,
   tab: 9,
   enter: 13,

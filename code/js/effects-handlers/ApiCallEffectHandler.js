@@ -2,6 +2,7 @@ import {
   AUTH_TEST,
   AUTH_AUTHENTICATE,
 
+  API_SEARCH_SUGGESTIONS,
   API_LIST_ARTISTS,
   API_LIST_SONGS_FROM_BROWSER
 } from '../config';
@@ -12,17 +13,15 @@ import axios from 'axios';
 import {
   AUTHTEST_API_CALL,
   AUTHENTICATE_API_CALL,
+  SEARCH_SUGGESTIONS_API_CALL,
   BROWSER_ARTISTS_API_CALL,
   LIST_BROWSER_API_CALL,
   SETTINGS_UPDATE_TRIGGERED
 } from '../constants/effects';
 
-import {
-  setSettings
-} from '../actions/AppActions';
-import {
-  authGotResponse
-} from '../actions/LoginActions';
+import { setSettings } from '../actions/AppActions';
+import { searchSuggestionsReceived } from '../actions/SearchActions';
+import { authGotResponse } from '../actions/LoginActions';
 import {
   gotListArtists,
   insertBrowserResults
@@ -37,6 +36,19 @@ const buildEffectHandler = handlers => {
 };
 
 export default buildEffectHandler({
+  [SEARCH_SUGGESTIONS_API_CALL]: (query, dispatcher) => {
+    if (query.searchTerm.length > 0) {
+      axios.get(API_SEARCH_SUGGESTIONS + encodeURIComponent(query.searchTerm), {
+        headers: { 'x-access-token': query.token }
+      }).then(
+        response => dispatcher.dispatch(searchSuggestionsReceived(response)),
+        () => dispatcher.dispatch(searchSuggestionsReceived(null))
+      );
+    } else {
+      setTimeout(() => dispatcher.dispatch(searchSuggestionsReceived(false)), 0);
+    }
+  },
+
   [AUTHTEST_API_CALL]: (token, dispatcher) => {
     axios.get(AUTH_TEST, {
       headers: { 'x-access-token': token }
