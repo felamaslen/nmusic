@@ -37,16 +37,12 @@ const buildEffectHandler = handlers => {
 
 export default buildEffectHandler({
   [SEARCH_SUGGESTIONS_API_CALL]: (query, dispatcher) => {
-    if (query.searchTerm.length > 0) {
-      axios.get(API_SEARCH_SUGGESTIONS + encodeURIComponent(query.searchTerm), {
-        headers: { 'x-access-token': query.token }
-      }).then(
-        response => dispatcher.dispatch(searchSuggestionsReceived(response)),
-        () => dispatcher.dispatch(searchSuggestionsReceived(null))
-      );
-    } else {
-      setTimeout(() => dispatcher.dispatch(searchSuggestionsReceived(false)), 0);
-    }
+    axios.get(API_SEARCH_SUGGESTIONS + encodeURIComponent(query.searchValue), {
+      headers: { 'x-access-token': query.token }
+    }).then(
+      response => dispatcher.dispatch(searchSuggestionsReceived(response)),
+      () => dispatcher.dispatch(searchSuggestionsReceived(null))
+    );
   },
 
   [AUTHTEST_API_CALL]: (token, dispatcher) => {

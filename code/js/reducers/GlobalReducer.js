@@ -17,6 +17,7 @@ import {
 
   // Search actions
   SEARCH_QUERY_RECEIVED,
+  SEARCH_VALUE_SET,
   SEARCH_SUGGESTIONS_RECEIVED,
 
   // Audio actions
@@ -63,6 +64,7 @@ import {
 } from './AppReducer';
 
 import {
+  searchValueSet,
   searchQueryReceived,
   searchSuggestionsReceived
 } from './SearchReducer';
@@ -142,7 +144,9 @@ export default (reduction, action) => {
 
   // Search actions
   case SEARCH_QUERY_RECEIVED:
-    return searchQueryReceived(reduction, action.payload);
+    return searchQueryReceived(reduction);
+  case SEARCH_VALUE_SET:
+    return searchValueSet(reduction, action.payload);
   case SEARCH_SUGGESTIONS_RECEIVED:
     return searchSuggestionsReceived(reduction, action.payload);
 

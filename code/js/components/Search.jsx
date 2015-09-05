@@ -5,7 +5,9 @@ import classNames from 'classnames';
 import { debounce } from '../common';
 
 import {
-  searchQueryReceived
+  searchSetValue,
+  searchQueryReceived,
+  searchSuggestionsReceived
 } from '../actions/SearchActions';
 
 import PureControllerView from './PureControllerView';
@@ -27,9 +29,9 @@ const renderSongs = (song, index) => (
 
 export default class Search extends PureControllerView {
   componentWillMount() {
-    this._getSuggestions = debounce(searchTerm => {
-      this.dispatchAction(searchQueryReceived(searchTerm));
-    }, 100);
+    this._getSuggestions = debounce(() => {
+      this.dispatchAction(searchQueryReceived());
+    }, 200);
   }
 
   render() {
@@ -74,7 +76,13 @@ export default class Search extends PureControllerView {
   _handleInput(ev) {
     const value = ev.target && ev.target.value ? ev.target.value : '';
 
-    return this._getSuggestions(value);
+    this.dispatchAction(searchSetValue(value));
+
+    this._getSuggestions();
+
+    if (!value.length) {
+      this.dispatchNext(searchSuggestionsReceived(false));
+    }
   }
 }
 

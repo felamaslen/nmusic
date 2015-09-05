@@ -72,8 +72,9 @@ export default new Record({
       }
     },
     search: {
-      searchTerm: '',
+      searchValue: '',
       loading: false,
+      resultsCache: {},
       results: {
         artists: [],
         albums: [],
