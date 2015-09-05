@@ -12,9 +12,18 @@ import {
 
 import PureControllerView from './PureControllerView';
 
-const renderArtistAlbum = (item, index) => (
+const renderArtists = (artist, index) => (
   <li key={index}>
-    <a>{item}</a>
+    <a>{artist}</a>
+  </li>
+);
+
+const renderAlbums = (album, index) => (
+  <li key={index}>
+    <a>
+      <span className="song-title">{album.first()}</span>
+      <span className="song-artist">{album.last()}</span>
+    </a>
   </li>
 );
 
@@ -42,11 +51,11 @@ export default class Search extends PureControllerView {
     });
 
     const resultsArtists = this.props.artists.size ? (
-      <ul className="artists">{this.props.artists.map(renderArtistAlbum)}</ul>
+      <ul className="artists">{this.props.artists.map(renderArtists)}</ul>
     ) : false;
 
     const resultsAlbums = this.props.albums.size ? (
-      <ul className="albums">{this.props.albums.map(renderArtistAlbum)}</ul>
+      <ul className="albums">{this.props.albums.map(renderAlbums)}</ul>
     ) : false;
 
     const resultsSongs = this.props.songs.size ? (

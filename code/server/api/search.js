@@ -1,3 +1,5 @@
+import { fromJS, List } from 'immutable';
+
 import { secureParam } from '../common';
 
 export default (app, db) => {
@@ -9,16 +11,19 @@ export default (app, db) => {
 
     db.Song.find({ title: termRegex }, 'title artist', { limit: 5 }, (error1, songs) => {
       const suggestions = {
-        songs: songs.map(song => {
-          return [song._id, song.title, song.artist];
-        })
+        songs: songs.map(song =>
+          [song._id, song.title, song.artist]
+        )
       };
 
       db.Song.find({ artist: termRegex }).distinct('artist', (error2, artists) => {
         suggestions.artists = artists.slice(0, 5).map(artist => artist);
 
-        db.Song.find({ album: termRegex }).distinct('album', (error3, albums) => {
-          suggestions.albums = albums.slice(0, 5).map(album => album);
+        db.Song.find({ album: termRegex }, 'album artist', (error3, items) => {
+          suggestions.albums = fromJS(items).map(item => List.of(
+            item.get('album'),
+            item.get('artist')
+          )).toSet().take(5);
 
           res.json(suggestions);
         });
