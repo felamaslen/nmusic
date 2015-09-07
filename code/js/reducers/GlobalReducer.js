@@ -154,7 +154,7 @@ export default (reduction, action) => {
   case SEARCH_SUGGESTIONS_RECEIVED:
     return searchSuggestionsReceived(reduction, action.payload);
   case SEARCH_RESULT_SELECTED:
-    return searchResultSelected(reduction, action.payload);
+    return searchResultSelected(reduction);
   case SEARCH_RESULT_HOVERED:
     return searchItemHovered(reduction, action.payload);
 

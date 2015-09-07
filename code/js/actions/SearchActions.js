@@ -14,6 +14,6 @@ export const searchQueryReceived = () => buildMessage(SEARCH_QUERY_RECEIVED);
 
 export const searchSuggestionsReceived = response => buildMessage(SEARCH_SUGGESTIONS_RECEIVED, response);
 
-export const searchSelectResult = index => buildMessage(SEARCH_RESULT_SELECTED, index);
+export const searchSelectResult = () => buildMessage(SEARCH_RESULT_SELECTED);
 
 export const searchHoverItem = indexes => buildMessage(SEARCH_RESULT_HOVERED, indexes);

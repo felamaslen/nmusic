@@ -16,10 +16,6 @@ export default buildEffectHandler({
     }, 0);
   },
 
-  [SEARCH_SELECT_ARTIST]: (artist, dispatcher) => {
-    console.debug('selecting artist', artist);
-  },
-
   [SEARCH_SELECT_ALBUM]: (album, dispatcher) => {
     console.debug('selecting album', album);
   },

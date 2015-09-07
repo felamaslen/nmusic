@@ -1,4 +1,9 @@
 import {
+  LIST_BROWSER_API_CALL,
+  BROWSER_ARTISTS_API_CALL
+} from '../constants/effects';
+
+import {
   decompressSongs,
   getRangesAfterClick,
   itemInRanges,
@@ -21,7 +26,7 @@ export const loadListArtists = reduction => {
     .set('effects', reduction
       .get('effects')
       .push(buildMessage(
-        'BROWSER_ARTISTS_API_CALL',
+        BROWSER_ARTISTS_API_CALL,
         reduction.getIn(['appState', 'auth', 'token'])
       ))
     );
@@ -66,7 +71,7 @@ export const selectArtist = (reduction, evt) => {
     }
 
     effects = effects.push(buildMessage(
-      'LIST_BROWSER_API_CALL',
+      LIST_BROWSER_API_CALL,
       {
         token: reduction.getIn(['appState', 'auth', 'token']),
         artists: artists.map(encodeURIComponent).join(','),

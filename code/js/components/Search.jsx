@@ -8,7 +8,8 @@ import {
   searchSetValue,
   searchQueryReceived,
   searchSuggestionsReceived,
-  searchHoverItem
+  searchHoverItem,
+  searchSelectResult
 } from '../actions/SearchActions';
 
 import PureControllerView from './PureControllerView';
@@ -51,28 +52,38 @@ export default class Search extends PureControllerView {
   render() {
     const searchResultsKeys = ['artists', 'albums', 'songs'];
 
-    const resultItem = (ul, index, element) => (
+    let resultListIndex = -1;
+    const resultItem = (index, element) => (
       <li onMouseOver={this._hoverItem.bind(this)} key={index} className={classNames({
-        active: this.props.hoverIndex.first() === ul && this.props.hoverIndex.last() === index
+        active: this.props.hoverIndex.first() === resultListIndex && this.props.hoverIndex.last() === index
       })}>{element}</li>
     );
 
     const resultList = [
-      list => list.map((artist, index) => resultItem(0, index, (
-        <a>{artist}</a>
-      ))),
-      list => list.map((album, index) => resultItem(1, index, (
-        <a>
-          <span className="song-title">{album.first()}</span>
-          <span className="song-artist">{album.last()}</span>
-        </a>
-      ))),
-      list => list.map((song, index) => resultItem(2, index, (
-        <a>
-          <span className="song-title">{song.get(1)}</span>
-          <span className="song-artist">{song.get(2)}</span>
-        </a>
-      )))
+      list => {
+        resultListIndex++;
+        return list.map((artist, index) => resultItem(index, (
+          <a>{artist}</a>
+        )));
+      },
+      list => {
+        resultListIndex++;
+        return list.map((album, index) => resultItem(index, (
+          <a>
+            <span className="song-title">{album.first()}</span>
+            <span className="song-artist">{album.last()}</span>
+          </a>
+        )));
+      },
+      list => {
+        resultListIndex++;
+        return list.map((song, index) => resultItem(index, (
+          <a>
+            <span className="song-title">{song.get(1)}</span>
+            <span className="song-artist">{song.get(2)}</span>
+          </a>
+        )));
+      }
     ];
 
     const results = this.props.results.map((list, listIndex) => {
@@ -177,13 +188,20 @@ export default class Search extends PureControllerView {
       case keys.up:
         newHoverIndex = this._previousSearchItem();
         break;
+      case keys.enter:
+        return this._selectItem();
       default:
+        return true;
       }
 
       if (!!newHoverIndex) {
         this.dispatchAction(searchHoverItem(newHoverIndex));
       }
     }
+  }
+
+  _selectItem() {
+    this.dispatchAction(searchSelectResult());
   }
 
   _hoverItem(ev) {

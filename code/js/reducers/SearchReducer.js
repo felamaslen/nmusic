@@ -10,7 +10,7 @@ import buildMessage from '../MessageBuilder';
 
 import {
   SEARCH_SUGGESTIONS_API_CALL,
-  SEARCH_SELECT_ARTIST,
+  LIST_BROWSER_API_CALL,
   SEARCH_SELECT_ALBUM,
   SEARCH_SELECT_SONG
 } from '../constants/effects';
@@ -70,6 +70,7 @@ export const searchSuggestionsReceived = (reduction, response) => {
     newReduction = newReduction.setIn(['appState', 'search', 'results'], newResults);
 
     // cache search result
+    // TODO: maximum cache age
     const searchValue = reduction.getIn(['appState', 'search', 'searchValue']);
     if (!noResults && searchValue.length) {
       newReduction = newReduction.setIn(
@@ -84,25 +85,45 @@ export const searchSuggestionsReceived = (reduction, response) => {
   ;
 };
 
-export const searchResultSelected = (reduction, indexes) => {
-  const list = reduction.getIn(['appState', 'search', 'results', indexes[0]]);
-  const item = list.get(indexes[1]);
+export const searchResultSelected = reduction => {
+  const index = reduction.getIn(['appState', 'search', 'hoverIndex']);
+  const ul = index.first();
+  const li = index.last();
 
-  let newEffect;
-  switch (indexes[0]) {
-  case SEARCH_LIST_CATEGORY_ARTIST:
-    newEffect = buildMessage(SEARCH_SELECT_ARTIST, item);
-    break;
-  case SEARCH_LIST_CATEGORY_ALBUM:
-    newEffect = buildMessage(SEARCH_SELECT_ALBUM, item.first());
-    break;
-  case SEARCH_LIST_CATEGORY_SONG:
-  default:
-    newEffect = buildMessage(SEARCH_SELECT_SONG, item.first());
-    break;
+  let newReduction = reduction;
+
+  if (ul > -1) {
+    let newEffect;
+
+    const item = reduction.getIn(['appState', 'search', 'results', ul, li]);
+
+    switch (ul) {
+    case SEARCH_LIST_CATEGORY_ARTIST:
+      newEffect = buildMessage(
+        LIST_BROWSER_API_CALL,
+        {
+          token: reduction.getIn(['appState', 'auth', 'token']),
+          artists: encodeURIComponent(item),
+          artistChanged: 'false'
+        }
+      );
+      break;
+    case SEARCH_LIST_CATEGORY_ALBUM:
+      newEffect = buildMessage(SEARCH_SELECT_ALBUM, item.first());
+      break;
+    case SEARCH_LIST_CATEGORY_SONG:
+    default:
+      newEffect = buildMessage(SEARCH_SELECT_SONG, item.first());
+      break;
+    }
+
+    newReduction = newReduction.set('effects', newReduction.get('effects').push(newEffect));
   }
 
-  return reduction.set('effects', reduction.get('effects').push(newEffect));
+  return newReduction
+    .setIn(['appState', 'search', 'results'], List.of())
+    .setIn(['appState', 'search', 'hoverIndex'], List.of(-1, null))
+  ;
 };
 
 export const searchItemHovered = (reduction, indexes) => {
