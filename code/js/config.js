@@ -62,3 +62,7 @@ export const AUTH_STATUS_WAITING = 2;
 export const AUTH_STATUS_LOADING = 3;
 export const AUTH_STATUS_LOADING_FROM_COOKIE = 4;
 export const AUTH_STATUS_SERVER_ERROR = 5;
+
+export const SEARCH_LIST_CATEGORY_ARTIST = 0;
+export const SEARCH_LIST_CATEGORY_ALBUM = 1;
+export const SEARCH_LIST_CATEGORY_SONG = 2;

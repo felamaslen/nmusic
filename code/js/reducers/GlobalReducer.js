@@ -19,6 +19,8 @@ import {
   SEARCH_QUERY_RECEIVED,
   SEARCH_VALUE_SET,
   SEARCH_SUGGESTIONS_RECEIVED,
+  SEARCH_RESULT_SELECTED,
+  SEARCH_RESULT_HOVERED,
 
   // Audio actions
   AUDIO_STREAM_CANPLAY,
@@ -66,7 +68,9 @@ import {
 import {
   searchValueSet,
   searchQueryReceived,
-  searchSuggestionsReceived
+  searchSuggestionsReceived,
+  searchResultSelected,
+  searchItemHovered
 } from './SearchReducer';
 
 import {
@@ -149,6 +153,10 @@ export default (reduction, action) => {
     return searchValueSet(reduction, action.payload);
   case SEARCH_SUGGESTIONS_RECEIVED:
     return searchSuggestionsReceived(reduction, action.payload);
+  case SEARCH_RESULT_SELECTED:
+    return searchResultSelected(reduction, action.payload);
+  case SEARCH_RESULT_HOVERED:
+    return searchItemHovered(reduction, action.payload);
 
   // Audio actions
   case AUDIO_STREAM_CANPLAY:

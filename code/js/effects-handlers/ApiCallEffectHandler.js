@@ -7,7 +7,6 @@ import {
   API_LIST_SONGS_FROM_BROWSER
 } from '../config';
 
-import { Map as map } from 'immutable';
 import axios from 'axios';
 
 import {
@@ -15,11 +14,9 @@ import {
   AUTHENTICATE_API_CALL,
   SEARCH_SUGGESTIONS_API_CALL,
   BROWSER_ARTISTS_API_CALL,
-  LIST_BROWSER_API_CALL,
-  SETTINGS_UPDATE_TRIGGERED
+  LIST_BROWSER_API_CALL
 } from '../constants/effects';
 
-import { setSettings } from '../actions/AppActions';
 import { searchSuggestionsReceived } from '../actions/SearchActions';
 import { authGotResponse } from '../actions/LoginActions';
 import {
@@ -27,13 +24,7 @@ import {
   insertBrowserResults
 } from '../actions/BrowserActions';
 
-const buildEffectHandler = handlers => {
-  return (dispatcher, effect) => {
-    map(handlers) // just wrap it in immutable map, we would like to use the fance methods like the filter
-      .filter((handler, effectType) => effectType === effect.type)
-      .forEach(handler => handler(effect.payload, dispatcher));
-  };
-};
+import buildEffectHandler from '../effectHandlerBuilder';
 
 export default buildEffectHandler({
   [SEARCH_SUGGESTIONS_API_CALL]: (query, dispatcher) => {
@@ -113,11 +104,5 @@ export default buildEffectHandler({
     ).catch(
       () => dispatcher.dispatch(insertBrowserResults(null))
     );
-  },
-
-  [SETTINGS_UPDATE_TRIGGERED]: (_, dispatcher) => {
-    window.setTimeout(() => {
-      dispatcher.dispatch(setSettings());
-    }, 0);
   }
 });

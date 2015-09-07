@@ -28,6 +28,7 @@ import {
 } from '../actions/BrowserActions';
 
 import apiCallEffectHandler from '../effects-handlers/ApiCallEffectHandler';
+import generalEffectHandler from '../effects-handlers/GeneralEffectHandler';
 
 // import components here
 import LoginForm from './LoginForm';
@@ -63,6 +64,7 @@ export default class App extends Component {
 
       // all effect handlers are being handled here
       reduction.get('effects').forEach(apiCallEffectHandler.bind(null, dispatcher));
+      reduction.get('effects').forEach(generalEffectHandler.bind(null, dispatcher));
 
       // let's set the reduction back to the Component's state,
       // this will result in re-render of those pure views, whose
@@ -231,17 +233,15 @@ export default class App extends Component {
 
       search = (
         <Search dispatcher={this.state.dispatcher}
-          searchTerm={this.state.reduction.getIn(['appState', 'search', 'searchTerm'])}
           loading={this.state.reduction.getIn(['appState', 'search', 'loading'])}
-          artists={this.state.reduction.getIn(['appState', 'search', 'results', 'artists'])}
-          albums={this.state.reduction.getIn(['appState', 'search', 'results', 'albums'])}
-          songs={this.state.reduction.getIn(['appState', 'search', 'results', 'songs'])}
+          results={this.state.reduction.getIn(['appState', 'search', 'results'])}
+          hoverIndex={this.state.reduction.getIn(['appState', 'search', 'hoverIndex'])}
         />
       );
     }
 
     const userArea = authenticated ? (
-      <section id="userAreaOuter">
+      <section id="userAreaOuter" className="noselect">
         <section id="section-meta" className="noselect">
           {playerEngine}
           {playerUI}

@@ -209,11 +209,10 @@ input {
   white-space: nowrap;
   outline: none;
 }
-.context-menu a:hover {
+.context-menu.hover-active a:hover,
+.context-menu .active a {
     color: #fff;
     background: linear-gradient(to bottom,rgba(89,128,239,1) 0,rgba(100,137,248,1) 6%,rgba(45,102,246,1) 72%,rgba(34,96,246,1) 94%,rgba(13,82,235,1) 100%);
-}
-.context-menu a:focus {
 }
 
 .spinner .bar1 {
@@ -853,7 +852,7 @@ input {
   padding-bottom: 7px;
   line-height: 10px;
 }
-.search-results-outer a:hover .song-artist {
+.search-results-outer .active .song-artist {
   color: #ddd;
 }
 

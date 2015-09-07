@@ -36,6 +36,7 @@ export default class UserMenu extends PureControllerView {
     const menuClass = classNames({
       'user-menu': true,
       'context-menu': true,
+      'hover-active': true,
       active: this.props.active
     });
 

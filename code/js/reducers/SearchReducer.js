@@ -1,17 +1,22 @@
-import { fromJS, Map as map } from 'immutable';
+import { fromJS, List } from 'immutable';
+
+import {
+  SEARCH_LIST_CATEGORY_ARTIST,
+  SEARCH_LIST_CATEGORY_ALBUM,
+  SEARCH_LIST_CATEGORY_SONG
+} from '../config';
 
 import buildMessage from '../MessageBuilder';
 
 import {
-  SEARCH_SUGGESTIONS_API_CALL
+  SEARCH_SUGGESTIONS_API_CALL,
+  SEARCH_SELECT_ARTIST,
+  SEARCH_SELECT_ALBUM,
+  SEARCH_SELECT_SONG
 } from '../constants/effects';
 
 export const searchValueSet = (reduction, value) => {
   return reduction.setIn(['appState', 'search', 'searchValue'], value);
-};
-
-const emptySearchSuggestions = {
-  data: { artists: [], albums: [], songs: [] }
 };
 
 export const searchQueryReceived = reduction => {
@@ -20,7 +25,7 @@ export const searchQueryReceived = reduction => {
   if (!searchValue.length) {
     // user cleared the search box before debounce timer ended
     return reduction
-      .setIn(['appState', 'search', 'results'], fromJS(emptySearchSuggestions.data))
+      .setIn(['appState', 'search', 'results'], List.of())
     ;
   }
 
@@ -29,6 +34,7 @@ export const searchQueryReceived = reduction => {
   if (!!cachedResult) {
     return reduction
       .setIn(['appState', 'search', 'loading'], false)
+      .setIn(['appState', 'search', 'hoverIndex'], List.of(-1, null))
       .setIn(['appState', 'search', 'results'], cachedResult)
     ;
   }
@@ -53,13 +59,13 @@ export const searchSuggestionsReceived = (reduction, response) => {
   let newReduction = reduction;
 
   if (!error) {
-    const _response = noResults ? emptySearchSuggestions : response;
+    const _response = noResults ? { data: { artists: [], albums: [], songs: [] } } : response;
 
-    const newResults = map({
-      artists: fromJS(_response.data.artists),
-      albums: fromJS(_response.data.albums),
-      songs: fromJS(_response.data.songs)
-    });
+    const newResults = fromJS([
+      _response.data.artists,
+      _response.data.albums,
+      _response.data.songs
+    ]);
 
     newReduction = newReduction.setIn(['appState', 'search', 'results'], newResults);
 
@@ -73,6 +79,32 @@ export const searchSuggestionsReceived = (reduction, response) => {
   }
 
   return newReduction
+    .setIn(['appState', 'search', 'hoverIndex'], List.of(-1, null))
     .setIn(['appState', 'search', 'loading'], false)
   ;
+};
+
+export const searchResultSelected = (reduction, indexes) => {
+  const list = reduction.getIn(['appState', 'search', 'results', indexes[0]]);
+  const item = list.get(indexes[1]);
+
+  let newEffect;
+  switch (indexes[0]) {
+  case SEARCH_LIST_CATEGORY_ARTIST:
+    newEffect = buildMessage(SEARCH_SELECT_ARTIST, item);
+    break;
+  case SEARCH_LIST_CATEGORY_ALBUM:
+    newEffect = buildMessage(SEARCH_SELECT_ALBUM, item.first());
+    break;
+  case SEARCH_LIST_CATEGORY_SONG:
+  default:
+    newEffect = buildMessage(SEARCH_SELECT_SONG, item.first());
+    break;
+  }
+
+  return reduction.set('effects', reduction.get('effects').push(newEffect));
+};
+
+export const searchItemHovered = (reduction, indexes) => {
+  return reduction.setIn(['appState', 'search', 'hoverIndex'], fromJS(indexes));
 };

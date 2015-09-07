@@ -75,11 +75,8 @@ export default new Record({
       searchValue: '',
       loading: false,
       resultsCache: {},
-      results: {
-        artists: [],
-        albums: [],
-        songs: []
-      }
+      results: [],
+      hoverIndex: [-1, null]
     },
     browser: {
       height: 220,
